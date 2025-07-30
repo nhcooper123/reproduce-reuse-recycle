@@ -1,6 +1,10 @@
+# Exclude raw data
+raw-data/*
+
 # History files
 .Rhistory
 .Rapp.history
+.DS_Store
 
 # Session Data files
 .RData
