@@ -17,8 +17,6 @@ raw_data <- clean_names(raw_data)
 # Clean the data
 clean_data <- 
   raw_data %>%
-# Remove papers from Ecology and Evolution
-  filter(journal != "ECE3") %>%
 # Select only required article types
   filter(display_article_type == "Research Article" |
           display_article_type == "Original Research" | 
@@ -41,6 +39,7 @@ clean_data <-
   mutate(journal = str_replace_all(journal, "MEE3", "Methods in Ecology and Evolution")) %>%  
   mutate(journal = str_replace_all(journal, "PAN3", "People and Nature")) %>%  
   mutate(journal = str_replace_all(journal, "JANE", "Journal of Animal Ecology")) %>%
+  mutate(journal = str_replace_all(journal, "ECE3", "Ecology and Evolution")) %>% 
   #mutate(journal = str_replace_all(journal, "JE", "Journal of Ecology")) %>%  
   mutate(journal = str_replace_all(journal, "JPE", "Journal of Applied Ecology")) %>%
   mutate(journal = str_replace_all(journal, "ESO3", "Ecological Solutions and Evidence")) %>%
