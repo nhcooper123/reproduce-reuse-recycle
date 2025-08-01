@@ -2,7 +2,7 @@
 # July 2025
 
 # Load libraries
-library(tidyverse) # for data manipulation
+library(tidyverse) # for data manipulation and plotting
 library(janitor) # for tidying names
 
 # Read in the dataset
