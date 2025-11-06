@@ -161,10 +161,11 @@ clean_data_all <-
                                        paper_number == 2288 ~ "Yes",
                                        TRUE ~ as.character(data_link)))     %>% 
          
-# Correcting errors in data archive. Some should have NA here as no data are available. 
-# Others are institutional repos not special other things
-# ### CHECK THESE NA ONES AS THEY SHOULD NOT SAY DATA IS ARCHIVED
-mutate(data_archive_clean = case_when(data_archive == "According to ethical requirements data is available only upon request to the authors." |
+  # 7. Data archive 
+  # Correcting errors in data archive. Some should have NA here as no data are available. 
+  # Others are institutional repos not special other things
+  # ### CHECK THESE NA ONES AS THEY SHOULD NOT SAY DATA IS ARCHIVED
+  mutate(data_archive_clean = case_when(data_archive == "According to ethical requirements data is available only upon request to the authors." |
                                       data_archive == "Data held by one author and the Missouri Department of Conservation" |                                                                                                                                                                                                                                                                                                                                                    
                                       data_archive == "Data is only available on request." |                                                                                                                                                                                                                                                                                                                                                                                      
                                       data_archive == "Data NOT archived because of twitter privacy terms." |
@@ -381,12 +382,44 @@ mutate(data_archive_clean = case_when(data_archive == "According to ethical requ
                                       
                                       TRUE ~ as.character(data_archive)))
                                                                                                                                                                                                                                                                                                                                                                                                
- 
-
-
+mutate(data_doi = case_when(data_doi == "Accession number: SRP151262" |
+                            data_doi == "Accession numbers"  |
+                            data_doi == "As it is supplementary materials it does not have an individual doi, but is of course associated with the paper's doi." |
+                            data_doi == "Has Accession Number"  |                                                                                                                                                                                                                                
+                            data_doi == "I think no, but it has an accession ID" |
+                            data_doi == "Yes, assuming the data is = the r-package" |
+                            data_doi == "The data is stored in the CRAN and Github repositories (it is an R package). These do not have a DOI per se. The Open Research Statement does not explicitly refer to the data either, but you can find it in the repositories to which you are linked." |
+                            data_doi == "There is a doi for instructions/code but no dataset present" |
+                            data_doi == "No link to data in Data Availability Statement"  |                                                                                                                                                                                                       
+                            data_doi == "No, data is not publicly available for confidentiality reasons" 
+                            ~ "No",
+                                      
+                            data_doi == "Data deposited in Dryad has a DOI, data deposited in NCBI does not" |
+                            data_doi ==  "Dryad dataset = yes, NCBI dataset = no" |
+                            data_doi == "first dataset has a doi, second does not" |                                                                                                                                                                                                               
+                            data_doi == "First dataset yes, second no" |
+                            data_doi ==  "Pre-existing data has DOI, simulated data does not have DOI" |
+                            data_doi ==  "Yes for the data on DRYAD" |
+                            data_doi ==  "Yes for the dryad data but not for the MG-RAST sequence data" |                                                                                                                                                                                           
+                            data_doi ==  "yes for the dryad data, unsure about the genetic data"  
+                            ~ "Yes but not for all data archived",
                             
-[26]  
-[21]     
+                            data_doi == "DOI not found" |
+                            data_doi == "repo has a DOI, but repo does not contain the data" |
+                            data_doi == "not available \"The application or website you were looking for is known on this server, but it is currently not available\""  |                                                                                                                         
+                            data_doi == "The link to the data does not open." |
+                            data_doi == "Yes but not detailed in the original publication [redirected through handle.net]" |
+                            "they have a DOI link but it is from another paper (check - https://doi.org/10.3389/fcimb.2025.1538459.s001)" 
+                            ~ "Yes but DOI not found/incorrect",
+                              
+                            data_doi == "There are two data available in one DOE, and the other one is a link to ENA" |
+                            data_doi == "Yes, but it's archived with the code so the DOI is for both"   
+                              ~ "Yes",
+                                    
+                            TRUE ~ as.character(data_doi))))
+
+                                                                                                                                                                                        
+
 
 which(clean_data_all$data_availability == "Yes" & is.na(clean_data_all$data_archive))
 sort(unique(clean_data_all$data_archive_clean))
@@ -399,3 +432,5 @@ naniar::vis_miss(clean_data_all)
 # Data validation 2272
 
 dat_valid <- filter(raw_data_questions, paper_number == 2272)
+
+
