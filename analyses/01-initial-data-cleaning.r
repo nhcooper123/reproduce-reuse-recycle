@@ -616,6 +616,9 @@ clean_data_all <-
 
   #------------------------------------------------------------------------------------------------------
   # 11. Can you download the data?
+  # Data that do not have a link cannot be downloaded so make this NA
+  mutate(data_link = case_when(data_link == "No"  | is.na(data_link) ~ NA_character_,                                                                                               
+                             TRUE ~ as.character(data_download))) %>%
   # Mostly these can be classed as Yes/No/No - because the data are embargoed
   # But for some papers with multiple datasets I've added a 'Yes, but not all data' option
   # A bit of debate here about what should be No versus NA...
@@ -668,62 +671,91 @@ clean_data_all <-
                                    data_download == "You can download the .R to recreate the data" 
                                     ~ NA_character_,
                                    
-                                   TRUE ~ as.character(data_download))) 
+                                   TRUE ~ as.character(data_download))) %>%
 
   #------------------------------------------------------------------------------------------------------
   # 12. Can you open the data?
-  mutate(data_open = case_when(data_open == 
+  # Data that cannot be downloaded cannot be opened so make this NA
+  mutate(data_open = case_when(data_download == "No"  | is.na(data_download) ~ NA_character_,                                                                                               
+                               TRUE ~ as.character(data_open))) %>%
+  # Several cannot be opened because they are huge files so I have modified the "Maybe if I had the correct software" option
+  # to "Needs specific software or too large"
+  mutate(data_open = case_when(data_open == "I can load the data into R but it just comes up as a huge 3D array, it's not clear whether this is the intended data format as there are no README instructions"                                                                                                   
                                ~ "Yes",
-                               data_open == 
+                               
+                               data_open == "At the moment no as the archival site is under maintenance and have disabled uploads and downloads" |                                                                                                                                                               
+                               data_open == "Data can be opened, but only after having found the proper repository ( https://figshare.com/projects/Nicholson_etal_2019_CPFLEM/57749 ), which is not itself in the paper (the article only gives the link to the metadata, and the dataset have a different DOI)" |
+                               data_open == "Loads the file name into R but doesn't load code" |
+                               data_open == "Need login credentials" |
+                               data_open == "Opens line of code in R to load the data in the directory, but nothing else"|                                                                                                                                                                                       
+                               data_open == "Pop up: We are currently upgrading EnviDat backend. Thank you for your understanding and patience during this time. EnviDat can be accessed in read-only mode. Data download, upload and user data management functionalities will be disabled."                   
                                ~ "No",
-                               data_open == 
+                               
+                               data_open == "Data are a mixture of text files (which I can open) and folders labelled \"NMR_spectra\" which contain a variety of files and types, some without specified formats (\"documents\"). No information about reading these files is given." |                          
+                               data_open == "Dryad = Yes, NCBI = maybe if I had the correct software" |
+                               data_open == "For one dataset, no. In Dryad, one version of the dataset is available and the other cannot be downloaded."  |
+                               data_open == "I can only access, download and open 1 out of 3 datasets that the Data Availability Statement linked to" |
+                               data_open == "Only opened the xlsx, not the dbf"  |
+                               data_open == "Some files, but not others"|                                                                                                                                                                                                                                        
+                               data_open == "Some of the FlickR links to images work, but others are broken." | 
+                               data_open == "Yes for the data bat dataset, but for .tif (lidar) i dont have the correct software" |                                                                                                                                                                              
+                               data_open == "Yes for the data on DRYAD" |
+                               data_open == "I can open the .xlsx, but  don't have Python for the .npy" |
+                               data_open == "Can open .xlsx but not .RDS (don't have correct software)"
+                               ~ "Yes, but not all files",
+                               
+                               # if it isn't available to be downloaded so can't be opened = NA
+                               data_open == "Data cannot be accessed as it could not be readily downloaded. I need to send request to authors from OSF account for data access." |                                                                                                                               
+                               data_open == "Data is not public" |                                                                                                                                                                                                                                               
+                               data_open == "Data not available" |
+                               data_open == "DOI not found" |
+                               data_open == "No link to data in Data Availability Statement"  |                                                                                                                                                                                                                  
+                               data_open == "No, data is not publicly available for confidentiality reasons"|                                                                                                                                                                                                    
+                               data_open == "Not able to find the data"  |                                                                                                                                                                                                                                       
+                               data_open == "not applicable since they are in the paper" |
+                               data_open == "R code provided to produce simulated data. Once run, code produces simulated data." |
+                               data_open == "We can preview online, but a server error prevented download" |                                                                                                                                                                                                     
+                               data_open == "We can't open them because we can't download them" |
+                               data_open == "There are suppose to be in the R package, but I am not sure to find them..." 
                                ~ NA_character_,
-                               ~ "Yes, but not for all data",
-
+                               
+                               data_open == "Data is 9.3GB zipped and will not extract to open"  |                                                                                                                                                                                                               
+                               data_open == "Dataset is very large (> 2 GB)" |
+                               data_open == "Data >346mb.ReadMe reviewed." |
+                               data_open == "File size too large" |
+                               data_open == "I can download the file, but I need to install the package to load the data" |
+                               data_open == "Mos tof the data can be opened except for some which requires specialised software" |
+                               data_open == "The compressed data file is 13 GB big. My laptop is slow and doesn't have enough space..." |                                                                                                                                                                        
+                               data_open == "The data and script files were 14.9 gb in size so i did not download them" |
+                               data_open == "Maybe if I had the correct software" 
+                               ~ "Needs specific software or too large", 
+                            
                                TRUE ~ as.character(data_open))) 
 
 
-[1] "At the moment no as the archival site is under maintenance and have disabled uploads and downloads"                                                                                                                                                                
-[2] "Can open .xlsx but not .RDS (don't have correct software)"                                                                                                                                                                                                         
-[3] "Data >346mb.ReadMe reviewed."                                                                                                                                                                                                                                      
-[4] "Data are a mixture of text files (which I can open) and folders labelled \"NMR_spectra\" which contain a variety of files and types, some without specified formats (\"documents\"). No information about reading these files is given."                           
-[5] "Data can be opened, but only after having found the proper repository ( https://figshare.com/projects/Nicholson_etal_2019_CPFLEM/57749 ), which is not itself in the paper (the article only gives the link to the metadata, and the dataset have a different DOI)"
-[6] "Data cannot be accessed as it could not be readily downloaded. I need to send request to authors from OSF account for data access."                                                                                                                                
-[7] "Data is 9.3GB zipped and will not extract to open"                                                                                                                                                                                                                 
-[8] "Data is not public"                                                                                                                                                                                                                                                
-[9] "Data not available"                                                                                                                                                                                                                                                
-[10] "Dataset is very large (> 2 GB)"                                                                                                                                                                                                                                    
-[11] "DOI not found"                                                                                                                                                                                                                                                     
-[12] "Dryad = Yes, NCBI = maybe if I had the correct software"                                                                                                                                                                                                           
-[13] "File size too large"                                                                                                                                                                                                                                               
-[14] "For one dataset, no. In Dryad, one version of the dataset is available and the other cannot be downloaded."                                                                                                                                                        
-[15] "I can download the file, but I need to install the package to load the data"                                                                                                                                                                                       
-[16] "I can load the data into R but it just comes up as a huge 3D array, it's not clear whether this is the intended data format as there are no README instructions"                                                                                                   
-[17] "I can only access, download and open 1 out of 3 datasets that the Data Availability Statement linked to"                                                                                                                                                           
-[18] "I can open the .xlsx, but  don't have Python for the .npy"                                                                                                                                                                                                         
-[19] "Loads the file name into R but doesn't load code"                                                                                                                                                                                                                  
-[20] "Maybe if I had the correct software"                                                                                                                                                                                                                               
-[21] "Mos tof the data can be opened except for some which requires specialised software"                                                                                                                                                                                
-[22] "Need login credentials"                                                                                                                                                                                                                                            
-[23] "No"                                                                                                                                                                                                                                                                
-[24] "No link to data in Data Availability Statement"                                                                                                                                                                                                                    
-[25] "No, data is not publicly available for confidentiality reasons"                                                                                                                                                                                                    
-[26] "Not able to find the data"                                                                                                                                                                                                                                         
-[27] "not applicable since they are in the paper"                                                                                                                                                                                                                        
-[28] "Only opened the xlsx, not the dbf"                                                                                                                                                                                                                                 
-[29] "Opens line of code in R to load the data in the directory, but nothing else"                                                                                                                                                                                       
-[30] "Pop up: We are currently upgrading EnviDat backend. Thank you for your understanding and patience during this time. EnviDat can be accessed in read-only mode. Data download, upload and user data management functionalities will be disabled."                   
-[31] "R code provided to produce simulated data. Once run, code produces simulated data."                                                                                                                                                                                
-[32] "Some files, but not others"                                                                                                                                                                                                                                        
-[33] "Some of the FlickR links to images work, but others are broken."                                                                                                                                                                                                   
-[34] "The compressed data file is 13 GB big. My laptop is slow and doesn't have enough space..."                                                                                                                                                                         
-[35] "The data and script files were 14.9 gb in size so i did not download them"                                                                                                                                                                                         
-[36] "There are suppose to be in the R package, but I am not sure to find them..."                                                                                                                                                                                       
-[37] "We can preview online, but a server error prevented download"                                                                                                                                                                                                      
-[38] "We can't open them because we can't download them"                                                                                                                                                                                                                 
-[39] "Yes"                                                                                                                                                                                                                                                               
-[40] "Yes for the data bat dataset, but for .tif (lidar) i dont have the correct software"                                                                                                                                                                               
-[41] "Yes for the data on DRYAD"
+                                                                                                                                                                                                      
+                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                           
+                                                                                                                                                                                                                                               
+                                                                                                                                                      
+                                                                                                                                                                                     
+                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                                                                                                  
+                                                                                                                                                                                                                         
+                                                                                                                                                                                
+                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                       
+                                                                                                                                                                             
+                                                                                                                                                                                                 
+                                                                                                                                                                                        
+                                                                                                                                                                                      
+                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                            
+
                                                                                                                                                                                                                           
 sort(unique(clean_data_all$data_open))
 
