@@ -89,11 +89,6 @@ raw_data_all <-
 # Look at the data pre-cleaning
 glimpse(raw_data_all)
 
-# Full list of options pre-cleaning for reference
-all_data_archive <- raw_data_all %>% group_by(data_archive) %>% summarise(n())
-all_data_license_type <- raw_data_all %>% group_by(data_license_type) %>% summarise(n())
-
-
 # ------------------
 # CLEAN CLEAN CLEAN!
 # --------------------------------------------------------------------------
