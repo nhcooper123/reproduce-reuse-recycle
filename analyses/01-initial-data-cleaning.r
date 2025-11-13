@@ -25,6 +25,9 @@ rawdata <-
   slice(-(1:127))
 
 # Rename columns to make them easier to deal with
+# And simultaneously only select columns we want to use.
+# Note that all citations columns have been removed as the data validation showed this questions really confused people
+# and we had wildly different answers for this across recorders.
 raw_data_all <-
   rawdata %>%
   dplyr::select(paper_number = `1. Paper number`,
@@ -46,10 +49,6 @@ raw_data_all <-
                 data_README = `8. Does the data have a README/metadata?`,                                                                                                                                                                                                                                                                  
                 data_README_scale = `9. How useful is the README/metadata? Read the notes in the protocol to help with decisions here. SKIP THIS Q IF NO README EXISTS.` , 
                 data_completeness = `10. How complete is the archived data?`,  
-                data_cited = `13. Has the data been cited (excluding the original paper it was archived for)? You can find this information on the Dryad and Figshare landing pages for the dataset on the right hand side. For other repositories it varies. If you can't find out easily just pick Unsure.`,                           
-                data_citations = `14. If yes, how many times?  Enter number or Unclear`,                                                                                                                                                                                                                                                      
-                data_cited_notself = `15. Has the data been cited by someone other than the original authors? You can find this by clicking on the citations and looking at the papers that cite the data.`,                                                                                                                                      
-                data_citations_notself = `16. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear`,
                 code_used = `0.1 Does the paper use code?`,
                 code_alert = `0.2 If the paper uses code, and this is NOT archived (i.e. they mention using R or Python but don't provide any scripts) please copy-paste the text from the paper that alerted you to them using code...`,                                                                                                 
                 code_archived = `0.3 Does the paper have archived code?`,
@@ -71,10 +70,6 @@ raw_data_all <-
                 code_Rpackage_available = `13. If the code is an R Package, and it was previously available on CRAN/Bioconductor (as stated in the Data Availability statement), is it still available? Check this by trying to install it on the most recent version of R. If you don't know how to do this/can't do this choose \"Unable to check\"`,
                 code_OTHERpackage_available = `14. If the code is a package in another language (e.g. Python) published on PyPI please put the name of the package here and where it has been deposited we will see if it is still available. If you know how to look this up yourself, please do and mention whether it is still available here (Yes/No)`,
                 code_application_cited = `18. APPLICATION papers only. How many times has the paper been cited? You can find this on the landing page of the paper.`,
-                code_cited = `19. Has the code been cited (excluding the original paper it was archived for)? Code = the archived code (not the paper or package).`,
-                code_citations = `20. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear`,                                                                                                                                                                                                                                                    
-                code_cited_notself = `21. Has the code been cited by someone other than the original authors?`,
-                code_citations_notself = `22. If yes, how many times? Enter number or Unclear`,
                 code_comments = `21. Do you have any other comments about the code? For example for those familiar with these processes, does the code use unit test? Doe it have continuous integration? Does it use docker/other containers?`,
                 country_corresponding = `1. Country of corresponding author  (on spreadsheet)`,                                                                                                                                                                                                                                                                 
                 country_first = `2. Country of first author. Use their main address on the paper. There may be more than one. We mean the address that is next to their name on the paper, NOT any “current address” that may be added for people who have recently moved institutions.`,                                                    
@@ -732,7 +727,26 @@ clean_data_all <-
                             
                                TRUE ~ as.character(data_open))) 
 
+  #------------------------------------------------------------------------------------------------------
+  # 13. Data formats
+  # 
 
+  #------------------------------------------------------------------------------------------------------
+  # 14. Does the data have a README?
+  # 
+  # 
+  #------------------------------------------------------------------------------------------------------
+  # 15. How useful is the README?
+  # Luckily this is a scale of 1-10 so just needs to be numeric
+  mutate(data_README_scale = as.numeric(data_README_scale))
+
+  #------------------------------------------------------------------------------------------------------
+  # 16. How complete is the data?
+  # 
+           
+
+
+sort(unique(clean_data_all$data_completeness))
                                                                                                                                                                                                       
                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                
@@ -757,7 +771,7 @@ clean_data_all <-
                                                                                                                                                                                                                                                             
 
                                                                                                                                                                                                                           
-sort(unique(clean_data_all$data_open))
+sort(unique(clean_data_all$data_README_scalesort(unique(clean_data_all$data_format))
 
 naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
