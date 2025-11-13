@@ -612,60 +612,120 @@ clean_data_all <-
                                        data_license_type == "The link was unavailable." 
                                        ~ NA_character_,
                                        
-                                       TRUE ~ as.character(data_license_type)))
+                                       TRUE ~ as.character(data_license_type))) %>%
+
+  #------------------------------------------------------------------------------------------------------
+  # 11. Can you download the data?
+  # Mostly these can be classed as Yes/No/No - because the data are embargoed
+  # But for some papers with multiple datasets I've added a 'Yes, but not all data' option
+  # A bit of debate here about what should be No versus NA...
+  mutate(data_download = case_when(data_download == "Details of the LANDSAT images are listed - so maybe if I knew more about it" |
+                                   data_download == "DOI not found" |
+                                   data_download == "Hard to tell if the data this links to is reference genome data that was created prior to this project, I cannot see where to download the project-specific data."|
+                                   data_download == "I can only access, download and open 1 out of 3 datasets that the Data Availability Statement linked to" |
+                                   data_download == "I could not find the option to download the data." |
+                                   data_download == "I cannot currently access the institutional repository page as I am getting a website certificate error (Safari will not let me load the page)" |                                                                               
+                                   data_download == "NCBI cloud data delivery requires login" |
+                                   data_download == "No - \"Full transcripts of the interviews cannot be made available to avoid compromising respondents' anonymity\""  |                                                                                                           
+                                   data_download == "no - due to confidentiality - unsure if that classifies as emnargoed" |
+                                   data_download == "No - ERROR: Malformed PASS accession number 'SRP218212'. It should be PASSnnnnn, where nnnnn is a 5-digit number. Please enter the correct accession number. - number provided was incorrect" |                                 
+                                   data_download == "no link provided, no clear dataset to download when I search for BioProject accession number on SRA" |                                                                                                                          
+                                   data_download == "No, data is not publicly available for confidentiality reasons" |                                                                                                                                                               
+                                   data_download == "No, folder empty" |                                                                                                                                                                                                             
+                                   data_download == "No, security issue ‘Your connection is not private Attackers might be trying to steal your information from au-east.erc.monash.edu.au (for example, passwords, messages, or credit cards).’ when attempting to download data\"" |
+                                   data_download == "No. because \"The requested service is temporarily unavailable. Please try later.\"" |                                                                                                                                          
+                                   data_download == "No. I need to send request to authors from OSF account for data access data."  |  
+                                   data_download == "The data is archived here but I can't open the link: https://doi:10.5061/dryad.vk002fn" |
+                                   data_download == "The link was unavailable."  |                                                                                                                                                                                                   
+                                   data_download == "the results are stored in doc file as supplementary material. The handle.org link with original data mentioned in the data availability statement doesnt work." |                                                                
+                                   data_download == "They require FTP (because it is too big?). Institutional repository link not working."  |                                                                                                                                       
+                                   data_download == "Not able to find the data" | 
+                                   data_download ==   "Yes, but only via copy-paste from the manuscript"
+                                   ~ "No",
+                                   
+                                   data_download == "Dryad data - yes; NCBI GenBank link is broken" |
+                                   data_download == "Full data have not been archived according to the BES data archiving policy due to restrictions from the data owners. BUT the author mentions where these data can be downloaded" |                                             
+                                   data_download == "One dataset yes (Dryad), other no" |
+                                   data_download == "Part of the data is available, but part is available only upon request" |
+                                   data_download == "Some data are available through dryad but some data are from the NIH and access is blocked."  |                                                                                                                                 
+                                   data_download == "Some data available, other data behind paywall, some data under embargo."   |                                                                                                                                                   
+                                   data_download == "Some data can be accessed and downloaded, however some data from institutional repositories are unavailable" |                                                                                                                  
+                                   data_download == "Yes for the data on DRYAD" |    
+                                   data_download == "Yes, but some data are available upon request."
+                                   ~ "Yes, but not all data",
+                                   
+                                   data_download == "I think yes but they are large genomic files"  |
+                                   data_download == "If I had the correct tools to gather raw sequence read data" |
+                                   data_download == "yes, but I needed to rename the file because the original was too long for my system"
+                                   ~ "Yes",
+                                   
+                                   data_download == "not applicable since they are in the paper" |
+                                   data_download == "prevented from accessing the data bcs of firewall restrictions" |
+                                   data_download == "No link to data in Data Availability Statement"  |   
+                                   data_download == "The data and script files were 14.9 gb in size so i did not download them" |
+                                   data_download == "The data is generated using code (not data file). Code in R (.R file). The code to generate de data works" |                                                                                                                    
+                                   data_download == "The data must be produced using an R script" |
+                                   data_download == "You can download the .R to recreate the data" 
+                                    ~ NA_character_,
+                                   
+                                   TRUE ~ as.character(data_download))) 
+
+  #------------------------------------------------------------------------------------------------------
+  # 12. Can you open the data?
+  mutate(data_open = case_when(data_open == 
+                               ~ "Yes",
+                               data_open == 
+                               ~ "No",
+                               data_open == 
+                               ~ NA_character_,
+                               ~ "Yes, but not for all data",
+
+                               TRUE ~ as.character(data_open))) 
 
 
-sort(unique(clean_data_all$data_download))
-
-#original options
-
-
-
-[1] "Details of the LANDSAT images are listed - so maybe if I knew more about it"                                                                                                                                                   
-[2] "DOI not found"                                                                                                                                                                                                                 
-[3] "Dryad data - yes; NCBI GenBank link is broken"                                                                                                                                                                                 
-[4] "Full data have not been archived according to the BES data archiving policy due to restrictions from the data owners. BUT the author mentions where these data can be downloaded"                                              
-[5] "Hard to tell if the data this links to is reference genome data that was created prior to this project, I cannot see where to download the project-specific data."                                                             
-[6] "I can only access, download and open 1 out of 3 datasets that the Data Availability Statement linked to"                                                                                                                       
-[7] "I cannot currently access the institutional repository page as I am getting a website certificate error (Safari will not let me load the page)"                                                                                
-[8] "I could not find the option to download the data."                                                                                                                                                                             
-[9] "I think yes but they are large genomic files"                                                                                                                                                                                  
-[10] "If I had the correct tools to gather raw sequence read data"                                                                                                                                                                   
-[11] "NCBI cloud data delivery requires login"                                                                                                                                                                                       
-[12] "No"                                                                                                                                                                                                                            
-[13] "No - \"Full transcripts of the interviews cannot be made available to avoid compromising respondents' anonymity\""                                                                                                             
-[14] "No - because the data are embargoed"                                                                                                                                                                                           
-[15] "no - due to confidentiality - unsure if that classifies as emnargoed"                                                                                                                                                          
-[16] "No - ERROR: Malformed PASS accession number 'SRP218212'. It should be PASSnnnnn, where nnnnn is a 5-digit number. Please enter the correct accession number. - number provided was incorrect"                                  
-[17] "no link provided, no clear dataset to download when I search for BioProject accession number on SRA"                                                                                                                           
-[18] "No link to data in Data Availability Statement"                                                                                                                                                                                
-[19] "No, data is not publicly available for confidentiality reasons"                                                                                                                                                                
-[20] "No, folder empty"                                                                                                                                                                                                              
-[21] "No, security issue ‘Your connection is not private Attackers might be trying to steal your information from au-east.erc.monash.edu.au (for example, passwords, messages, or credit cards).’ when attempting to download data\""
-[22] "No. because \"The requested service is temporarily unavailable. Please try later.\""                                                                                                                                           
-[23] "No. I need to send request to authors from OSF account for data access data."                                                                                                                                                  
-[24] "Not able to find the data"                                                                                                                                                                                                     
-[25] "not applicable since they are in the paper"                                                                                                                                                                                    
-[26] "One dataset yes (Dryad), other no"                                                                                                                                                                                             
-[27] "Part of the data is available, but part is available only upon request"                                                                                                                                                        
-[28] "prevented from accessing the data bcs of firewall restrictions"                                                                                                                                                                
-[29] "Some data are available through dryad but some data are from the NIH and access is blocked."                                                                                                                                   
-[30] "Some data available, other data behind paywall, some data under embargo."                                                                                                                                                      
-[31] "Some data can be accessed and downloaded, however some data from institutional repositories are unavailable"                                                                                                                   
-[32] "The data and script files were 14.9 gb in size so i did not download them"                                                                                                                                                     
-[33] "The data is archived here but I can't open the link: https://doi:10.5061/dryad.vk002fn"                                                                                                                                        
-[34] "The data is generated using code (not data file). Code in R (.R file). The code to generate de data works"                                                                                                                     
-[35] "The data must be produced using an R script"                                                                                                                                                                                   
-[36] "The link was unavailable."                                                                                                                                                                                                     
-[37] "the results are stored in doc file as supplementary material. The handle.org link with original data mentioned in the data availability statement doesnt work."                                                                
-[38] "They require FTP (because it is too big?). Institutional repository link not working."                                                                                                                                         
-[39] "Yes"                                                                                                                                                                                                                           
-[40] "Yes for the data on DRYAD"                                                                                                                                                                                                     
-[41] "yes, but I needed to rename the file because the original was too long for my system"                                                                                                                                          
-[42] "Yes, but only via copy-paste from the manuscript"                                                                                                                                                                              
-[43] "Yes, but some data are available upon request."                                                                                                                                                                                
-[44] "You can download the .R to recreate the data" 
-
+[1] "At the moment no as the archival site is under maintenance and have disabled uploads and downloads"                                                                                                                                                                
+[2] "Can open .xlsx but not .RDS (don't have correct software)"                                                                                                                                                                                                         
+[3] "Data >346mb.ReadMe reviewed."                                                                                                                                                                                                                                      
+[4] "Data are a mixture of text files (which I can open) and folders labelled \"NMR_spectra\" which contain a variety of files and types, some without specified formats (\"documents\"). No information about reading these files is given."                           
+[5] "Data can be opened, but only after having found the proper repository ( https://figshare.com/projects/Nicholson_etal_2019_CPFLEM/57749 ), which is not itself in the paper (the article only gives the link to the metadata, and the dataset have a different DOI)"
+[6] "Data cannot be accessed as it could not be readily downloaded. I need to send request to authors from OSF account for data access."                                                                                                                                
+[7] "Data is 9.3GB zipped and will not extract to open"                                                                                                                                                                                                                 
+[8] "Data is not public"                                                                                                                                                                                                                                                
+[9] "Data not available"                                                                                                                                                                                                                                                
+[10] "Dataset is very large (> 2 GB)"                                                                                                                                                                                                                                    
+[11] "DOI not found"                                                                                                                                                                                                                                                     
+[12] "Dryad = Yes, NCBI = maybe if I had the correct software"                                                                                                                                                                                                           
+[13] "File size too large"                                                                                                                                                                                                                                               
+[14] "For one dataset, no. In Dryad, one version of the dataset is available and the other cannot be downloaded."                                                                                                                                                        
+[15] "I can download the file, but I need to install the package to load the data"                                                                                                                                                                                       
+[16] "I can load the data into R but it just comes up as a huge 3D array, it's not clear whether this is the intended data format as there are no README instructions"                                                                                                   
+[17] "I can only access, download and open 1 out of 3 datasets that the Data Availability Statement linked to"                                                                                                                                                           
+[18] "I can open the .xlsx, but  don't have Python for the .npy"                                                                                                                                                                                                         
+[19] "Loads the file name into R but doesn't load code"                                                                                                                                                                                                                  
+[20] "Maybe if I had the correct software"                                                                                                                                                                                                                               
+[21] "Mos tof the data can be opened except for some which requires specialised software"                                                                                                                                                                                
+[22] "Need login credentials"                                                                                                                                                                                                                                            
+[23] "No"                                                                                                                                                                                                                                                                
+[24] "No link to data in Data Availability Statement"                                                                                                                                                                                                                    
+[25] "No, data is not publicly available for confidentiality reasons"                                                                                                                                                                                                    
+[26] "Not able to find the data"                                                                                                                                                                                                                                         
+[27] "not applicable since they are in the paper"                                                                                                                                                                                                                        
+[28] "Only opened the xlsx, not the dbf"                                                                                                                                                                                                                                 
+[29] "Opens line of code in R to load the data in the directory, but nothing else"                                                                                                                                                                                       
+[30] "Pop up: We are currently upgrading EnviDat backend. Thank you for your understanding and patience during this time. EnviDat can be accessed in read-only mode. Data download, upload and user data management functionalities will be disabled."                   
+[31] "R code provided to produce simulated data. Once run, code produces simulated data."                                                                                                                                                                                
+[32] "Some files, but not others"                                                                                                                                                                                                                                        
+[33] "Some of the FlickR links to images work, but others are broken."                                                                                                                                                                                                   
+[34] "The compressed data file is 13 GB big. My laptop is slow and doesn't have enough space..."                                                                                                                                                                         
+[35] "The data and script files were 14.9 gb in size so i did not download them"                                                                                                                                                                                         
+[36] "There are suppose to be in the R package, but I am not sure to find them..."                                                                                                                                                                                       
+[37] "We can preview online, but a server error prevented download"                                                                                                                                                                                                      
+[38] "We can't open them because we can't download them"                                                                                                                                                                                                                 
+[39] "Yes"                                                                                                                                                                                                                                                               
+[40] "Yes for the data bat dataset, but for .tif (lidar) i dont have the correct software"                                                                                                                                                                               
+[41] "Yes for the data on DRYAD"
+                                                                                                                                                                                                                          
+sort(unique(clean_data_all$data_open))
 
 naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
