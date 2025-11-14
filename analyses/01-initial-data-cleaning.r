@@ -903,12 +903,7 @@ clean_data_all <-
                                  data_format == "yml, zip"~ NA_character_,                                                                                                                                                                                                                                                                                                                                                     
                                  data_format == "zip file (8.39 GB), downloads fine, won't open \"error 79\"" ~ NA_character_,
                                  data_format == ".zip" ~ NA_character_,
-                                 TRUE ~ as.character(data_format))) #%>%
-
-
-clean_data_all <-
-  
-  clean_data_all %>%
+                                 TRUE ~ as.character(data_format))) %>%
 
   #------------------------------------------------------------------------------------------------------
   # 14. Does the data have a README?
@@ -994,7 +989,7 @@ clean_data_all <-
                                  data_README == "Yes. Designated README + I also considered information on Dryad webpage as metadata for Q9."  |                                                                                                                                                                  
                                  data_README == "Yes. Explicit README + info on Dryad webpage. Both considered for Q9."    |                                                                                                                                                                                      
                                  data_README == "Yes. Explicit README + metadata on archive webpage (https://conservancy.umn.edu/items/6a8ef2c3-211d-4d2b-bc0e-ee5bf5227909) both considered for Q9."
-                                  ~ "Yes"
+                                  ~ "Yes",
                                  
                                  data_README == "Data not available" |
                                  data_README == "The link to the data does not open." |                                                                                                                                                                                                                           
@@ -1002,21 +997,8 @@ clean_data_all <-
                                  data_README == "The methods section" 
                                  ~ NA_character_,
                                  
-                                 TRUE ~ as.character(data_README)))
+                                 TRUE ~ as.character(data_README))) %>%
   
-  
-                                                                                                                                                                                     
-
-
-
-
-
-
-
-
-
-
-  # 
   #------------------------------------------------------------------------------------------------------
   # 15. How useful is the README?
   # Data without a README cannot be scored so make this NA
@@ -1024,15 +1006,117 @@ clean_data_all <-
                              TRUE ~ as.character(data_README_scale))) %>%
   # This is a scale of 1-10 so needs to be numeric
   mutate(data_README_scale = as.numeric(data_README_scale))
-
-
   #------------------------------------------------------------------------------------------------------
   # 16. How complete is the data?
-  # 
-           
+  # If we can't open the data we can't check this so make these NA
+  mutate(data_completeness = case_when(data_open == "No"  | is.na(data_open) ~ NA_character_,                                                                                               
+                                       TRUE ~ as.character(data_completeness))) %>%
+  # The options here have long descriptions so let's recode them first.
+  # Low: The main analyses of the paper cannot be repeated with the data that has been archived.
+  # Fair: Some analyses can be repeated but not all (~50% of analyses can be repeated).
+  # High: Most data are provided with only small omissions, for example exploratory analyses (~75% of analyses can be repeated).
+  # Complete: All the data necessary to reproduce all analyses and results are archived.
+  mutate(data_completeness = case_when(data_completeness == "The main analyses of the paper cannot be repeated with the data that has been archived." ~ "Low",
+                                       data_completeness == "Some analyses can be repeated but not all (~50% of analyses can be repeated)." ~ "Fair",
+                                       data_completeness == "Most data are provided with only small omissions (~75% of analyses can be repeated)." ~ "High",
+                                       data_completeness == "All the data necessary to reproduce all analyses and results are archived." ~ "Complete",
+                                       TRUE ~ as.character(data_completeness))) %>%
+  # This was a difficult variable to assess, so many of these options are just changed to Unsure
+  # Where people couldn't access the data I've just gone for unsure. These may end up becoming NAs.
+  mutate(data_completeness = case_when(data_completeness == "\"Agreements for these data with partner governements (Kitasoo/Xai'xais and Gitga'at First Nation) prohibit us from diplaying the exact spatial data of detected bears. As such, bear detection information has been summarized at the scale of 'landmass' (see manuscript). Contact the lead author for further information.\"" |
+                                       data_completeness == "According to ethical requirements data is available only upon request to the authors." |
+                                       data_completeness == "Data included but recoded to hide sensible information" |
+                                       data_completeness == "No raw data included, only summaries" |                                                                                                                                                                                                                                                                                                                                       
+                                       data_completeness == "Not providing raw data" |
+                                       data_completeness == "Mostly summaries"  
+                                       ~ "Low",
+                                       
+                                       data_completeness == "\"A CSV file mentioned in the README is missing, which prevents reproducing the temporal analysis." |
+                                       data_completeness == "Data are from camera traps, animal observation frequencies are given but no images from cameras (and no sense of uncertainty)" |
+                                       data_completeness == "Data they collected themselves is archivedproperly, qualitative data from workshop findings is in supplementary, public data they used is not archived, just links to gov.uk given" |  
+                                       data_completeness == "Simulated data can be recreated, only a smaller example is already archived."| 
+                                       data_completeness == "Some part of the raw data was missing to reproduce the analysis. Trait data was submitted but phylogeny used in the analysis is missing."                                                                                                                                                                                                                                   
+                                       ~ "Fair",
+                                       
+                                       data_completeness == "Archived data covers part of the analyses, but the remaining analyses use data within R packages, so they're still reproducible." | 
+                                       data_completeness == "Data available is not the raw data but processed. Even so, not sure if the archived data can repeat all of the results in the paper." |
+                                       data_completeness == "Empirical data are complete but simulated data are not provided" |
+                                       data_completeness == "I believe all the data necessary to reproduce all analyses and results are archived; however, the column headers are French, which I had to translate." |
+                                       data_completeness == "Only processed data (no raw data), but this can reproduce all analyses and results." |                                                                                                                                                                                                                                                                                        
+                                       data_completeness == "Only processed data (no raw data), but this reproduces all analyses and results." | 
+                                       data_completeness == "The data available were processed. Those files can be used to produce all the results, but the raw data to reach the version archived is not shared." |                                                                                                                                                                                                                       
+                                       data_completeness == "The data available were processed. Those files can be used to produce all the results, but the raw data to reach the version archived is not shared."                                                                                                                                                                                                                        
+                                       ~ "High",
+                                       
+                                       data_completeness == "All data is provided but not all data is mentioned in the data availability statement - climate data." |
+                                       data_completeness == "I believe all the data necessary to reproduce all analyses and results are archived; however, the column headers are French, which I had to translate." |
+                                       data_completeness == "All the analyses in the paper can be reproduced, but that is because the paper is missing part of its own method: it does not say how the plant species were sampled, so it is unclear whether each species had multiple replicates (which is missing from the data, with just a single row per species) or if they genuinely only sampled one individual plant per species." |
+                                       data_completeness == "All the data necessary to reproduce all analyses and results are archived - except for some of the raw data (e.g. Rsample), but these can be back-calculated if needed from provided data"                                                                                                                                                                                   
+                                       ~ "Complete",
+                                       
+                                       data_completeness == "data but no code" |
+                                       data_completeness == "\"Unsure\" applies here. Explanation: The data folder contains many files in various formats, some of which I cannot open. The README is not informative, so assessing the completeness of the archived data is virtually impossible without running all the code." |                                                                                                         
+                                       data_completeness == "\"Unsure\" applies here. Explanation: The data folder contains many files in various formats, some of which I cannot open. There is also no accompanying metadata, so assessing the completeness of the archived data is virtually impossible without running all the code." |                                                                                                
+                                       data_completeness == "\"Unsure\" applies here. Explanation: there is a large dataset, but no metadata, so assessing the completeness of the archived data is virtually impossible without running all the code."  |                                                                                                                                                                                 
+                                       data_completeness == "Aside from genetic dataset archived in NCBI, the remaining data have only been archived in processed form (no raw data). Not sure if the provided data can reproduce all analyses and results." |
+                                       data_completeness == "Data as .txt file and difficult to open and understand" |
+                                       data_completeness == "Data seems very complete from the list of filenames, but cannot open due to size and extraction" |
+                                       data_completeness == "Essential data available in a table in SOM [besides data at Dryad]" |
+                                       data_completeness == "Hard to access completeness because of one link not working. The working links do not provide enough data for all analyses." |
+                                       data_completeness == "I cannot open parts of the data, the file type does not work on my computer" |                                                                                                                                                                                                                                                                                                
+                                       data_completeness == "I had issues witḥ the encoding of some text files" |                                                                                                                                                                                                                                                                                                                          
+                                       data_completeness == "I think all the data required to reproduce the analyses are provided. However, I cannot check the statistical analyses because they used JMP Pro version 11 (SAS Institute) and do not provide code (if such is necessary)" |                                                                                                                                                 
+                                       data_completeness == "I think all the requisite data are provided, though I have not checked because the readme does not describe the data structure (so it is hard to tell) and the data need to be analysed using the R package the authors created" |                                                                                                                                         
+                                       data_completeness == "I think most can be repeated" |                                                                                                                                                                                                                                                                                                                                               
+                                       data_completeness == "I think probably most/all analyses can be reproduced, but the detailed data are in Matlab format, which I cannot re-analyse" |                                                                                                                                                                                                                                                
+                                       data_completeness == "I would again think all the raw data is available to perform the analysis but due to lack of meta-data and sample sizes I should look for, I am not sure whether I can assess it directly." |                                                                                                                                                                                 
+                                       data_completeness == "I'm not sure - the raw catch data is all provided, however, the authors present a lot of modelling scenarios that require further data from other sources (not provided) and calculations. I believe the parameter calculations for the model are all provided in the supplementary info at the end, so I would lean towards yes for this question, but it is complicated"  | 
+                                       data_completeness == "I'm not sure as it is very outside of my field - I think yes, as the lab sample results are published, as are the raw sampling data, but I'm not certain about the mass spectrometry data" |                                                                                                                                                                                  
+                                       data_completeness == "It is really difficult for me to judge this because the paper is far out of my field - I think yes; all sequence data is published, and the supporting info contains the data on environmental parameters and such used" |                                                                                                                                                    
+                                       data_completeness == "It looks like all data are here, but given no code it's not clear to me whether the main analyses can be repeated." |                                                                                                                                                                                                                                                         
+                                       data_completeness == "Unsure - due to unclear metadata making it difficult to match the archived data to the methods in the paper." |                                                                                                                                                                                                                                                               
+                                       data_completeness == "Unsure because part of the data cannot be accessed"      |                                                                                                                                                                                                                                                                                                                    
+                                       data_completeness == "Unsure but data files are labeled \"sample data\" so definitely incomplete" |                                                                                                                                                                                                                                                                                                 
+                                       data_completeness == "unsure but I think if the reads are listed this should cover analyses" |                                                                                                                                                                                                                                                                                                      
+                                       data_completeness == "Unsure. The authors do not provide complete metadata, there is no explanation of column, but after reading the M&M of the paper, this might be possible. There is no code, only data." |                                                                                                                                                                                      
+                                       data_completeness == "Unsure. They provide data in .mat files which are open with Matlab so I cannot check, but the code seems pretty organised"| 
+                                       data_completeness == "Missing file DiamTargetSpp.csv [realized while checking the code]" |                                                                                                                                                                                                                                                                                                          
+                                       data_completeness == "No code is listed, so unsure if data is complete. It seems likely to be so however given the details on data collection in the methods." |                                                                                                                                  
+                                       data_completeness == "No locations have been included in the csv file, thus I am unsure if the entire analysis can be repeated using the data." |                                                                                                                                                                                                                                                   
+                                       data_completeness == "One dataset needs to be requested to access due to large file size" |                                                                                                                                                                                                                                                                                                         
+                                       data_completeness == "see above" |  
+                                       data_completeness == "The data contains images of trees not seals (paper is about seals) !!!!"  |                                                                                                                                                                                                                                                                                                   
+                                       data_completeness == "The data was messy. Wrong extension and no README. Yet, the whole procces seems very straigthfoward and I think I could reproduce the results (even if I don't know what kind of data I'm putting in the code)." |                                                                                                                                                            
+                                       data_completeness == "There are instructions on how to get the data from iNaturalist, but it hasn't been archived." |                                                                                                                                                                                                                                                                               
+                                       data_completeness == "there are R files associated with the study, but the one file labeled data is empty when it is opened." |                                                                                                                                                                                                                                                                     
+                                       data_completeness == "The authors provide site locations with their coordinates, and traits in their dataset, but do not directly provide site descriptions to use as predictors. THese are provided in the paper."   |                                                                                                                                                                             
+                                       data_completeness == "Seems to have all the three datasets that would be needed as spreadsheets in excel but no meta-data to understand the columns and no sample sizes to see if all the data is provided" 
+                                       ~ "Unsure" ,
+                                       
+                                       data_completeness == "Data not available" |
+                                       data_completeness == "data DOI not found" |
+                                       data_completeness == "Kenyan STR profiles are unshareable." |
+                                       data_completeness == "Unable to download the data so cannot tell" |
+                                       data_completeness == "No link to data in Data Availability Statement" |
+                                       data_completeness == "R package" | 
+                                       data_completeness == "The paper fulltext is not accessible." |
+                                       data_completeness == "The link to the data does not open." |                                                                                                                                                                                                                                                                                                                                        
+                                       data_completeness == "The link was unavailable."
+                                       ~ NA_character_,
+                                       
+                                       
+                                       TRUE ~ as.character(data_completeness)))
+
+                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                                                                                       
+
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                                 
+                                                                                                                                                                                     
 
 
-sort(unique(clean_data_all$data_format))
+
+sort(unique(clean_data_all$data_completeness))
                                                                                                                                                                                                       
                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                
@@ -1040,24 +1124,8 @@ sort(unique(clean_data_all$data_format))
                                                                                                                                                                                                                                                     
                                                                                                                                                                                                            
                                                                                                                                                                                                                                                
-                                                                                                                                                      
-                                                                                                                                                                                     
-                                                                                                                                                          
-                                                                                                                                                                                                        
-                                                                                                                                                                                                                  
-                                                                                                                                                                                                                         
-                                                                                                                                                                                
-                                                                                                                                                                                                                                           
-                                                                                                                                                                                                                       
-                                                                                                                                                                             
-                                                                                                                                                                                                 
-                                                                                                                                                                                        
-                                                                                                                                                                                      
-                                                                                                                                                                                                              
-                                                                                                                                                                                                                                                            
+                                                                                                                                                                          
 
-                                                                                                                                                                                                                          
-sort(unique(clean_data_all$data_README_scalesort(unique(clean_data_all$data_format))
 
 naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
