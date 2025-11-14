@@ -148,6 +148,8 @@ clean_data_all <-
   # Fix one paper with incorrect journal name
   mutate(doi = str_replace(doi, "Ecology and Evolution", "Methods in Ecology and Evolution")) %>%
   #------------------------------------------------------------------------------------------------------
+  # DATA!!!                                                                                                                                                                                       
+  #------------------------------------------------------------------------------------------------------
   # 4. Data used
   # Two papers have NA for data_used, but then go onto answer data questions so should be Yes
   mutate(data_used = replace_na(data_used, "Yes")) %>%
@@ -156,18 +158,18 @@ clean_data_all <-
                                        TRUE ~ as.character(data_used))) %>%
   #------------------------------------------------------------------------------------------------------
   # IF NO DATA ARE USED, ANSWERS FOR ALL OTHER DATA QUESTIONS SHOULD BE NA (EXCEPT DATA AVAIL TEXT)
-  mutate(data_availability == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_availability))) %>%
-  mutate(data_link == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_link))) %>%
-  mutate(data_archive == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_archive))) %>%
-  mutate(data_doi == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_doi))) %>%
-  mutate(data_license == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_license))) %>%
-  mutate(data_license_type == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_license_type))) %>%
-  mutate(data_download == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_download))) %>%
-  mutate(data_open == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_open))) %>%
-  mutate(data_format == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_format))) %>%
-  mutate(data_README == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README))) %>%
-  mutate(data_README_scale == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README_scale))) %>%
-  mutate(data_completeness == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_completeness))) %>%
+  mutate(data_availability = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_availability))) %>%
+  mutate(data_link = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_link))) %>%
+  mutate(data_archive = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_archive))) %>%
+  mutate(data_doi = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_doi))) %>%
+  mutate(data_license = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_license))) %>%
+  mutate(data_license_type = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_license_type))) %>%
+  mutate(data_download = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_download))) %>%
+  mutate(data_open = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_open))) %>%
+  mutate(data_format = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_format))) %>%
+  mutate(data_README = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README))) %>%
+  mutate(data_README_scale = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README_scale))) %>%
+  mutate(data_completeness = case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_completeness))) %>%
   
   #------------------------------------------------------------------------------------------------------
   # 5. Data mentioned in data availability statement
@@ -209,7 +211,7 @@ clean_data_all <-
   # Correcting errors in data archive. Some should have NA here as no data are available. 
   # Lots are institutional repos
   # ### CHECK THESE NA ONES AS THEY SHOULD NOT SAY DATA IS ARCHIVED
-  mutate(data_archive_clean = case_when(data_archive == "According to ethical requirements data is available only upon request to the authors." |
+  mutate(data_archive = case_when(data_archive == "According to ethical requirements data is available only upon request to the authors." |
                                       data_archive == "Data held by one author and the Missouri Department of Conservation" |                                                                                                                                                                                                                                                                                                                                                    
                                       data_archive == "Data is only available on request." |                                                                                                                                                                                                                                                                                                                                                                                      
                                       data_archive == "Data NOT archived because of twitter privacy terms." |
@@ -1106,8 +1108,96 @@ clean_data_all <-
                                        
                                        TRUE ~ as.character(data_completeness)))
 
-                                                                                                                                                                                       
-                                                                                                                                                                                                                                                                                                                                       
+#"code_used"                  
+#[21] "code_alert"                  "code_archived"               "code_availability"           "code_link"                  
+#[25] "code_archive"                "code_doi"                    "code_license"                "code_license_type"          
+#[29] "code_CITATION"               "code_download"               "code_open"                   "code_format"                
+#[33] "code_language"               "code_README"                 "code_README_scale"           "code_annotation_scale"      
+#[37] "code_vignette"               "code_Rpackage_available"     "code_OTHERpackage_available" "code_application_cited"     
+#[41] "code_comments"               "country_corresponding"       "country_first"               "georegion_data"             
+#[45] "georegion_author_match"      "georegion_data_cited"        "equity_comments"             "comments"                   
+#[49] "recorder_ID"                 "issues"                     
+ 
+
+ clean_data_all <-
+    clean_data_all %>%
+  #------------------------------------------------------------------------------------------------------
+  # CODE!!!                                                                                                                                                                                       
+  #------------------------------------------------------------------------------------------------------
+  # 17. Code used
+  # Five papers have NA here, but all bar one does use code. Corrected here:
+  mutate(code_used = case_when(paper_number == 87 | paper_number == 1236 | paper_number == 1302 | paper_number == 3003 ~ "Yes",
+                               paper_number == 249 ~ "No",
+                               TRUE ~ as.character(code_used))) %>%    
+  # Simplified to Yes/No/Unsure. Unsure where it's not clear, but Yes where the recorder is certain code was
+  # used even if it is not mentioned at all in the paper or data availability statement
+  mutate(code_used = case_when(code_used == "Some of the analyses probably required some coding but it seems they used interactive software [e.g. mark-recapture in MARK]" |  
+                               code_used == "Statistical analyses were performed in spss 22.0" |
+                               code_used == "Unsure. They provide this: All statistical computations were carried out using the package Statistica 6.0 (StatSoft©; Version 6; StatSoft Inc., Tulsa, OK, USA)." |                                                        
+                               code_used == "Used JMP, which is a statistical analysis tool, not code."  
+                               ~ "No",
+                               
+                               code_used == "Although a software or coding language is not mentioned anywhere in the text, the study conducted statistical analyses, IPMs and simulations - so clearly did use some type of coding software, but failed to mention it." |
+                               code_used == "Given the plots seems like have been done in R using ggplot2. But isn't mentioned anywhere else in the whole paper" |
+                               code_used ==  "model-based paper. Uses software Maximum Entropy Modelling (Maxent v.3.4.1; Phillips et al., 2006; http://biodiversityinformatics.amnh.org/open_source/maxent/)" |
+                               code_used == "They don't say that code was used, but at least some figures were made (most likely) with the R package ggplot." |
+                               code_used == "They had to use code to work with the data but is not mentioned in the methodology"  |
+                               code_used == "They never mention any code nor any software, but based on their analyses, they must have used code" |
+                               code_used ==   "yes, at least to create figures" 
+                                ~ "Yes",
+                               
+                               code_used == "All analyses were performed in Comprehensive Meta-Analysis 3.0 software (Borenstein et al., 2005)." |
+                               code_used == "It is not stated which coding language or software has been used to analyze data." |
+                               code_used == "The paper aimed to develope a software" |
+                               code_used ==   "The paper performs statistical analysis but it does not state which statistical software is used (so it is not possible to know if it is code-based or not)" |
+                               code_used == "They create a model, but I am not sure whether code was used or how the model simulations were carried out" |
+                               code_used == "They use mixed models, but they do not say whether through code or other types of software that do not use code." |
+                               code_used == "They use SAS which could be GUI or code" |                                                                                                                                                                               
+                               code_used == "They used MetaWin, figures look R, but unsure" 
+                               ~ "Unsure",
+                               
+                               TRUE ~ as.character(code_used))) #%>%
+
+  #------------------------------------------------------------------------------------------------------
+# IF NO DATA ARE USED, ANSWERS FOR ALL OTHER DATA QUESTIONS SHOULD BE NA (EXCEPT DATA AVAIL TEXT)
+mutate(data_availability == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_availability))) %>%
+  mutate(data_link == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_link))) %>%
+  mutate(data_archive == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_archive))) %>%
+  mutate(data_doi == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_doi))) %>%
+  mutate(data_license == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_license))) %>%
+  mutate(data_license_type == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_license_type))) %>%
+  mutate(data_download == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_download))) %>%
+  mutate(data_open == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_open))) %>%
+  mutate(data_format == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_format))) %>%
+  mutate(data_README == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README))) %>%
+  mutate(data_README_scale == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README_scale))) %>%
+  mutate(data_completeness == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_completeness))) %>%
+  
+  #------------------------------------------------------------------------------------------------------
+# 5. Data mentioned in data availability statement
+# Several people forgot to answer this question. 
+# Checked and answered appropriately.
+mutate(data_availability = case_when(paper_number == 1897 ~ "Yes",
+                                     paper_number == 245 ~ "Yes",
+                                     paper_number == 346 ~ "Yes",
+                                     paper_number == 1132 ~ "Yes",
+                                     paper_number == 1595 ~ "Yes",
+                                     TRUE ~ as.character(data_availability))) %>%
+  #------------------------------------------------------------------------------------------------------
+# IF DATA ARE ONLY AVAILABLE ON REQUEST, OR NOT IN THE DATA AVAILABILITY STATEMENT AT ALL,
+# ANSWERS FOR ALL OTHER DATA QUESTIONS SHOULD BE NA (EXCEPT DATA AVAIL TEXT)
+  mutate(data_link = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_link))) %>%
+  mutate(data_archive = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_archive))) %>%
+  mutate(data_doi = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_doi))) %>%
+  mutate(data_license = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_license))) %>%
+  mutate(data_license_type = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_license_type))) %>%
+  mutate(data_download = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_download))) %>%
+  mutate(data_open = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_open))) %>%
+  mutate(data_format = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_format))) %>%
+  mutate(data_README = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_README))) %>%
+  mutate(data_README_scale = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_README_scale))) %>%
+  mutate(data_completeness = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_completeness))) %>%
+  #------------------------------------------------------------------------------------------------------                                                                                                                                                                                                                                                                                                                                     
 
                                                                                                                                                                                                                                                                                           
                                                                                                                                                                                                                                                                                                                                                                  
@@ -1115,7 +1205,7 @@ clean_data_all <-
 
 
 
-sort(unique(clean_data_all$data_completeness))
+sort(unique(clean_data_all$code_used))
                                                                                                                                                                                                       
                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                
