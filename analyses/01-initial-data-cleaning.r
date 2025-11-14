@@ -1005,7 +1005,7 @@ clean_data_all <-
   mutate(data_README_scale = case_when(data_README == "No"  | is.na(data_README) ~ NA_character_,                                                                                               
                              TRUE ~ as.character(data_README_scale))) %>%
   # This is a scale of 1-10 so needs to be numeric
-  mutate(data_README_scale = as.numeric(data_README_scale))
+  mutate(data_README_scale = as.numeric(data_README_scale)) %>%
   #------------------------------------------------------------------------------------------------------
   # 16. How complete is the data?
   # If we can't open the data we can't check this so make these NA
@@ -1103,7 +1103,6 @@ clean_data_all <-
                                        data_completeness == "The link to the data does not open." |                                                                                                                                                                                                                                                                                                                                        
                                        data_completeness == "The link was unavailable."
                                        ~ NA_character_,
-                                       
                                        
                                        TRUE ~ as.character(data_completeness)))
 
