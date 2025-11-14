@@ -716,11 +716,8 @@ clean_data_all <-
                                data_open == "Maybe if I had the correct software" 
                                ~ "Needs specific software or too large", 
                             
-                               TRUE ~ as.character(data_open))) #%>%
+                               TRUE ~ as.character(data_open))) %>%
 
-clean_data_all <-
-  
-  clean_data_all %>%
   #-----------------------------------------------------------------------------------------------------------
   # 13. Data formats
   # This one is a horrible mess. Many different file types, and many examples of multiple file types which
@@ -734,6 +731,7 @@ clean_data_all <-
   # and ensured that other file types are separated by ; for consistency.
   # .tif not .tiff
   # .tre not .tr or .tree
+  # I've used NA for zip files as this is a compression type not the actual file type
   # A lot of confusion wrt shape files (which can be combined into one category) and sequence data (maybe exclude this?).
   mutate(data_format = case_when(data_format == ".csv/.tsv;" ~ ".csv/.tsv",
                                  data_format == ".csv/.tsv;.doc(x);.pdf;.RDS;.txt;.shp; .tif" ~ ".csv/.tsv;.doc(x);.pdf;.RDS;.txt;.shp;.tif",
@@ -793,8 +791,7 @@ clean_data_all <-
                                  data_format == ".csv/.tsv;shape files (.shp, .dbf, ....)" ~ ".csv/.tsv;.shp;.dbf",                                                                                                                                                                                                                                                                                                                     
                                  data_format == ".csv/.tsv;tif" ~ ".csv/.tsv;.tif",                                                                                                                                                                                                                                                                                                                                                 
                                  data_format == ".csv/.tsv;wav" ~ ".csv/.tsv;.wav",                                                                                                                                                                                                                                                                                                                                                 
-                                 data_format == ".csv/.tsv;xml" ~ ".csv/.tsv;.xml",   
-                                 
+                                 data_format == ".csv/.tsv;xml" ~ ".csv/.tsv;.xml", 
                                  data_format == ".dat; .m;"  ~ ".dat;.m",                                                                                                                                                                                                                                                                                 
                                  data_format == ".dbf, .prj, .shp, .shx" ~ ".dbf;.prj;.shp;.shx",                                                                                                                                                                                                                                                                                                                                        
                                  data_format == ".doc(x);.txt;.xls(x);.M file" ~ ".doc(x);.txt;.xls(x);.m",                                                                                                                                                                                                                                                                                                                                 
@@ -905,20 +902,129 @@ clean_data_all <-
                                  data_format == "wav and wav.data" ~ ".wav",                                                                                                                                                                                                                                                                                                                                             
                                  data_format == "yml, zip"~ NA_character_,                                                                                                                                                                                                                                                                                                                                                     
                                  data_format == "zip file (8.39 GB), downloads fine, won't open \"error 79\"" ~ NA_character_,
-                                 TRUE ~ as.character(data_format)))
+                                 data_format == ".zip" ~ NA_character_,
+                                 TRUE ~ as.character(data_format))) #%>%
 
 
-
-  # 
+clean_data_all <-
+  
+  clean_data_all %>%
 
   #------------------------------------------------------------------------------------------------------
   # 14. Does the data have a README?
-  # 
+  # Options can be condensed to existing Yes/Mo options. Some confusion where something like a README is
+  # provided but it is not called a README. Mostly these are short descriptions, not full READMEs. I have created
+  # a new option: "Quasi-README" to express these options where there is something like a README but incomplete.
+  # If the README cannot be opened this is the equivalent of having no README.
+  # I have not split this to distinguish whether there are READMEs for all files as the README scale Q should 
+  # help with this.
+  mutate(data_README = case_when(data_README == "A file called README is present - but it's just the abstract" |
+                                 data_README == "Can't see one" |
+                                 data_README == "It is there but uses WinAnsiEncoding so can't read it" |                                 
+                                 data_README == "Not in Dryad page, unsure if it is in file, as I couldn't access" |
+                                 data_README == "The provide what they call Original FGDC Metadata, but this is not the data dictionary / metadata of the actual dataset (.csv) that they provide and presumably used for all analyses. I am therefore considering here that there is no REAMDE/metadata" |
+                                 data_README == "There is a readme on the Creation of a REST API, but not the data." |
+                                 data_README == "Yes- unable to open file" |
+                                 data_README == "Yes, but unable to open" 
+                                 ~ "No",
+                                 
+                                 data_README == "A short description has been given in the \"Usage Notes\" within the Dryad landing page."|
+                                 data_README == "A short description is included in the Figshare landing page" |                                 
+                                 data_README == "A short description is provided on the Figshare page." |
+                                 data_README == "A tab in the excel file containing the data has a brief description of what the column headers mean" |
+                                 data_README == "Brief method and usage notes section" |
+                                 data_README == "available as the repository landing page, but not as a file" |
+                                 data_README == "I feel it is important to note that the data has metadata but not a README or a data dictionary/codebook. The metadata provided is perfect, but since there is no README or data dictionary, I decided not to answer question 9." |
+                                 data_README ==   "Data was described in the 'Usage notes' section of DRYAD, but no individual README/metadata file"  |                                                                                                                                                             
+                                 data_README == "Dataset is described in the Zenodo webpage, but there is not an individual README/metadata file"  |                                                                                                                                                              
+                                 data_README == "Description in the zenodo" |                                                                                                                                                                                                                                     
+                                 data_README == "Descriptions directly on the dryad webpage" |                                                                                                                                                                                                                    
+                                 data_README == "directly on the webpage (e.g. : \"usage notes\")"  |                                                                                                                                                                                                             
+                                 data_README == "Has a file with the codes used for species but not called README/metadata and does not contain full information" |                                                                                                                                               
+                                 data_README == "it doesn't have a propre doc file Read me, but the webpage on dryad has a short part called \"Usage notes\" which descrbies both sheets on the .xlsx file."  |                                                                                                   
+                                 data_README == "Kind of - not a separate file, but there are some details on the first sheet of the .xlsx and brief info on the main zenodo page"   |                                                                                                                            
+                                 data_README == "Metadata tab in excel file. Brief description of data, not an indiviual README/metadata file" |                                                                                                                                                                  
+                                 data_README == "minimal usage note on dryad"   |                                                                                                                                                                                                                                 
+                                 data_README == "No formal README/metadata, but Figshare webpage has brief metadata (treated as metadata for purposes of Q9)" |                                                                                                                                                   
+                                 data_README == "No individual README/metadata file, usage notes contain a very brief description of the data file"  |                                                                                                                                                            
+                                 data_README == "No README is available, but the description of the data has been provided in the \"Usage Notes\" section of the DRYAD landing page."|                                                                                                                            
+                                 data_README == "No Readme or metadata file but description of the data in the section Usage notes in Dryad" |                                                                                                                                                                    
+                                 data_README == "No README, but there are simple descriptions of each Excel file on a separate spreadsheet"  |                                                                                                                                                                    
+                                 data_README == "No readme, but there is metadata on Dryad"   |                                                                                                                                                                                                                   
+                                 data_README == "No separate README file. Description of the columns/headeres are directly available in the Zenodo page."   |                                                                                                                                                    
+                                 data_README == "not a formal README file, on webpage"   |                                                                                                                                                                                                                        
+                                 data_README == "Not a specific file, but there is a description on figshare" |
+                                 data_README == "Not separated file. In \"Usage notes\" section in Dryat"  |                                                                                                                                                                                                      
+                                 data_README == "Read \"Usage notes\" on the dryad page"  |                                                                                                                                                                                                                       
+                                 data_README == "Repository page contains metadata, while each data file has a twin file containing \"explanation of column names\"" |                                                                                                                                            
+                                 data_README == "Some descriptions of the data files are in the 'Method' section of DRYAD, but there is not an individual README/metadata file" |                                                                                                                                 
+                                 data_README == "Some information included within the Excel file itself."   |                                                                                                                                                                                                     
+                                 data_README == "Supplementary  Info PDF" |                                                                                                                                                                                                                                       
+                                 data_README == "The .xlsx data file includes a legend but there is no README or metadata." |
+                                 data_README ==   "Has a data dictionary"|                                                                                                                                                                                                                                         
+                                 data_README == "Has a data ditctionary" |
+                                 data_README == "The data description is included in the Usage Notes section, not as a separate README file." |                                                                                                                                                                   
+                                 data_README == "The usage notes section in DRYAD describes the data files, no individual README/metadata file" |                                                                                                                                                                 
+                                 data_README == "There are methods and usage notes available on the main Dryad page; no downloadable or obvious readme"  |                                                                                                                                                        
+                                 data_README == "There are usage notes in the Dryad repository that are a kind of readme" |
+                                 data_README == "there is just a file 'MANIFEST.txt' which lists all files but nothing else" |
+                                 data_README == "There is no ReadMe file but the contents that would be in one are written on the website."|
+                                 data_README == "Usage notes section in DRYAD provides brief descriptions of each file. No individual README/metadata file." |                                                                                                                                                    
+                                 data_README == "user notes on excel file" |                                                                                                                                                                                                                                      
+                                 data_README == "Very brief description of the data provided in Figshare. Metadata spreadsheet tab available in each excel file"|                                                                                                                                                 
+                                 data_README == "Yes, but only what is provided on the repository webpage (no designated README/metadata file)"|                                                                                                                                                                  
+                                 data_README == "Yes? Only the Dryad webpage, no separate README/metadata file. Dryad webpage considered to be metadata for Q9." 
+                                 ~ "Quasi-README",
+                                
+                                 data_README == "Multiple README files (4 Readme)"|
+                                 data_README == "Not as a separate document but as a sheet of the excel file" |
+                                 data_README == "Read Me is a seperate tab on datasheet which is uninformative, but it has metadata description on zenodo"| 
+                                 data_README == "README is merged for code + data, way less useful for data." |
+                                 data_README == "The data appears to be stored in different repositories/URLs. The GitHub data has a Readme file, but the data stored in institutional repositories does not have a Readme file per se (it has some information in the repository, but it is not very detailed)."|
+                                 data_README == "The file called 'README' is actually the R script with a few notes of metadata interspersed" |                                                                                                                                                                   
+                                 data_README == "The file called README is actually a vignette, it does not explain the data" |
+                                 data_README == "The README is for the entire repository, which includes both the data and the code" |
+                                 data_README == "The README only consists of the sentence \"If you have more questions or want to use this dataset, Please contact Dr. Guiyao Zhou (jdzhouguiyao@163.com)\" so I don't want to count it" |                                                                         
+                                 data_README == "there are two data repositories linked. Only one has a README file" |
+                                 data_README == "There is a README, but language primarily refers to code not data. Only information relevant to data is author contact details. There is some other metadata on the Dryad page, which I also considered in Q9." |                                                
+                                 data_README == "There is an explicit README + some additional metadata on Dryad webpage (i.e. contact details, license details): I considered both for purposes of Q9."  |                                                                                                       
+                                 data_README == "Yes for the data on DRYAD" |
+                                 data_README == "Yes, for the data used to parameterize the model, but no for the outputs of the individual based simulation." | 
+                                 data_README == "Yes. Also considered information on Dryad webpage for purposes of Q9 (e.g. license info is only on the Dryad webpage, not in the designated README)"  |                                                                                                          
+                                 data_README == "Yes. Designated README + I also considered information on Dryad webpage as metadata for Q9."  |                                                                                                                                                                  
+                                 data_README == "Yes. Explicit README + info on Dryad webpage. Both considered for Q9."    |                                                                                                                                                                                      
+                                 data_README == "Yes. Explicit README + metadata on archive webpage (https://conservancy.umn.edu/items/6a8ef2c3-211d-4d2b-bc0e-ee5bf5227909) both considered for Q9."
+                                  ~ "Yes"
+                                 
+                                 data_README == "Data not available" |
+                                 data_README == "The link to the data does not open." |                                                                                                                                                                                                                           
+                                 data_README == "The link was unavailable."  |                                                                                                                                                                                                                                    
+                                 data_README == "The methods section" 
+                                 ~ NA_character_,
+                                 
+                                 TRUE ~ as.character(data_README)))
+  
+  
+                                                                                                                                                                                     
+
+
+
+
+
+
+
+
+
+
   # 
   #------------------------------------------------------------------------------------------------------
   # 15. How useful is the README?
-  # This is a scale of 1-10 so just needs to be numeric
+  # Data without a README cannot be scored so make this NA
+  mutate(data_README_scale = case_when(data_README == "No"  | is.na(data_README) ~ NA_character_,                                                                                               
+                             TRUE ~ as.character(data_README_scale))) %>%
+  # This is a scale of 1-10 so needs to be numeric
   mutate(data_README_scale = as.numeric(data_README_scale))
+
 
   #------------------------------------------------------------------------------------------------------
   # 16. How complete is the data?
