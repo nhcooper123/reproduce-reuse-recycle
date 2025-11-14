@@ -168,10 +168,6 @@ clean_data_all <-
   mutate(data_README == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README))) %>%
   mutate(data_README_scale == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_README_scale))) %>%
   mutate(data_completeness == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_completeness))) %>%
-  mutate(data_cited == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_cited))) %>%
-  mutate(data_citations == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_citations))) %>%
-  mutate(data_cited_notself == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_cited_notself))) %>%
-  mutate(data_citations_notself == case_when(data_used == "No" ~ NA_character_, TRUE ~ as.character(data_citations_notself))) %>%
   
   #------------------------------------------------------------------------------------------------------
   # 5. Data mentioned in data availability statement
@@ -197,11 +193,6 @@ clean_data_all <-
   mutate(data_README = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_README))) %>%
   mutate(data_README_scale = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_README_scale))) %>%
   mutate(data_completeness = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_completeness))) %>%
-  mutate(data_cited = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_cited))) %>%
-  mutate(data_citations = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_citations))) %>%
-  mutate(data_cited_notself = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_cited_notself))) %>%
-  mutate(data_citations_notself = case_when(data_availability == "No, but they are available on request" | data_availability == "No" ~ NA_character_, TRUE ~ as.character(data_citations_notself))) %>%
-  
   #------------------------------------------------------------------------------------------------------
   # 6. Can you open the link? 
   # Some people have not answered this although data are mentioned in the data availability statement
@@ -737,7 +728,7 @@ clean_data_all <-
   # 
   #------------------------------------------------------------------------------------------------------
   # 15. How useful is the README?
-  # Luckily this is a scale of 1-10 so just needs to be numeric
+  # This is a scale of 1-10 so just needs to be numeric
   mutate(data_README_scale = as.numeric(data_README_scale))
 
   #------------------------------------------------------------------------------------------------------
@@ -746,7 +737,7 @@ clean_data_all <-
            
 
 
-sort(unique(clean_data_all$data_completeness))
+sort(unique(clean_data_all$data_format))
                                                                                                                                                                                                       
                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                
