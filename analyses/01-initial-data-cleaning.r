@@ -534,8 +534,9 @@ clean_data_all <-
                                   TRUE ~ as.character(data_license))) %>%
   #------------------------------------------------------------------------------------------------------
   # 10. Data license type
-  # If data_license = No then data_license_type should be NA
-  mutate(data_license_type = case_when(data_license == "No" ~ NA_character_, 
+  # If data_license = No, Unsure or NA then data_license_type should be NA
+  mutate(data_license_type = case_when(data_license == "No" | data_license == "Unsure" | data_license == NA_character_
+                                       ~ NA_character_, 
                                        TRUE ~ as.character(data_license_type))) %>%    
   
   # My choices here might be more controversial, sorry! 
@@ -638,10 +639,10 @@ clean_data_all <-
                                        data_license_type == "GPL"
                                        ~ "Other",
                                        
-                                       # These should be NA
+                                       # These should be Unsure
                                        data_license_type == "The link to the data does not open." |
                                        data_license_type == "The link was unavailable." 
-                                       ~ NA_character_,
+                                       ~ "Unsure",
                                        
                                        TRUE ~ as.character(data_license_type))) %>%
 
@@ -1439,14 +1440,151 @@ clean_data_all <-
                               code_doi == "No code archived" 
                               ~ NA_character_,
                                   
-                              TRUE ~ as.character(code_doi))) #%>%
+                              TRUE ~ as.character(code_doi))) %>%
 
-clean_data_all <-
-  clean_data_all %>%
+  #------------------------------------------------------------------------------------------------------
+  # 23. Does the code have a license?  
+  # Some concerns here where one version does have a license but another does not. I have classed this as 
+  # Yes as it does have a license of some kind. Likewise if the data and code share a license I have chosen
+  # Yes.
+  mutate(code_license = case_when(code_license == "Code in institutional repository has a licence, R package on GitHub does not seem to" |
+                                  code_license == "Code was submitted along with raw data. Both have same liscence." | 
+                                  code_license == "It is under same license as the data license"|                                                             
+                                  code_license == "It was under the data linked in the paper, which does have a CC0 license"  |                               
+                                  code_license == "It's in the dryad repository and there's a licence for that (CC0) but none specifically for just the code"|
+                                  code_license == "License: Other (Attribution)"   | 
+                                  code_license == "No separate license for the code, its a combined license for both data and R code" |                       
+                                  code_license == "Other (Open)"   |                                                                                          
+                                  code_license == "Packaged with the data, so same license" |                                                                 
+                                  code_license == "same as data archive"   |                                                                                  
+                                  code_license == "Stored with data licence"   |                                                                              
+                                  code_license == "the data and the code share the same license."     |                                                       
+                                  code_license == "The data and the code share the same license." |                                                           
+                                  code_license == "Yes, the same as for the data"  |                                                                          
+                                  code_license == "Yes, the same license as the dryad data package, but not a separate one."  |                               
+                                  code_license == "Zenodo version yes, GitHub no" 
+                                  ~ "Yes",
+                                  
+                                  code_license == "Unclear" |
+                                  code_license == "I couldn’t open the code."  
+                                  ~ "Unsure",
+
+                                  code_license == "No code archived"
+                                  ~ NA_character_,
+
+                                  TRUE ~ as.character(code_license))) #%>%
   
+clean_data_all <-
+  clean_data_all %>%                    
+  #------------------------------------------------------------------------------------------------------
+  # 24. Code license type       
+  # # If code_license = No, Unsure or NA then code_license_type should be NA
+  mutate(code_license_type = case_when(code_license == "No" | code_license == "Unsure" | code_license ==  NA_character_ 
+                                       ~ NA_character_, 
+                                       TRUE ~ as.character(code_license_type))) %>%    
+  
+  # I have followed similar protocols to the data_license_type variable
+  # I've combined all CC BY derivatives, e.g. CC BY-ND into one option: 'CC BY derivatives', as there are not many for each type.
+  # Most specific licenses have been changed to "Other". 
+  # GPL is also recorded as GNU - changed all these to GPL.
+  # Many Zenodo based projects have license Other (Open), but no other details of the license, so I classified this as "Other".
+  # CC 4.0 == CC BY, this has been corrected.
+  # Where multiple licenses are listed (rare) I have chosen the most restrictive.
+  # In cases where the GitHub and Zenodo licenses differ I have used the GitHub license (e.g. GPL, MIT rather than Other Open).
+  # Note for interpretation, I think some people confused code and data licenses here, as a lot of code is archived with data.                                 
+  mutate(code_license_type = case_when(code_license_type ==  "'other (open)'" |
+                                       code_license_type == "\"Other (Open)\"" |                                                                                                 
+                                       code_license_type == "\"Other (Open)\" but terms of the licence are not specified." |                                                     
+                                       code_license_type == "\"Others (Open)\"" |
+                                       code_license_type == "(Open)"        |  
+                                       code_license_type == "\"YEAR: 2017 COPYRIGHT HOLDER: Ian Vaughan\" in the LICENCE file" |                                                 
+                                       code_license_type == "Academic Free Licence v3.0"   |                                                                                     
+                                       code_license_type == "AGPL" |                                                                                                             
+                                       code_license_type == "Apache" |                                                                                                           
+                                       code_license_type == "Author"  |                                                                                                          
+                                       code_license_type == "BSD variants" |  
+                                       code_license_type == "License: Other (Attribution)"   |                                                                                   
+                                       code_license_type == "License: Other (Open)"   |  
+                                       code_license_type == "It just includes the text 'Open'"   |                                                                               
+                                       code_license_type == "Just says \"open\""  |  
+                                       code_license_type == "Open"       |                                                                                                       
+                                       code_license_type == "other (open)" |                                                                                                     
+                                       code_license_type == "Other (open)" |                                                                                                     
+                                       code_license_type == "Other (Open)" |
+                                       code_license_type == "Unlicense license" |                                                                                                 
+                                       code_license_type == "Quote: \"Other (Open)\"" |                                                                                          
+                                       code_license_type == "The Unlicense"   |                                                                                                  
+                                       code_license_type == "Unclear;\"Other (Open)\""    
+                                       ~ "Other", 
+
+                                       code_license_type == "CC 4.0"  |                                                                                                          
+                                       code_license_type == "CC Attribition 4.0 International; Other (Open)" | 
+                                       code_license_type == "CC BY 4.0"  |  
+                                       code_license_type == "CC BY;CC BY 4.0"  |                                                                                                 
+                                       code_license_type == "CC BY;Creative Commons Attribution 4.0 International" |  
+                                       code_license_type == "CC4.0"     |                                                                                                       
+                                       code_license_type == "CCA 4.0 International"  |                                                                                           
+                                       code_license_type == "Creative Commons Attribution 4.0 International" |                                                                   
+                                       code_license_type == "Creative Commons Attribution Internation 4.0"  | 
+                                       code_license_type == "Public"      |                                                                                                      
+                                       code_license_type == "Public domain" 
+                                       ~ "CC BY",
+                                       
+                                       code_license_type == "CC BY_NC 4.0" |                                                                                                     
+                                       code_license_type == "CC BY-NC-ND" |                                                                                                      
+                                       code_license_type == "CC BY-SA"  | 
+                                       code_license_type == "CC-NC-ND"
+                                       ~ "CC BY derivatives",
+                                       
+                                       code_license_type == "CC0 1.0 Universal" |                                                                                                
+                                       code_license_type == "CC0; CC0 1.0" | 
+                                       code_license_type == "CC0;Listed as: \"Other (Open)\"" |                                                                                  
+                                       code_license_type == "CC0;Other (Open)"    |  
+                                       code_license_type == "CC0;R script is included in the Dryad data, same license" |                                                        
+                                       code_license_type == "CC0;Same licence as data" 
+                                       ~ "CC0",
+                                       
+                                       code_license_type == "GNU"  |                                                                                                             
+                                       code_license_type == "GNU General public license" |                                                                                       
+                                       code_license_type == "GNU General Public License" |                                                                                       
+                                       code_license_type == "GNU GENERAL PUBLIC LICENSE"  |                                                                                      
+                                       code_license_type == "GNU General Public License (GPL)" |                                                                                 
+                                       code_license_type == "GNU General Public License v2.0" |                                                                                  
+                                       code_license_type == "GNU General Public License v3"  |                                                                                   
+                                       code_license_type == "GPL" |                                                                                                              
+                                       code_license_type == "GPL-3" |  
+                                       code_license_type == "CC BY;GPL"   |  
+                                       code_license_type == "CC0;GPL;GPL in the DESCRIPTION file and Open in Zenodo" |                                                           
+                                       code_license_type == "CC0;GPL;Says GPL(>=2) in the DESCRIPTION and Other (Open) in Zenodo" | 
+                                       code_license_type == "LGPL v3"   |  
+                                       code_license_type == "Unclear;Zenodo repo has CC-BY but LICENSE file within archived code says GPL" 
+                                       ~ "GPL",
+                                       
+                                       code_license_type == "CC BY;MIT" |
+                                       code_license_type == "There are two sources to access the code. For Zenodo, the license is Other (Open). For Github, the license is MIT."
+                                       ~ "MIT",
+                                       
+                                       code_license_type == "Unclear" | 
+                                       code_license_type == "I couldn’t open the code."  |  
+                                       code_license_type == "not specified"
+                                       ~ "Unsure",
+                                       
+                                       code_license_type == "No code archived" 
+                                       ~ NA_character_,
+                                                                       
+                                       TRUE ~ as.character(code_license_type))) #%>%
+                                                                                                      
+                                                                                                
+                                                                                                    
+                                                                                                    
+                                                                                  
+                                   
 
 
-sort(unique(clean_data_all$code_doi))
+
+
+
+sort(unique(clean_data_all$code_license_type))
 
 
 naniar::miss_var_summary(raw_data_all)
