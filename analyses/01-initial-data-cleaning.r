@@ -1648,17 +1648,111 @@ clean_data_all <-
                                TRUE ~ as.character(code_open))) #%>%                                                                                                                         
                                
                                                                                                                                                                           
-                               
+clean_data_all <-
+  clean_data_all %>%                               
 
+  #------------------------------------------------------------------------------------------------------
+  # 27. What format is the code saved in?
+  # Simplify "markdown / notebook containing code (e.g. .Rmd, .qmd, etc)" to "notebook"
+  # and "native source code (e.g. .R, .py, .jl, etc)" to "native source code".
+  # Several file extensions also correspond to native source code:
+  # .ino = Arduino; .m = mathematica; .nlogo = netlogo; .plx = perl; # .stan = Stan; 
+  # .jl = Julia; .mat = MATLAB; .rds = R; .vb = visual basic; .jar = Java; .mdl = 3d design plus
+  # All .md are classed as notebooks. I left html as an option but suspect this may be rendered notebook files
+  mutate(code_format = case_when(code_format == "markdown / notebook containing code (e.g. .Rmd, .qmd, etc)" |
+                                 code_format == ".md"  |
+                                 code_format == "Jupyter Notebook file" |
+                                 code_format == ".nb"  |                                                                                                       
+                                 code_format == ".nb (Wolfram notebook)" |
+                                 code_format == "markdown / notebook containing code (e.g. .Rmd, .qmd, etc);File not provided"
+                                 ~ "notebook",
+                                 
+                                 code_format == "markdown / notebook containing code (e.g. .Rmd, .qmd, etc);.html" 
+                                 ~ "notebook;.html",
+                                 
+                                 code_format == "markdown / notebook containing code (e.g. .Rmd, .qmd, etc);.pdf" |                                            
+                                 code_format == "markdown / notebook containing code (e.g. .Rmd, .qmd, etc);.pdf;" 
+                                 ~ "notebook;.pdf",
+                                 
+                                 code_format == "markdown / notebook containing code (e.g. .Rmd, .qmd, etc);.txt" 
+                                 ~ "notebook;.txt",
+                                 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc)" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);" |
+                                 code_format == "ino" |
+                                 code_format == ".ino" |
+                                 code_format == ".m" | 
+                                 code_format == ".nlogo" | 
+                                 code_format == ".plx" |
+                                 code_format == ".R and .stan" | 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.jl" | 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.mat" | 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.nlogo" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.rds" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);unspecified file type" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);packed in a .rar file" |
+                                 code_format == ".vb" | 
+                                 code_format == "jar" | 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.mdl" 
+                                 ~ "native source code",
+                                 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.csv/.tsv"
+                                 ~ "native source code;.csv/.tsv",
+                                 
+                                 code_format == ".txt;Mfile" | # matlab
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.txt" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.txt;.xaml, .cs" 
+                                 ~ "native source code;.txt",
+                                 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.csv/.tsv;.txt"
+                                 ~ "native source code;.csv/.tsv;.txt",
+                                 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.doc(x)" 
+                                 ~ "native source code;.doc(x)",
+                                 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.md" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);.md;.exe for use without Python" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);markdown / notebook containing code (e.g. .Rmd, .qmd, etc)" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);markdown / notebook containing code (e.g. .Rmd, .qmd, etc);.md" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);ipynb"
+                                 ~ "native source code;notebook",
+                                 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);markdown / notebook containing code (e.g. .Rmd, .qmd, etc);html" |
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);markdown / notebook containing code (e.g. .Rmd, .qmd, etc);.html"
+                                 ~ "native source code;notebook;.html",
+                                 
+                                 code_format == "native source code (e.g. .R, .py, .jl, etc);markdown / notebook containing code (e.g. .Rmd, .qmd, etc);.txt" 
+                                 ~ "native source code;notebook;.txt",
+                                 
+                                 code_format == ".csv/.tsv;.md" 
+                                 ~ ".csv/.tsv;notebook",
+                                 
+                                 # rst = restructured text, nls = windows app, nsc = zip7
+                                 code_format == ".nex, .yaml" |
+                                 code_format == ".nls" |   
+                                 code_format == "It's an R savefile (.RData)" |
+                                 code_format == ".rst" |
+                                 code_format == "nsc"
+                                 ~ "Other",
+                                 
+                                 code_format == "unknown" |                                                                                                    
+                                 code_format == "Unknown" 
+                                 ~ "Unsure",
+                              
+                                 code_format == "No code archived" |
+                                 code_format == "The link to code does not open."
+                                 ~ NA_character_,
+                                 
+                                 TRUE ~ as.character(code_format))) #%>% 
 
-# "code_format"                
+                
 #[33] "code_language"               "code_README"                 "code_README_scale"           "code_annotation_scale"      
 #[37] "code_vignette"               "code_Rpackage_available"     "code_OTHERpackage_available" "code_application_cited"     
 #[41] "code_comments"               "country_corresponding"       "country_first"               "georegion_data"             
 #[45] "georegion_author_match"      "georegion_data_cited"        "equity_comments"             "comments"                   
 #[49] "recorder_ID"                
-sort(unique(clean_data_all$code_open))
-sum <- clean_data_all %>% group_by(code_CITATION) %>% summarise(n())
+sort(unique(clean_data_all$code_format))
+sum <- clean_data_all %>% group_by(code_format) %>% summarise(n())
 
 naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
