@@ -1297,10 +1297,8 @@ clean_data_all <-
                                        code_availability == "They point to code previously published at Mendeley Data" 
                                        ~ "No",
                                        
-                                       TRUE ~ as.character(code_availability))) #%>%
+                                       TRUE ~ as.character(code_availability))) %>%
 
-clean_data_all <-
-  clean_data_all %>%
   #------------------------------------------------------------------------------------------------------
   # 20. Can you open the link to the code?
   # Note that a lot of the code is not directly mentioned in the data availability statement, but
@@ -1336,21 +1334,80 @@ clean_data_all <-
                                code_link == "It is linked within Data Availability but it's not clear that the code is there too (along with the data)."                                                                                                                                                  
                                 ~ "No",
                                
-                               TRUE ~ as.character(code_link))) #%>%
-                                                                                                                                                                                                                                               
-                                                                                                                                                                                             
-                                                                                                                                                                         
-                                                                                                                                                                                        
+                               TRUE ~ as.character(code_link))) %>%
+
+  #------------------------------------------------------------------------------------------------------
+  # 21. Where is the code archived?     
+  # Similarly to the data archive question, most options have very low numbers so simplify to "Other repo/database"
+  # This includes institutional repositories, national data centres like CEFAS/USGS, databases for specific
+  # projects                                                                                                                                                                                                                                       
+  mutate(code_archive = case_when(code_archive == "ARP Adatrepozitorium" | 
+                                  code_archive == "DataVerse" |
+                                  code_archive == "Environmental Data Initiative (EDI Data Portal)" |
+                                  code_archive == "Environmental Data Repository" |
+                                  code_archive == "Etsin" |
+                                  code_archive == "Forest Plots" |
+                                  code_archive == "Institutional repository" |
+                                  code_archive == "Knowledge Network for Biocomplexity (KNB)"  |                                                                                                                                                   
+                                  code_archive == "Mendeley"  |                                                                                                                                                                                    
+                                  code_archive == "Mendeley Data"  |                                                                                                                                                                               
+                                  code_archive == "MyDiv" |
+                                  code_archive == "OSF" |                                                                                                                                                                                          
+                                  code_archive == "Personal website"  |                                                                                                                                                                            
+                                  code_archive == "Purdue University Research Repository"  |                                                                                                                                                       
+                                  code_archive == "ScienceBase"   |                                                                                                                                                                                
+                                  code_archive == "SourceForge" |
+                                  code_archive == "USGS" 
+                                  ~"Other repo/database",                                                                                                                                                                                       
+                                    
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Institutional repository" |
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Personal website"
+                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;Other repo/database", 
+
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;R CRAN"
+                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;CRAN",
+                                  
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;\"available at ftp://pbil.univ-lyon1.fr/pub/datasets/dray/DiazNature/\"" |
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;Hugging Face" |
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;Software Heritage Library; OpenAIRE"
+                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;Other repo/database", 
+
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;R CRAN" 
+                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;CRAN", 
+                                  
+                                  code_archive == "Institutional repository;Supplementary materials"  |                                                                                                                                            
+                                  code_archive == "Institutional repository;Supplementary materials;USGS (https://code.usgs.gov/)" |
+                                  code_archive == "Supplementary materials; ESS-DIVE"|
+                                  code_archive == "Supplementary materials;This website: code.usgs.gov/umesc  (Full link: https://code.usgs.gov/umesc/quant-ecology/legacy-code/defining-and-classifying-migratory-habitats-as-sources-and-sinks)"
+                                  ~ "Supplementary materials;Other repo/database",
+                                  
+                                  code_archive == "Supplementary Information" 
+                                  ~ "Supplementary materials",
+                                  
+                                  code_archive == "On rdrr.io with link to code on Zenodo" |
+                                  code_archive == "Zenodo;PeerJ"
+                                  ~ "Zenodo;Other repo/database",
+                                  
+                                  code_archive == "No code archived" |
+                                  code_archive == "The code was said to have been made available in the supplementary information as an Rmarkdown file, but this is not found when you download the supplementary material"
+                                  ~ NA_character_,
+                                  
+                                  TRUE ~ as.character(code_archive))) #%>%
+                                                                                                                                       
+                                                                                                                                   
+                                                                                                                                                                                         
                       
                                                                                                                                                                                                                                           
                                                                                                                                                                           
-sort(unique(clean_data_all$code_link))
+sort(unique(clean_data_all$code_archive))
 
 
 naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
 
 
+clean_data_all <-
+  clean_data_all %>%
 # Extract data validation paper 2272
 
 dat_valid <- filter(raw_data_questions, paper_number == 2272)
