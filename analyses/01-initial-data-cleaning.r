@@ -1894,38 +1894,143 @@ clean_data_all <-
   mutate(code_README_scale = case_when(code_README == "No"  | is.na(code_README) ~ NA_character_,                                                                                               
                                      TRUE ~ as.character(code_README_scale))) %>%
   # This is a scale of 1-10 so needs to be numeric
-  mutate(code_README_scale = as.numeric(code_README_scale)) #%>%
+  mutate(code_README_scale = as.numeric(code_README_scale)) %>%
 
+  #------------------------------------------------------------------------------------------------------
+  # 30. How comprehensive is the code annotation? 
+  # This is a scale of 1-10 so needs to be numeric
+  mutate(code_annotation_scale = as.numeric(code_annotation_scale)) %>%
+
+  #------------------------------------------------------------------------------------------------------
+  # 31. Does the code have a vignette or similar explaining how it works?
+  # I've been generous here about what counts 
+  mutate(code_vignette = case_when(code_vignette == "Code chunks are included in descriptive RMarkdown files"    | 
+                                   code_vignette == "Code all incorporated into markdown."  |
+                                   code_vignette == "Code chunks are within an .Rmd file that describes the analyses" |                                                                                        
+                                   code_vignette == "Code provided within explanatory .Rmd file"     | 
+                                   code_vignette == "Example code given but not proper vignette"  |                                                                                                            
+                                   code_vignette == "Inbuilt tutorial"   |                                                                                                                                     
+                                   code_vignette == "Included in the readme, but I would say yes." |                                                                                                          
+                                   code_vignette == "It only gives an example of the simplified model they used and the archived model is not well annotated" |                                                
+                                   code_vignette == "link to example gist scripts, not annotated"|                                                                                                             
+                                   code_vignette == "No but the README has similar guidance"   | 
+                                   code_vignette == "No, but all is clear from the annotations" |                                                                                                              
+                                   code_vignette == "Part of code is contained in R package with documentation (manual)"  |
+                                   code_vignette == "Supporting information provides logic and specific instructions on how to run the code" |                                                                 
+                                   code_vignette == "The paper has a Markdown supplement with detailed descriptions on how to run the code, well annotated."|                                                  
+                                   code_vignette == "The program comes with instruction videos explaining how it works"      |                                                                                 
+                                   code_vignette == "There is a short, unannotated file called \"test_code\" containing some example code" |   
+                                   code_vignette == "User manual for software provided" |   
+                                   code_vignette == "There is a vignette describing which parts of the analyses are in the Python code and which in the MATLAB, as well as some instructions for installation"
+                                   ~ "Yes",
+                                   
+                                   code_vignette == "samples of the data have been provided to run the code." 
+                                   ~ "No",
+                                   
+                                   code_vignette == "Don't think so"  | 
+                                   code_vignette == "Not sure if the \"Overview of sensitivity analysis\" file counts as this"| 
+                                   code_vignette == "ReadMe is a Python Markdown file, cannot open"   | 
+                                   code_vignette == "unclear"   |                                                                                                                                              
+                                   code_vignette == "unclear since I do not have the suitable Python compiler to open the code."
+                                   ~ "Unsure",
+                                  
+                                   code_vignette == "Broken link" |
+                                   code_vignette == "I couldn’t open the code." | 
+                                   code_vignette == "The link to code does not open."|  
+                                   code_vignette == "No code archived"
+                                   ~ NA_character_,
+
+                                   TRUE ~ as.character(code_vignette))) %>% 
+
+  #------------------------------------------------------------------------------------------------------
+  # 32. If the code is an R package, can it still be installed via CRAN or BioConductor?
+  # Incredibly this variable requires no cleaning however there are 57 we should go back and check                                                                                                                                   
+  #x <- clean_data_all %>% filter(code_Rpackage_available == "Unable to check")                                                                                
+ 
+  #------------------------------------------------------------------------------------------------------
+  # 33. If the code is an non-R package, can it still be installed?
+  # This variable doesn't add much data, only 15 entries are relevant. Therefore cut this variable
+  select(-code_OTHERpackage_available) %>%                                                                                                       
+                                                                                                 
+  #------------------------------------------------------------------------------------------------------
+  # 34. If the paper is an applications paper, how many times has it been cited?
+  # First replace "not an application paper" and "N/A" with NA
+  # Then make this variable numeric
+  mutate(code_application_cited = case_when(code_application_cited == "not an application paper" | code_application_cited == "N/A"
+                                            ~ NA_character_,
+                                            TRUE ~ as.character(code_application_cited))) %>%
+  mutate(code_application_cited = as.numeric(code_application_cited)) %>%
   
-  clean_data_all <-
-  clean_data_all %>%  
-#------------------------------------------------------------------------------------------------------
-# 29. How useful is the README?  
+  #------------------------------------------------------------------------------------------------------
+  # 35. Code comments. These are here for interest and may be used in future studies but they will not 
+  # be included here due to the amount of time it would take to parse them all. But feel free to use 
+  # the data for your own purposes!
   
-#"code_README_scale"           "code_annotation_scale"      
-#[37] "code_vignette"               "code_Rpackage_available"     "code_OTHERpackage_available" "code_application_cited"     
-#[41] "code_comments"               "country_corresponding"       "country_first"               "georegion_data"             
-#[45] "georegion_author_match"      "georegion_data_cited"        "equity_comments"             "comments"                   
-#[49] "recorder_ID"                
-sort(unique(clean_data_all$code_README_scale))
-sum <- clean_data_all %>% group_by(code_language) %>% summarise(n())
+  # ------------------------------------------------------------------------------------------------------
+  # DATA EQUITY!!!
+  # ------------------------------------------------------------------------------------------------------
+  # 36. What country is the corresponding author from?
+  # This variable was included as it was on the spreadsheet Wiley shared with us. However it doesn't appear
+  # to be accurate and was often different in the spreadsheet and the paper. As such we will remove this
+  # variable from the analyses.
+  select(-country_corresponding) %>%  
 
-naniar::miss_var_summary(raw_data_all)
-naniar::vis_miss(clean_data_all)
+  # ------------------------------------------------------------------------------------------------------
+  # 37. What georegion is the first author from?
+  # Note that many authors have multiple georegions.
+  # This variable did not have an "other" option so does not require cleaning at this stage
+  
+  # ------------------------------------------------------------------------------------------------------
+  # 38. What georegion was any novel data collected from?
+  # 39. Does the georegion of authors match where data were collected from?
+  # 40. What georegions cite the paper?
+  # 41. Equity comments. 
+  # All of these variables are horribly messy with hundreds of options each. So while they are very
+  # interesting and important I think these will need to be worked on another time
+  select(-c(georegion_data, georegion_author_match, georegion_data_cited, equity_comments)) %>%  
 
+  # ------------------------------------------------------------------------------------------------------
+  # GENERAL!!!
+  # ------------------------------------------------------------------------------------------------------
+  # 42. Comments. These have been left as is in case they are useful but are unlikely to be part
+  # of the analyses in this paper. Note that many comments have been dealt with at specific points
+  # of the data cleaning process
+  # ------------------------------------------------------------------------------------------------------
+  # 43. Recorder_ID.
+  # This should be numeric
+  mutate(recorder_ID = as.numeric(recorder_ID)) %>%
+  # A couple of recorder IDs are NA which should be recorded as 151
+  mutate(recorder_ID = case_when(is.na(recorder_ID) ~ 151,
+                   TRUE ~ as.numeric(recorder_ID)))
+  # ------------------------------------------------------------------------------------------------------
+ 
 
+# ------------------------------------------------------------------------------------------------------
+# EXTRACT DATA VALIDATION DATASET
+# ------------------------------------------------------------------------------------------------------
+# Before removing duplicated papers we need to extract all paper 2272 examples for data validation
+# Only one of these will remain in the final dataset once we remove the duplicates.
+data_validation <- filter(clean_data_all, paper_number == 2272)
+# Save to file
+write_csv(data_validation, file = "data/data-validation_2025-11-15.csv")
 
-# Extract data validation paper 2272
-
-dat_valid <- filter(raw_data_questions, paper_number == 2272)
-
-# 
-# Final checks
-# 
-
+# ------------------------------------------------------------------------------------------------------
+# FINAL CHECKS
+# ------------------------------------------------------------------------------------------------------ 
 # Remove duplicated papers
-# 
-# Delete other duplicated papers by deleting the later duplicates
 # There should be 12
-clean_data_all <- distinct(paper_number, .keep_all = TRUE)
+clean_data_all_noduplicates <- 
+  clean_data_all %>%
+  distinct(paper_number, .keep_all = TRUE)
 
+# Look at the dataset
+glimpse(clean_data_all_noduplicates)
+
+# Look at missing values
+missing_vars <- naniar::miss_var_summary(clean_data_all_noduplicates)
+naniar::vis_miss(clean_data_all_noduplicates)
+
+# ------------------------------------------------------------------------------------------------------
+# WRITE TO FILE
+# ------------------------------------------------------------------------------------------------------ 
+write_csv(clean_data_all_noduplicates, file = "data/data-validation_2025-11-15.csv")
