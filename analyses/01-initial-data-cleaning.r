@@ -78,8 +78,7 @@ raw_data_all <-
                 georegion_data_cited = `17. For any paper(s) citing the data, what georegions are on the authors main addresses (i.e. when doing the work)? Please select all relevant options.`,                                                                                                                                                   
                 equity_comments = `Any comments about data equity that these Qs don't cover?`,   
                 comments = `2. Any other comments about this paper?`,                                                                                                                                                                                                                                                                   
-                recorder_ID, # this column name was already updated when anonymising. 
-                issues = `1. Did you have any issues recording data for this paper? If yes we will go back and check it for you later.`) 
+                recorder_ID) # this column name was already updated when anonymising. 
 
 # Look at the data pre-cleaning
 glimpse(raw_data_all)
@@ -117,6 +116,49 @@ raw_data_all$article_type[1610] <- "Research Article"
 # Row numbers 1001, 1246 = details all missing so exclude
 raw_data_all <- raw_data_all %>% slice(c(-1001, -1246))
 
+#--------------------------------------------------------------------------
+# 179 entries were flagged with issues. These were checked by Bethany A
+# See fixing-papers-with-issues for details of why/how these were editted
+#--------------------------------------------------------------------------
+# Delete duplicated entry where second instance is correct one
+# Note that there are a few more duplicates, but these will be deleted after we extract the 
+# data validation paper 2272. We can't do this until we have completed the cleaning.
+raw_data_all <- 
+  raw_data_all %>% 
+  slice(-902)
+
+# Delete papers with issues that cannot be easily fixed
+raw_data_all <- 
+  raw_data_all %>% 
+    filter(paper_number != 6654 & paper_number != 1343 & paper_number != 1802 &
+             paper_number != 1015 & paper_number != 42 & paper_number != 6656 &
+             paper_number != 1707 & paper_number != 3433 & paper_number != 3430 & 
+             paper_number != 3436 & paper_number != 3440 & paper_number != 1523 & 
+             paper_number != 1914 & paper_number != 3414 & paper_number != 7422 &
+             paper_number != 7453 & paper_number != 3390 & paper_number != 5636 &
+             paper_number != 6979 & paper_number != 6589)
+
+# Some entire rows have been edited. Fix as follows.
+# i. Read in the fixing papers with issues data
+fix <- read_csv("raw-data/fixing-papers-with-issues.csv")
+
+# ii. Subset to just the ones that need to be edited and keep only rows in the raw_data_all
+fix <- 
+  fix %>%
+  filter(course_of_action == "Edit") %>%
+  select(-c(course_of_action, justification)) %>%
+  # code_application_cited is numeric here but character in raw_data_all so convert it
+  mutate(code_application_cited = as.character(code_application_cited))
+
+# iii. Loop through each paper finding the correct rows in the raw_data_all
+# with these paper numbers, then replace the contents of those rows with
+# the corrected data.
+# I'm sure there is a better way to do this but I had limited time...
+for(i in 1:length(fix$paper_number)) {
+  id_row <- which(raw_data_all$paper_number == fix$paper_number[i])
+  raw_data_all[id_row, ] <- fix[i, ]
+  }
+
 # --------------------------------------------------------------------------
 # More complex fixes
 # These proceed one variable at a time. Typos or errors are corrected
@@ -124,6 +166,7 @@ raw_data_all <- raw_data_all %>% slice(c(-1001, -1246))
 # or consolidated as appropriate. Details should be clear from the code and 
 # comments below, but can easily be editted if you disagree with my
 # aggregating systems.
+# NOTE: There are a lot of edits so this code takes a minute or so to run
 # --------------------------------------------------------------------------
 clean_data_all <-
   raw_data_all %>%
@@ -1312,8 +1355,17 @@ naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
 
 
-# Data validation 2272
+# Extract data validation paper 2272
 
 dat_valid <- filter(raw_data_questions, paper_number == 2272)
 
+# 
+# Final checks
+# 
+
+# Remove duplicated papers
+# 
+# Delete other duplicated papers by deleting the later duplicates
+# There should be 12
+clean_data_all <- distinct(paper_number, .keep_all = TRUE)
 
