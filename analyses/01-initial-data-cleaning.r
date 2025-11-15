@@ -1242,7 +1242,7 @@ clean_data_all <-
                                    code_archived == "Code mentioned in the data availability statement but not actually available on the repository it refers to" |
                                    code_archived == "Data availability statement says code is included in the repository but it is not there" |
                                    code_archived == "It has some code for developing a map, but not for reproducing the analysis" |
-                                   code_archived ==   "No, asserts absence of novel code" |
+                                   code_archived == "No, asserts absence of novel code" |
                                    code_archived == "No, but makes reference to having code in the data availability statement." |
                                    code_archived == "Packages that were used for the analyses are mentioned but no code is available"|
                                    code_archived == "R codes are mentioned in the README files but no code could be found." |
@@ -1299,56 +1299,52 @@ clean_data_all <-
                                        
                                        TRUE ~ as.character(code_availability))) #%>%
 
-  #------------------------------------------------------------------------------------------------------
-  # 20. Can you open the link to the code?
-
-
-sort(unique(clean_data_all$code_link))
-                                                                                                                                                                                                      
-
-
 clean_data_all <-
   clean_data_all %>%
-  
+  #------------------------------------------------------------------------------------------------------
+  # 20. Can you open the link to the code?
+  # Note that a lot of the code is not directly mentioned in the data availability statement, but
+  # it is available in other places. In these situations I have said Yes the link works.
+  mutate(code_link = case_when(code_link == "Accessible from the .zip folder in the supporting information" |
+                               code_link == "Code found in repository with the data, but no mention of this in the manuscript."  |
+                               code_link == "Code is archived with the data (but this is not explicitly mentioned in the paper)" |                                                                                                                                                                         
+                               code_link == "Code is available through the link to the data (Dryad), but the paper makes no mention of code being archived anywhere. So there are no instructions or link explicitly linked to the code. We only found it because we followed the link to the Dryad data."|
+                               code_link == "Code is bundled with the data but not described separately."|                                                                                                                                                                                                 
+                               code_link == "Code is included in the data repo" |                                                                                                                                                                                                                          
+                               code_link == "Code was archived with data."   |                                                                                                                                                                                                                             
+                               code_link == "Data Availability Statement is for version 2 of Dryad, code is in Version 3. So it is findable but not from the statement"|                                                                                                                                   
+                               code_link == "I am able to find the code from the link that leads to the data."   |                                                                                                                                                                                         
+                               code_link == "I can access the R code archived on Zenodo, but not the R scripts for testing hypervolume concentration \"available at ftp://pbil.univ-lyon1.fr/pub/datasets/dray/DiazNature/\""  |                                                                           
+                               code_link == "I found the code because it was archved together with data, but there was no reference in the Data Availability (or equivalent) statement"   |                                                                                                                
+                               code_link == "I have found the code in the data archive"    |                                                                                                                                                                                                               
+                               code_link == "I would have missed it if I hadn't checked the supporting material"   |
+                               code_link == "It was linked to the data repository" |
+                               code_link == "no mention that the code is archived, but present with the data" |                                                                                                                                                                                            
+                               code_link == "Only the DYRAD link is in the Data Availability statement, but the code is not in the files of that link, but in the 'related work' section of that webpage."  |                                                                                              
+                               code_link == "Part of the code was available (a bioinformatics pipeline for processing genetic data), but the R code used in the article is not available, even though it is mentioned in the Dryad repository README." |                                                   
+                               code_link == "The code is attached, but I haven't found anywhere that says the code has been archived for analysis."  |                                                                                                                                                     
+                               code_link == "The link in the data archiving statement where the code is supposed to be archived is to the Dryad repository for the data. However, the Dryad repository has a link to the Zenodo repository with the code, under \"Related works\"" | 
+                               code_link == "They do not mention the code explicitly, but it is available through the same link referring to the data" |                                                                                                                                                   
+                               code_link == "We were able to find this following the link to Data in the Data Availabiility link and we found the code after reading the README file" |                                                                                                                    
+                               code_link == "yes, but only by clicking on a link to zenodo within the dryad data repository"  |                                                                                                                                                                            
+                               code_link == "yes, but only dev version on GitHub. Stable version on CRAN no longer available."   |                                                                                                                                                                         
+                               code_link == "Yes. But it was hard to find.Codes were found in a seperate Zenodo rep shown in dryad as 'related works'. Not in the main paper."   |                                                                                                                         
+                               code_link == "Zenodo repository where the code is archived is not provided in the Data Availability statement, but is linked in the Dryad repository that *is* included in the Data Availability statement."
+                                ~ "Yes",
+                              
+                               code_link == "Authors' just cited their own package, but the specific code to reproduce their simulation results, etc., was not included." |                                                                                                                                
+                               code_link == "It is linked within Data Availability but it's not clear that the code is there too (along with the data)."                                                                                                                                                  
+                                ~ "No",
+                               
+                               TRUE ~ as.character(code_link))) #%>%
                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                  
-                                                                                                                                                                                                                                                    
-  [1] "Accessible from the .zip folder in the supporting information"                                                                                                                                                                                               
-[2] "Authors' just cited their own package, but the specific code to reproduce their simulation results, etc., was not included."                                                                                                                                 
-[3] "Code found in repository with the data, but no mention of this in the manuscript."                                                                                                                                                                           
-[4] "Code is archived with the data (but this is not explicitly mentioned in the paper)"                                                                                                                                                                          
-[5] "Code is available through the link to the data (Dryad), but the paper makes no mention of code being archived anywhere. So there are no instructions or link explicitly linked to the code. We only found it because we followed the link to the Dryad data."
-[6] "Code is bundled with the data but not described separately."                                                                                                                                                                                                 
-[7] "Code is included in the data repo"                                                                                                                                                                                                                           
-[8] "Code was archived with data."                                                                                                                                                                                                                                
-[9] "Data Availability Statement is for version 2 of Dryad, code is in Version 3. So it is findable but not from the statement"                                                                                                                                   
-[10] "Error: DOI not found"                                                                                                                                                                                                                                        
-[11] "I am able to find the code from the link that leads to the data."                                                                                                                                                                                            
-[12] "I can access the R code archived on Zenodo, but not the R scripts for testing hypervolume concentration \"available at ftp://pbil.univ-lyon1.fr/pub/datasets/dray/DiazNature/\""                                                                             
-[13] "I found the code because it was archved together with data, but there was no reference in the Data Availability (or equivalent) statement"                                                                                                                   
-[14] "I have found the code in the data archive"                                                                                                                                                                                                                   
-[15] "I would have missed it if I hadn't checked the supporting material"                                                                                                                                                                                          
-[16] "It is linked within Data Availability but it's not clear that the code is there too (along with the data)."                                                                                                                                                  
-[17] "It was linked to the data repository"                                                                                                                                                                                                                        
-[18] "No"                                                                                                                                                                                                                                                          
-[19] "no mention that the code is archived, but present with the data"                                                                                                                                                                                             
-[20] "Only the DYRAD link is in the Data Availability statement, but the code is not in the files of that link, but in the 'related work' section of that webpage."                                                                                                
-[21] "Part of the code was available (a bioinformatics pipeline for processing genetic data), but the R code used in the article is not available, even though it is mentioned in the Dryad repository README."                                                    
-[22] "The code is attached, but I haven't found anywhere that says the code has been archived for analysis."                                                                                                                                                       
-[23] "The link in the data archiving statement where the code is supposed to be archived is to the Dryad repository for the data. However, the Dryad repository has a link to the Zenodo repository with the code, under \"Related works\""                        
-[24] "the link works, but it looks like they forgot to upload the R scripts"                                                                                                                                                                                       
-[25] "There was no reference made to archived code. I just found the R-scripts as part of the archived data."                                                                                                                                                      
-[26] "They do not mention the code explicitly, but it is available through the same link referring to the data"                                                                                                                                                    
-[27] "Unsure if code is included in R scripts with data"                                                                                                                                                                                                           
-[28] "We were able to find this following the link to Data in the Data Availabiility link and we found the code after reading the README file"                                                                                                                     
-[29] "Yes"                                                                                                                                                                                                                                                         
-[30] "yes, but only by clicking on a link to zenodo within the dryad data repository"                                                                                                                                                                              
-[31] "yes, but only dev version on GitHub. Stable version on CRAN no longer available."                                                                                                                                                                            
-[32] "Yes. But it was hard to find.Codes were found in a seperate Zenodo rep shown in dryad as 'related works'. Not in the main paper."                                                                                                                            
-[33] "Zenodo repository where the code is archived is not provided in the Data Availability statement, but is linked in the Dryad repository that *is* included in the Data Availability statement."                                                               
-
-                                                                                                                                                                                                                                               
+                                                                                                                                                                                             
+                                                                                                                                                                         
+                                                                                                                                                                                        
+                      
+                                                                                                                                                                                                                                          
                                                                                                                                                                           
+sort(unique(clean_data_all$code_link))
 
 
 naniar::miss_var_summary(raw_data_all)
