@@ -1645,11 +1645,7 @@ clean_data_all <-
                                code_open == "No code archived" 
                                ~ NA_character_,
                                
-                               TRUE ~ as.character(code_open))) #%>%                                                                                                                         
-                               
-                                                                                                                                                                          
-clean_data_all <-
-  clean_data_all %>%                               
+                               TRUE ~ as.character(code_open))) %>%                                                                                                                         
 
   #------------------------------------------------------------------------------------------------------
   # 27. What format is the code saved in?
@@ -1743,16 +1739,176 @@ clean_data_all <-
                                  code_format == "The link to code does not open."
                                  ~ NA_character_,
                                  
-                                 TRUE ~ as.character(code_format))) #%>% 
+                                 TRUE ~ as.character(code_format))) %>% 
+  
+  #------------------------------------------------------------------------------------------------------
+  # 28. What language is the code in? 
+  # Simplify "R (including Rmarkdown, Quarto)" to "R"
+  # .yaml and .yml are just part of the notebooks so are not separate languages here
+  # Bash = Shell
+  mutate(code_language = case_when(code_language == "R (including Rmarkdown, Quarto)"  |                                                                                                                              
+                                   code_language == "R (including Rmarkdown, Quarto);.yaml, .yml" |
+                                   code_language == "R (including Rmarkdown, Quarto);Data simulation is in R, the app itself is using different languages"                                                          
+                                   ~ "R",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);HTML" 
+                                   ~ "R;HTML",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);BUGS" |
+                                   code_language == "R (including Rmarkdown, Quarto);JAGS" 
+                                   ~ "R;BUGS/JAGS",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);C/C++;.nb (Wolfram Notebook File)"
+                                   ~ "R;C/C++;Python",
+                                                                                                                  
+                                   code_language == "R (including Rmarkdown, Quarto);JavaScript"
+                                   ~ "R;Java",
+                                                                                                 
+                                   code_language == "R (including Rmarkdown, Quarto);NetLogo"
+                                   ~ "R;NetLogo",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);Python;Jags"
+                                   ~ "R;Python;BUGS/JAGS",
+                                                                                                                                             
+                                   code_language == "R (including Rmarkdown, Quarto);Python;CSS;HTML;Java;Also Jupyter Notebook and SCSS"
+                                   ~ "R;Python;CSS;HTML;Java",
+                                                                                                                                                       
+                                   code_language == "R (including Rmarkdown, Quarto);Python;Shell" |
+                                   code_language == "R (including Rmarkdown, Quarto);Python;Shell;Two different genetic handling pipelines are archived in Dryad and Zenodo, including a range of programs/languages"
+                                   ~ "R;Python;Shell",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);Python;TeX/LaTeX" 
+                                   ~ "R;Python;TeX/LaTeX",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);Shell"   
+                                   ~ "R;Shell",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);Stan" |
+                                   code_language == "R (including Rmarkdown, Quarto);STAN"
+                                   ~ "R;Stan",
+  
+                                   code_language == "R (including Rmarkdown, Quarto);C/C++"
+                                   ~ "R;C/C++",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);Julia"
+                                   ~ "R;Julia",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);MATLAB" 
+                                   ~ "R;MATLAB",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);Perl"  
+                                   ~ "R;Perl",
+                                   
+                                   code_language == "R (including Rmarkdown, Quarto);Python"
+                                   ~ "R;Python",
+                                   
+                                   code_language == "C/C++;.NET" 
+                                   ~ "C/C++;Other",
+                                   
+                                   code_language == "Wolfram Mathematica" |                                                                                                                                            
+                                   code_language == "Wolfram notebook"
+                                   ~ "Mathematica",
+                                   
+                                   code_language == ".js"
+                                   ~ "Java",
+                                   
+                                   code_language == "Net Logo" |                                                                                                                                                      
+                                   code_language == "NetLOGO"
+                                   ~ "NetLogo",
+                                   
+                                   code_language == "Python;Jupyter Notebook" 
+                                   ~ "Python",
+                                   
+                                   code_language == "Python;Bash"
+                                   ~ "Python;Shell",
+                                   
+                                   code_language == "Python;TypeScript" 
+                                   ~ "Python/Other",
+                                  
+                                   code_language == "Arduino" |
+                                   code_language == "SAS" |
+                                   code_language == "Visual Basic/Pure Basic" 
+                                   ~ "Other",
 
-                
-#[33] "code_language"               "code_README"                 "code_README_scale"           "code_annotation_scale"      
+                                   code_language == "Authors have said that it is in an Rmarkdown file but cannot find the file/the file was not provided" |
+                                   code_language == "Broken link" |
+                                   code_language == "No code archived" |
+                                   code_language == "unknown" 
+                                   ~ NA_character_,
+
+                                   TRUE ~ as.character(code_language))) %>% 
+  #------------------------------------------------------------------------------------------------------
+  # 28. Does the code have a README?
+  # Similarly to the data README, there are sort of READMEs which I've called Quasi-README.
+  # If it is included in the same README as the data I have chosen Yes.
+  mutate(code_README = case_when(code_README == "(there are two places to access the code:) Yes at the doi; no in the supplementary info" |
+                                 code_README == "In README file associated with the data" |                                                                                                                                                                                                                                              
+                                 code_README == "included in Data README" |                                                                                                                                                                                                                                                             
+                                 code_README == "Included in data's README" |                                                                                                                                                                                                                                                           
+                                 code_README == "Included in README for data"  |
+                                 code_README == "It doesn't have a README specifically for the code - there is one README which mentions all the files, including the R scripts, uploaded to Dryad."  |                                                                                                                                 
+                                 code_README == "One README file for both the data and R files." |
+                                 code_README == "No separate readme for R files, it's a single readme file for both data and R files"  |
+                                 code_README == "README.md for all data, not just code"|                                                                                                                                                                                                                                                
+                                 code_README == "Same README as data"  |                                                                                                                                                                                                                                                                
+                                 code_README == "Shared readme with datafiles"   |                                                                                                                                                                                                                                                      
+                                 code_README == "The code has a file named README.md but it is very brief. The bii_example.rmd file is very detailed and contains essentially all of the information that would be desired in a README, so I considered that along with the actual README when answering \"How useful is the README?\"" |
+                                 code_README == "The README is for the entire repository, which includes both the data and the code" |                                                                                                                                                                                                  
+                                 code_README == "The README is not in Zenodo; but it can be found in DRYAD where the data is archived." |                                                                                                                                                                                               
+                                 code_README == "The same as the dataset"|                                                                                                                                                                                                                                                              
+                                 code_README == "The same readme file is used for data and code" |                                                                                                                                                                                                                                  
+                                 code_README == "There is a README file but it only contains the title and abstract of the paper"  |                                                                                                                                                                                                    
+                                 code_README == "There is a README that refers to all files uploaded to GitHub. The R code files are mentioned, but not in great detail." |                                                                                                                                                             
+                                 code_README == "Yes, but only for Creation of a REST API"  |                                                                                                                                                                                                                                           
+                                 code_README == "Yes. Explicit README + info on archive webpage (https://conservancy.umn.edu/items/6a8ef2c3-211d-4d2b-bc0e-ee5bf5227909) both considered for Q10."  
+                                   ~ "Yes",
+                                 
+                                 code_README =="Code and protocol annotated in html/Rmd file." |
+                                 code_README =="Code chunks are within an .Rmd file that describes the analyses" |                                                                                                                                                                                                                     
+                                 code_README =="CRAN documentation" |                                                                                                                                                                                                                                                                   
+                                 code_README == "Few information in the header of the code" |                                                                                                                                                                                                                                           
+                                 code_README == "Has some metadata in Zenodo" |
+                                 code_README == "It doesn't have a README file, but at the beginning of each code there is an explanation of what it does, what it needs, etc." |                                                                                                                                                       
+                                 code_README == "Not in Zenodo; but it is understood that the author is introducing a new R package available in CRAN, where README can be found" |                                                                                                                                                     
+                                 code_README == "Only the details on Zenodo and a bit about use of the code as comments at the top of the script" | 
+                                 code_README == "Very brief descriptions of the data files in Zenodo, no individual README file" |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                                 code_README == "Yes, but not entitled as README, so difficult to find"    
+                                 ~ "Quasi-README",
+                                 
+                                 code_README == "The README for the data files described the presence of the code, but the files for the code do not have a README." | 
+                                 code_README == "There is no file designated as README but the entire R session has been stored in Github"  
+                                 ~ "No",
+
+                                 code_README == "I couldn’t see if the a readme file. I couldn’t open the code" |
+                                 code_README == "The link to code does not open." |
+                                 code_README == "Unable to download it" |
+                                 code_README == "Broken link"  |
+                                 code_README == "No code archived" 
+                                 ~ NA_character_,
+
+                                 TRUE ~ as.character(code_README))) %>% 
+                                                                                                                                                                                                                                                 
+  #------------------------------------------------------------------------------------------------------
+  # 29. How useful is the README?
+  # Code without a README cannot be scored so make this NA
+  mutate(code_README_scale = case_when(code_README == "No"  | is.na(code_README) ~ NA_character_,                                                                                               
+                                     TRUE ~ as.character(code_README_scale))) %>%
+  # This is a scale of 1-10 so needs to be numeric
+  mutate(code_README_scale = as.numeric(code_README_scale)) #%>%
+
+  
+  clean_data_all <-
+  clean_data_all %>%  
+#------------------------------------------------------------------------------------------------------
+# 29. How useful is the README?  
+  
+#"code_README_scale"           "code_annotation_scale"      
 #[37] "code_vignette"               "code_Rpackage_available"     "code_OTHERpackage_available" "code_application_cited"     
 #[41] "code_comments"               "country_corresponding"       "country_first"               "georegion_data"             
 #[45] "georegion_author_match"      "georegion_data_cited"        "equity_comments"             "comments"                   
 #[49] "recorder_ID"                
-sort(unique(clean_data_all$code_format))
-sum <- clean_data_all %>% group_by(code_format) %>% summarise(n())
+sort(unique(clean_data_all$code_README_scale))
+sum <- clean_data_all %>% group_by(code_language) %>% summarise(n())
 
 naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
