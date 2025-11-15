@@ -1186,7 +1186,7 @@ clean_data_all <-
                                code_used == "All analyses were performed in Comprehensive Meta-Analysis 3.0 software (Borenstein et al., 2005)." |
                                code_used == "It is not stated which coding language or software has been used to analyze data." |
                                code_used == "The paper aimed to develope a software" |
-                               code_used ==   "The paper performs statistical analysis but it does not state which statistical software is used (so it is not possible to know if it is code-based or not)" |
+                               code_used == "The paper performs statistical analysis but it does not state which statistical software is used (so it is not possible to know if it is code-based or not)" |
                                code_used == "They create a model, but I am not sure whether code was used or how the model simulations were carried out" |
                                code_used == "They use mixed models, but they do not say whether through code or other types of software that do not use code." |
                                code_used == "They use SAS which could be GUI or code" |                                                                                                                                                                               
@@ -1392,22 +1392,68 @@ clean_data_all <-
                                   code_archive == "The code was said to have been made available in the supplementary information as an Rmarkdown file, but this is not found when you download the supplementary material"
                                   ~ NA_character_,
                                   
-                                  TRUE ~ as.character(code_archive))) #%>%
+                                  TRUE ~ as.character(code_archive))) %>%
                                                                                                                                        
-                                                                                                                                   
-                                                                                                                                                                                         
-                      
-                                                                                                                                                                                                                                          
-                                                                                                                                                                          
-sort(unique(clean_data_all$code_archive))
+  #------------------------------------------------------------------------------------------------------
+  # 22. Does the code have a DOI? A lot of code was bundled with the dataset so added an option for 
+  # "Yes, same as data".
+  mutate(code_doi = case_when(code_doi == "A single doi has been assigned to both the code and the data." |         
+                              code_doi == "Both data and code are archived using the same DOI" |   
+                              code_doi == "Code is available at the same DOI as the data, but not specifically mentioned" | 
+                              code_doi == "It has the same DOI as the data."    |   
+                              code_doi == "It's inside the data zip file that downloads" |
+                              code_doi == "No an individual DOI, a common one for the data along which it was archived"|  
+                              code_doi == "no unique DOI, same as the data repository"  | 
+                              code_doi == "Not a separate DOI from the data. The same DOI as the data on Dryad"  |                                                
+                              code_doi == "Not different from the data: http://doi.org/10.5061/dryad.pvmcvdngw"  | 
+                              code_doi == "Same as archived data"  |                                                                                              
+                              code_doi == "same as data"     |                                                                                                    
+                              code_doi == "same as DOI for data"  |                                                                                               
+                              code_doi == "Same as the dataset"   |                                                                                               
+                              code_doi == "same DOI as the data" |                                                                                                
+                              code_doi == "Same DOI as the data"   |                                                                                              
+                              code_doi == "Same DOI as the data file"  |                                                                                          
+                              code_doi == "Shares the same DOI as the data" |                                                                                     
+                              code_doi == "The code and the data share the same doi"  | 
+                              code_doi == "The data and the code share the same doi" |                                                                            
+                              code_doi == "The doi is the same as for the data: 0.5061/dryad.pvmcvdngw"  |                                                        
+                              code_doi == "The same as the dataset"     |                                                                                         
+                              code_doi == "Yes, although the DOI isn't unique to the code, it covers the data as well"|                                           
+                              code_doi == "Yes, because it is under the data being linked. It does not have its own doi" |
+                              code_doi == "Yes, same as for the data"
+                              ~ "Yes, same as data",
+                              
+                              code_doi == "Broken link"  |  # whether we can access the data is dealt with in the next Qs
+                              code_doi == "The link to code does not open."|
+                              code_doi == "https://doi.org/10.5281/zenodo.6914377" |                                                                             
+                              code_doi == "https://doi.org/10.5281/zenodo.8289843"  | 
+                              code_doi == "Project-specific code in institutional repository does have a DOI, the method implementation on GitHub does not" |   
+                              code_doi == "package has a DOI via CRAN"   | 
+                              code_doi == "Yes, but only due to CRAN's recent automatic implementation of DOI: 10.32614/CRAN.package.emon"  
+                                ~ "Yes",
+                            
+                              code_doi == "The codes are located within the CRAN and Github repositories (this is an R package). These do not have a DOI per se."|
+                              code_doi == "As before, code in supp. mat. therefore does not have a separate DOI from the paper."  
+                              ~ "No",
+                              
+                              code_doi == "No code archived" 
+                              ~ NA_character_,
+                                  
+                              TRUE ~ as.character(code_doi))) #%>%
+
+clean_data_all <-
+  clean_data_all %>%
+  
+
+
+sort(unique(clean_data_all$code_doi))
 
 
 naniar::miss_var_summary(raw_data_all)
 naniar::vis_miss(clean_data_all)
 
 
-clean_data_all <-
-  clean_data_all %>%
+
 # Extract data validation paper 2272
 
 dat_valid <- filter(raw_data_questions, paper_number == 2272)
