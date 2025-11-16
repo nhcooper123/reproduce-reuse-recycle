@@ -2,7 +2,7 @@
 # NC. Nov 2025
 
 # Prior to running this code I ran a script that tidied and anonymised the recorders. 
-# Each unique recorder or set of recorders has a unique recorder_ID number. recorder_ID 151 is NA.
+# Each unique recorder or set of recorders has a unique recorder_ID number. recorder_ID 148 is NA.
 # No other changes were made to the raw data.
 
 # This script takes that raw data and (slowly and painfully) cleans it so it can be used in the analyses.
@@ -10,14 +10,13 @@
 # Load libraries
 # ---------------
 library(tidyverse)
-library(janitor)
 library(naniar)
 
 # ------------------
 # Read in the data
 # ------------------
 # Read in raw data
-rawdata <- read_csv("raw-data/BES-data-code-hackathon-raw-outputs_ANON.csv")
+rawdata <- read_csv("raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv")
 
 # Exclude 127 rows from test run prior to 12 noon 30th Sept
 rawdata <- 
@@ -26,8 +25,18 @@ rawdata <-
 
 # Rename columns to make them easier to deal with
 # And simultaneously only select columns we want to use.
-# Note that all citations columns have been removed as the data validation showed this questions really confused people
-# and we had wildly different answers for this across recorders.
+# ------------------------------------------------------------------------------------------------------
+# NOTE that all citations columns have been removed as the data validation showed these questions 
+# really confused people and we had wildly different answers for this across recorders.
+#   
+# I have also removed *corresponding author country*. This variable was included as it was on the spreadsheet 
+# Wiley shared with us. However it doesn't appear to be accurate and was often different in the spreadsheet 
+# and the paper. As such we will remove this variable from the analyses.
+# 
+# I also removed the *data equity* questions. 
+# All of these variables are horribly messy with hundreds of options each. So while they are very
+# interesting and important I think these will need to be worked on another time
+# ------------------------------------------------------------------------------------------------------
 raw_data_all <-
   rawdata %>%
   dplyr::select(paper_number = `1. Paper number`,
@@ -71,12 +80,7 @@ raw_data_all <-
                 code_OTHERpackage_available = `14. If the code is a package in another language (e.g. Python) published on PyPI please put the name of the package here and where it has been deposited we will see if it is still available. If you know how to look this up yourself, please do and mention whether it is still available here (Yes/No)`,
                 code_application_cited = `18. APPLICATION papers only. How many times has the paper been cited? You can find this on the landing page of the paper.`,
                 code_comments = `21. Do you have any other comments about the code? For example for those familiar with these processes, does the code use unit test? Doe it have continuous integration? Does it use docker/other containers?`,
-                country_corresponding = `1. Country of corresponding author  (on spreadsheet)`,                                                                                                                                                                                                                                                                 
                 country_first = `2. Country of first author. Use their main address on the paper. There may be more than one. We mean the address that is next to their name on the paper, NOT any “current address” that may be added for people who have recently moved institutions.`,                                                    
-                georegion_data = `3. What georegion(s) were any novel data used in the paper collected from? Select all that apply. NOTE THIS MEANS DATA THAT WERE PHYSICALLY COLLECTED IN THESE COUNTRIES, DO NOT INCLUDE THINGS WHERE THE AUTHORS USED A DATASET FROM FRANCE BUT DID NOT ACTUALLY GO TO FRANCE TO COLLECT DATA :)`,         
-                georegion_author_match = `4. Are any authors (use their main address on the paper) based in the georegion the data were collected from?  Also check the Acknowledgments to see if data labourers from the georegion who are not authors are mentioned there instead.`,
-                georegion_data_cited = `17. For any paper(s) citing the data, what georegions are on the authors main addresses (i.e. when doing the work)? Please select all relevant options.`,                                                                                                                                                   
-                equity_comments = `Any comments about data equity that these Qs don't cover?`,   
                 comments = `2. Any other comments about this paper?`,                                                                                                                                                                                                                                                                   
                 recorder_ID) # this column name was already updated when anonymising. 
 
@@ -146,7 +150,7 @@ fix <- read_csv("raw-data/fixing-papers-with-issues.csv")
 fix <- 
   fix %>%
   filter(course_of_action == "Edit") %>%
-  select(-c(course_of_action, justification)) %>%
+  select(-c(country_corresponding, georegion_data:equity_comments, course_of_action, justification)) %>%
   # code_application_cited is numeric here but character in raw_data_all so convert it
   mutate(code_application_cited = as.character(code_application_cited))
 
@@ -164,7 +168,7 @@ for(i in 1:length(fix$paper_number)) {
 # These proceed one variable at a time. Typos or errors are corrected
 # Where "Other" was an option all options have been reviewed and corrected
 # or consolidated as appropriate. Details should be clear from the code and 
-# comments below, but can easily be editted if you disagree with my
+# comments below, but can easily be edited if you disagree with my
 # aggregating systems.
 # NOTE: There are a lot of edits so this code takes a minute or so to run
 # --------------------------------------------------------------------------
@@ -1967,40 +1971,22 @@ clean_data_all <-
   # the data for your own purposes!
   
   # ------------------------------------------------------------------------------------------------------
-  # DATA EQUITY!!!
-  # ------------------------------------------------------------------------------------------------------
-  # 36. What country is the corresponding author from?
-  # This variable was included as it was on the spreadsheet Wiley shared with us. However it doesn't appear
-  # to be accurate and was often different in the spreadsheet and the paper. As such we will remove this
-  # variable from the analyses.
-  select(-country_corresponding) %>%  
-
-  # ------------------------------------------------------------------------------------------------------
-  # 37. What georegion is the first author from?
-  # Note that many authors have multiple georegions.
-  # This variable did not have an "other" option so does not require cleaning at this stage
-  
-  # ------------------------------------------------------------------------------------------------------
-  # 38. What georegion was any novel data collected from?
-  # 39. Does the georegion of authors match where data were collected from?
-  # 40. What georegions cite the paper?
-  # 41. Equity comments. 
-  # All of these variables are horribly messy with hundreds of options each. So while they are very
-  # interesting and important I think these will need to be worked on another time
-  select(-c(georegion_data, georegion_author_match, georegion_data_cited, equity_comments)) %>%  
-
-  # ------------------------------------------------------------------------------------------------------
   # GENERAL!!!
   # ------------------------------------------------------------------------------------------------------
-  # 42. Comments. These have been left as is in case they are useful but are unlikely to be part
+  # 36. What georegion is the first author from?
+  # Note that many authors have multiple georegions.
+  # This variable did not have an "other" option so does not require cleaning at this stage
+
+  # ------------------------------------------------------------------------------------------------------
+  # 37. Comments. These have been left as is in case they are useful but are unlikely to be part
   # of the analyses in this paper. Note that many comments have been dealt with at specific points
   # of the data cleaning process
   # ------------------------------------------------------------------------------------------------------
-  # 43. Recorder_ID.
+  # 38. Recorder_ID.
   # This should be numeric
   mutate(recorder_ID = as.numeric(recorder_ID)) %>%
-  # A couple of recorder IDs are NA which should be recorded as 151
-  mutate(recorder_ID = case_when(is.na(recorder_ID) ~ 151,
+  # A couple of recorder IDs are NA which should be recorded as 148
+  mutate(recorder_ID = case_when(is.na(recorder_ID) ~ 148,
                    TRUE ~ as.numeric(recorder_ID)))
   # ------------------------------------------------------------------------------------------------------
  
@@ -2012,13 +1998,12 @@ clean_data_all <-
 # Only one of these will remain in the final dataset once we remove the duplicates.
 data_validation <- filter(clean_data_all, paper_number == 2272)
 # Save to file
-write_csv(data_validation, file = "data/data-validation_2025-11-15.csv")
+write_csv(data_validation, file = "data/data-validation_2025-11-16.csv")
 
 # ------------------------------------------------------------------------------------------------------
 # FINAL CHECKS
 # ------------------------------------------------------------------------------------------------------ 
 # Remove duplicated papers
-# There should be 12
 clean_data_all_noduplicates <- 
   clean_data_all %>%
   distinct(paper_number, .keep_all = TRUE)
@@ -2033,4 +2018,4 @@ naniar::vis_miss(clean_data_all_noduplicates)
 # ------------------------------------------------------------------------------------------------------
 # WRITE TO FILE
 # ------------------------------------------------------------------------------------------------------ 
-write_csv(clean_data_all_noduplicates, file = "data/data-validation_2025-11-15.csv")
+write_csv(clean_data_all_noduplicates, file = "data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
