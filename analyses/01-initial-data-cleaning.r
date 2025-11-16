@@ -508,7 +508,8 @@ clean_data_all <-
                             data_doi == "not available \"The application or website you were looking for is known on this server, but it is currently not available\""  |                                                                                                                         
                             data_doi == "The link to the data does not open." |
                             data_doi == "Yes but not detailed in the original publication [redirected through handle.net]" |
-                            data_doi == "they have a DOI link but it is from another paper (check - https://doi.org/10.3389/fcimb.2025.1538459.s001)" 
+                            data_doi == "they have a DOI link but it is from another paper (check - https://doi.org/10.3389/fcimb.2025.1538459.s001)" |
+                            data_doi == "Yes but DOI not found/incorrect"
                             ~ "Yes, but DOI not found/incorrect",
                               
                             data_doi == "There are two data available in one DOE, and the other one is a link to ENA" |
@@ -683,8 +684,11 @@ clean_data_all <-
                                    data_download == "the results are stored in doc file as supplementary material. The handle.org link with original data mentioned in the data availability statement doesnt work." |                                                                
                                    data_download == "They require FTP (because it is too big?). Institutional repository link not working."  |                                                                                                                                       
                                    data_download == "Not able to find the data" | 
-                                   data_download ==   "Yes, but only via copy-paste from the manuscript"
+                                   data_download == "Yes, but only via copy-paste from the manuscript"
                                    ~ "No",
+                                   
+                                   data_download == "No - because the data are embargoed" 
+                                   ~ "No, because the data are embargoed",
                                    
                                    data_download == "Dryad data - yes; NCBI GenBank link is broken" |
                                    data_download == "Full data have not been archived according to the BES data archiving policy due to restrictions from the data owners. BUT the author mentions where these data can be downloaded" |                                             
@@ -835,7 +839,7 @@ clean_data_all <-
                                  data_format == ".csv/.tsv;Data can likely also be accessed through an R package, fwdata, that is used in the archived R scripts." ~ ".csv/.tsv",                                                                                                                                                                                                                                             
                                  data_format == ".csv/.tsv;fastq, oligos"  ~ ".csv/.tsv;.fastq;.oligos",                                                                                                                                                                                                                                                                                                                                      
                                  data_format == ".csv/.tsv;grd; gri" ~  ".csv/.tsv;.grd;.gri" , 
-                                 data_format == ".csv/.tsv;It is difficult to say. The repository is huge and it is not easy to say what is data and what is something else. The README (.md) is not really informative, though there seem to be files here and there with a lot of information. In the repository, there are other files that might be data, such as .js or .geojson, but I cannot really say." ~ ".csv/.tsv;Unclear",
+                                 data_format == ".csv/.tsv;It is difficult to say. The repository is huge and it is not easy to say what is data and what is something else. The README (.md) is not really informative, though there seem to be files here and there with a lot of information. In the repository, there are other files that might be data, such as .js or .geojson, but I cannot really say." ~ ".csv/.tsv;Unsure",
                                  data_format == ".csv/.tsv;Microsoft Access Database (accdb)" ~ ".csv/.tsv;.accdb",                                                                                                                                                                                                                                                                                                                  
                                  data_format == ".csv/.tsv;R (entered manually)" ~ ".csv/.tsv",                                                                                                                                                                                                                                                                                                                            
                                  data_format == ".csv/.tsv;Raw sequence reads" ~ ".csv/.tsv",                                                                                                                                                                                                                                                                                                                                  
@@ -865,7 +869,8 @@ clean_data_all <-
                                  data_format == ".R with code to create the data" ~ NA_character_,                                                                                                                                                                                                                                                                                                                              
                                  data_format == ".rda" ~ ".Rdata",                                                                                                                                                                                                                                                                                                                                                          
                                  data_format == ".RData" ~ ".Rdata",                                                                                                                                                                                                                                                                                                                                                      
-                                 data_format == ".RData, .jags" ~ ".Rdata;.jags",                                                                                                                                                                                                                                                                                                                                                
+                                 data_format == ".RData, .jags" ~ ".Rdata;.jags", 
+                                 data_format == ".Rdata, .jags" ~ ".Rdata;.jags", 
                                  data_format == ".RDS;.xml, .adf" ~ ".RDS;.xml;.adf",                                                                                                                                                                                                                                                                                                                                              
                                  data_format == ".Rsave" ~ NA_character_,                                                                                                                                                                                                                                                                                                                                                       
                                  data_format == ".rtf (rich text format)" ~  ".rtf",                                                                                                                                                                                                                                                                                                                                      
@@ -878,7 +883,8 @@ clean_data_all <-
                                  data_format == ".txt;.aln, .fa, .nwk" ~ ".txt;.aln;.fasta;.nwk",                                                                                                                                                                                                                                                                                                                                         
                                  data_format == ".txt;.dat, .stl, .cas.gz, .out" ~ ".txt;.dat;.stl;.cas.gz;.out",                                                                                                                                                                                                                                                                                                                                
                                  data_format == ".txt;.gri; .grd; .tif; .shp"  ~ ".txt;.gri;.grd;.tif;.shp",                                                                                                                                                                                                                                                                                                                                 
-                                 data_format == ".txt;.R" ~ ".txt",                                                                                                                                                                                                                                                                                                                                                      
+                                 data_format == ".txt;.R" ~ ".txt",   
+                                 data_format == ".txt;R file" ~ ".txt", 
                                  data_format == ".txt;.R; .jpg; .gif; .Rd; .grd; .gri; .rda" ~ ".txt;.jpg;.gif;.grd;.gri;.Rdata",                                                                                                                                                                                                                                                                                                                  
                                  data_format == ".txt;.R; .py; .png" ~ ".txt;.py;.png",                                                                                                                                                                                                                                                                                                                                           
                                  data_format == ".txt;.RData" ~ ".txt;.Rdata",                                                                                                                                                                                                                                                                                                                                                 
@@ -934,29 +940,31 @@ clean_data_all <-
                                  data_format == "rda" ~ ".Rdata",                                                                                                                                                                                                                                                                                                                                                           
                                  data_format == "Rdata" ~ ".Rdata" ,                                                                                                                                                                                                                                                                                                                                                         
                                  data_format == "RData" ~ ".Rdata",                                                                                                                                                                                                                                                                                                                                                         
-                                 data_format == "rwl" ~ ".rwl",                                                                                                                                                                                                                                                                                                                                                            
+                                 data_format == "rwl" ~ ".rwl", 
+                                 data_format == ".txt;.Rda" ~ ".txt;.Rdata", 
                                  data_format == "See above" ~ NA_character_,                                                                                                                                                                                                                                                                                                                                                     
                                  data_format == "software, including .exe" ~ NA_character_,                                                                                                                                                                                                                                                                                                                                      
                                  data_format == "Table in the manuscript"  ~ NA_character_,                                                                                                                                                                                                                                                                                                                                      
                                  data_format == "The data must be produced using an R script" ~ NA_character_,                                                                                                                                                                                                                                                                                                                   
                                  data_format == "The paper developed a new R package: .rda .R .rd"  ~ NA_character_,                                                                                                                                                                                                                                                                                                             
                                  data_format == "there is no data archive, just the links to the public online databases" ~ NA_character_,                                                                                                                                                                                                                                                                                       
-                                 data_format == "unclear" ~ "Unclear",                                                                                                                                                                                                                                                                                                                                                       
-                                 data_format == "unclear what format the data is in."  ~ "Unclear",                                                                                                                                                                                                                                                                                                                          
+                                 data_format == "unclear" ~ "Unsure",                                                                                                                                                                                                                                                                                                                                                       
+                                 data_format == "unclear what format the data is in."  ~ "Unsure",                                                                                                                                                                                                                                                                                                                          
                                  data_format == "unclear, since access is restricted and subject to request." ~ NA_character_,                                                                                                                                                                                                                                                                                                   
                                  data_format == "Unclear, the DOI is dysfunctional" ~ NA_character_,                                                                                                                                                                                                                                                                                                                             
-                                 data_format == "unknown" ~ "Unclear",                                                                                                                                                                                                                                                                                                                                                      
-                                 data_format == "Unknown" ~ "Unclear",                                                                                                                                                                                                                                                                                                                                                       
+                                 data_format == "unknown" ~ "Unsure",                                                                                                                                                                                                                                                                                                                                                      
+                                 data_format == "Unknown" ~ "Unsure",                                                                                                                                                                                                                                                                                                                                                       
                                  data_format == "unknown, DOI was incorrect"  ~ NA_character_,                                                                                                                                                                                                                                                                                                                                  
-                                 data_format == "unnamed data format"  ~ "Unclear",                                                                                                                                                                                                                                                                                                                                         
-                                 data_format == "unsure" ~ "Unclear",                                                                                                                                                                                                                                                                                                                                                       
-                                 data_format == "Unsure" ~ "Unclear",                                                                                                                                                                                                                                                                                                                                                       
-                                 data_format == "UNSURE" ~ "Unclear",                                                                                                                                                                                                                                                                                                                                                     
+                                 data_format == "unnamed data format"  ~ "Unsure",                                                                                                                                                                                                                                                                                                                                         
+                                 data_format == "unsure" ~ "Unsure",                                                                                                                                                                                                                                                                                                                                                       
+                                 data_format == "Unsure" ~ "Unsure",                                                                                                                                                                                                                                                                                                                                                       
+                                 data_format == "UNSURE" ~ "Unsure",                                                                                                                                                                                                                                                                                                                                                     
                                  data_format == "Unsure because could not download" ~ NA_character_,                                                                                                                                                                                                                                                                                                                            
                                  data_format == "wav and wav.data" ~ ".wav",                                                                                                                                                                                                                                                                                                                                             
                                  data_format == "yml, zip"~ NA_character_,                                                                                                                                                                                                                                                                                                                                                     
                                  data_format == "zip file (8.39 GB), downloads fine, won't open \"error 79\"" ~ NA_character_,
                                  data_format == ".zip" ~ NA_character_,
+                                 data_format == "Unclear" ~ "Unsure",
                                  TRUE ~ as.character(data_format))) %>%
 
   #------------------------------------------------------------------------------------------------------
@@ -1042,7 +1050,8 @@ clean_data_all <-
                                  data_README == "Yes. Also considered information on Dryad webpage for purposes of Q9 (e.g. license info is only on the Dryad webpage, not in the designated README)"  |                                                                                                          
                                  data_README == "Yes. Designated README + I also considered information on Dryad webpage as metadata for Q9."  |                                                                                                                                                                  
                                  data_README == "Yes. Explicit README + info on Dryad webpage. Both considered for Q9."    |                                                                                                                                                                                      
-                                 data_README == "Yes. Explicit README + metadata on archive webpage (https://conservancy.umn.edu/items/6a8ef2c3-211d-4d2b-bc0e-ee5bf5227909) both considered for Q9."
+                                 data_README == "Yes. Explicit README + metadata on archive webpage (https://conservancy.umn.edu/items/6a8ef2c3-211d-4d2b-bc0e-ee5bf5227909) both considered for Q9." |
+                                 data_README == "From some sources there is a readme, from others no"
                                   ~ "Yes",
                                  
                                  data_README == "Data not available" |
@@ -1244,7 +1253,8 @@ clean_data_all <-
                                    code_archived == "Yes, but only some code showing how to calculate one variable from some example data and not code to replicate the full analysis."  |                                                                                                                    
                                    code_archived == "yes, even refers to code in the README files and data availability statement, but no R scripts are included in the dryad repository" |                                                                                                                   
                                    code_archived == "Yes, is it in Supporting Iinformation, but without mention it."  |                                                                                                                                                                                       
-                                   code_archived == "Yes. It was mentioned in data archiving statement. But not included in the dryad link where raw data was found. Instead codes were found in a seperate Zenodo rep shown in dryad as 'related works'."
+                                   code_archived == "Yes. It was mentioned in data archiving statement. But not included in the dryad link where raw data was found. Instead codes were found in a seperate Zenodo rep shown in dryad as 'related works'."|
+                                   code_archived == "It has code for the computer vision but not for the main R analysis"
                                    ~ "Yes",
                                    
                                    code_archived == "Claims to have code but nothing in repository" |
@@ -1273,8 +1283,9 @@ clean_data_all <-
   mutate(code_availability = case_when(code_availability == "From Data Availability Statement: \"The codes to perform SBCE probability estimation are available on Zenodo (Louvet, 2020), as well as on a GitHub repository.\"" |
                                        code_availability == "in the Data Availability statement they only talk about the data but they give the link to the code"  |
                                        code_availability == "R package is linked in Data Availability statement" |
-                                       code_availability ==  "Source code for the device is archived and mentioned in Data availability statement, code for the statistical analysis is not archived" |
-                                       code_availability ==  "Yes - \"analysis scripts\" mentioned"
+                                       code_availability == "Source code for the device is archived and mentioned in Data availability statement, code for the statistical analysis is not archived" |
+                                       code_availability == "Yes - \"analysis scripts\" mentioned" |
+                                       code_availability == "Partially avaliable in Data avalaibility"
                                        ~ "Yes",
                                        
                                        code_availability == "Code is described in Readme of files on Dryad" |
@@ -1336,7 +1347,8 @@ clean_data_all <-
                                code_link == "yes, but only by clicking on a link to zenodo within the dryad data repository"  |                                                                                                                                                                            
                                code_link == "yes, but only dev version on GitHub. Stable version on CRAN no longer available."   |                                                                                                                                                                         
                                code_link == "Yes. But it was hard to find.Codes were found in a seperate Zenodo rep shown in dryad as 'related works'. Not in the main paper."   |                                                                                                                         
-                               code_link == "Zenodo repository where the code is archived is not provided in the Data Availability statement, but is linked in the Dryad repository that *is* included in the Data Availability statement."
+                               code_link == "Zenodo repository where the code is archived is not provided in the Data Availability statement, but is linked in the Dryad repository that *is* included in the Data Availability statement." |
+                               code_link == "For CV, not for main analysis"
                                 ~ "Yes",
                               
                                code_link == "Authors' just cited their own package, but the specific code to reproduce their simulation results, etc., was not included." |                                                                                                                                
@@ -1438,8 +1450,9 @@ clean_data_all <-
                               code_doi == "https://doi.org/10.5281/zenodo.8289843"  | 
                               code_doi == "Project-specific code in institutional repository does have a DOI, the method implementation on GitHub does not" |   
                               code_doi == "package has a DOI via CRAN"   | 
-                              code_doi == "Yes, but only due to CRAN's recent automatic implementation of DOI: 10.32614/CRAN.package.emon"  
-                                ~ "Yes",
+                              code_doi == "Yes, but only due to CRAN's recent automatic implementation of DOI: 10.32614/CRAN.package.emon"  |
+                              code_doi == "For the code included"  
+                              ~ "Yes",
                             
                               code_doi == "The codes are located within the CRAN and Github repositories (this is an R package). These do not have a DOI per se."|
                               code_doi == "As before, code in supp. mat. therefore does not have a separate DOI from the paper."  
@@ -1470,7 +1483,8 @@ clean_data_all <-
                                   code_license == "The data and the code share the same license." |                                                           
                                   code_license == "Yes, the same as for the data"  |                                                                          
                                   code_license == "Yes, the same license as the dryad data package, but not a separate one."  |                               
-                                  code_license == "Zenodo version yes, GitHub no" 
+                                  code_license == "Zenodo version yes, GitHub no" |
+                                  code_license ==   "Yes, for the code included"
                                   ~ "Yes",
                                   
                                   code_license == "Unclear" |
@@ -1520,7 +1534,8 @@ clean_data_all <-
                                        code_license_type == "Unlicense license" |                                                                                                 
                                        code_license_type == "Quote: \"Other (Open)\"" |                                                                                          
                                        code_license_type == "The Unlicense"   |                                                                                                  
-                                       code_license_type == "Unclear;\"Other (Open)\""    
+                                       code_license_type == "Unclear;\"Other (Open)\"" |
+                                       code_license_type == "Unclear;Other (Open)"
                                        ~ "Other", 
 
                                        code_license_type == "CC 4.0"  |                                                                                                          
@@ -1602,7 +1617,8 @@ clean_data_all <-
                                    code_CITATION == "Not a file, but provided citation in Zenodo"  |                                                                       
                                    code_CITATION == "Same as archived data set"  |                                                                                         
                                    code_CITATION == "Same citation as data" |                                                                                              
-                                   code_CITATION == "The code is in the Dryad data repository, which has a citation."
+                                   code_CITATION == "The code is in the Dryad data repository, which has a citation."|
+                                   code_CITATION == "part of the data - cite same as data set"
                                    ~ "No",
                                   
                                    code_CITATION == "I couldn’t open the code." |  
@@ -1624,6 +1640,9 @@ clean_data_all <-
                                    code_download ==  "I can open the pdf and copy paste individual code sections into an R"
                                    ~ "No",
                                    
+                                   code_download == "Yes, for the code included"
+                                   ~ "Yes",
+                                   
                                    code_download == "No code archived" 
                                    ~ NA_character_,
                                    
@@ -1642,7 +1661,8 @@ clean_data_all <-
                                
                                code_open == "They provide R code in a PDF" |
                                code_open == "The code pertains to novel software created and presented in this publication: https://code.usgs.gov/great-lakes-science-center/computer-vision/fishscale (with it's own software DOI)" |
-                               code_open == "I can open the pdf and copy paste individual code sections into an R"  
+                               code_open == "I can open the pdf and copy paste individual code sections into an R"  |
+                               code_open == "Yes, for the code included"
                                ~ "Yes",
                                
                                code_open == "Two languages were used (R and STAN). We were able to open the R files, but not the STAN files because we did not have the right software." |                                           
@@ -1775,7 +1795,8 @@ clean_data_all <-
                                    code_language == "R (including Rmarkdown, Quarto);NetLogo"
                                    ~ "R;NetLogo",
                                    
-                                   code_language == "R (including Rmarkdown, Quarto);Python;Jags"
+                                   code_language == "R (including Rmarkdown, Quarto);Python;Jags"|
+                                   code_language == "R (including Rmarkdown, Quarto);Bugs"
                                    ~ "R;Python;BUGS/JAGS",
                                                                                                                                              
                                    code_language == "R (including Rmarkdown, Quarto);Python;CSS;HTML;Java;Also Jupyter Notebook and SCSS"
@@ -1831,7 +1852,7 @@ clean_data_all <-
                                    ~ "Python;Shell",
                                    
                                    code_language == "Python;TypeScript" 
-                                   ~ "Python/Other",
+                                   ~ "Python;Other",
                                   
                                    code_language == "Arduino" |
                                    code_language == "SAS" |
@@ -1868,7 +1889,8 @@ clean_data_all <-
                                  code_README == "There is a README file but it only contains the title and abstract of the paper"  |                                                                                                                                                                                                    
                                  code_README == "There is a README that refers to all files uploaded to GitHub. The R code files are mentioned, but not in great detail." |                                                                                                                                                             
                                  code_README == "Yes, but only for Creation of a REST API"  |                                                                                                                                                                                                                                           
-                                 code_README == "Yes. Explicit README + info on archive webpage (https://conservancy.umn.edu/items/6a8ef2c3-211d-4d2b-bc0e-ee5bf5227909) both considered for Q10."  
+                                 code_README == "Yes. Explicit README + info on archive webpage (https://conservancy.umn.edu/items/6a8ef2c3-211d-4d2b-bc0e-ee5bf5227909) both considered for Q10."  |
+                                 code_README == "Yes, for the code included"
                                    ~ "Yes",
                                  
                                  code_README =="Code and protocol annotated in html/Rmd file." |
@@ -1980,7 +2002,9 @@ clean_data_all <-
   # 36. What georegion is the first author from?
   # Note that many authors have multiple georegions.
   # This variable did not have an "other" option so does not require cleaning at this stage
-
+  # I have just changed UNCLEAR to Unsure for consistency with other variables.
+  mutate(country_first = case_when(country_first == "UNCLEAR" ~ "Unsure",
+                                   TRUE ~ as.character(country_first))) %>%
   # ------------------------------------------------------------------------------------------------------
   # 37. Comments. These have been left as is in case they are useful but are unlikely to be part
   # of the analyses in this paper. Note that many comments have been dealt with at specific points
