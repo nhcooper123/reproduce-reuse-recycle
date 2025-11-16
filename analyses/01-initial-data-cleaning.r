@@ -193,7 +193,8 @@ clean_data_all <-
   #------------------------------------------------------------------------------------------------------
   # 3. Journal
   # Fix one paper with incorrect journal name
-  mutate(journal = str_replace(journal, "Ecology and Evolution", "Methods in Ecology and Evolution")) %>%
+  # Note that this requires ^foo$ format so it doesn't replace the E & E part of MEE too
+  mutate(journal = str_replace(journal, "^Ecology and Evolution$", "Methods in Ecology and Evolution")) %>%
   #------------------------------------------------------------------------------------------------------
   # DATA!!!                                                                                                                                                                                       
   #------------------------------------------------------------------------------------------------------
