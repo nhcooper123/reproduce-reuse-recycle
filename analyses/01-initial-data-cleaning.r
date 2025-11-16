@@ -395,7 +395,8 @@ clean_data_all <-
                                       data_archive == "NCBI GenBank;PlutoF" |
                                       data_archive == "GBIF"     |                                                                    
                                       data_archive == "Institutional repository;NCBI GenBank" |
-                                      data_archive == "NCBI GenBank" 
+                                      data_archive == "NCBI GenBank" |
+                                      data_archive == "MG-RAST"
                                       ~ "Other repo/database",
                                       
                                       data_archive == "Dryad;Institutional repository" |
@@ -414,7 +415,8 @@ clean_data_all <-
                                       data_archive == "Dryad;TRY database, Dataset 416" |  
                                       data_archive == "Dryad;World Spider Trait Databasde" |
                                       data_archive == "Dryad;Only part of the data (that were uploaded on DRYAD) can be accessed. The data availability statement points to another source: LOng-Term Vegetation Sampling database https://lotvs.csic.es/ and is partially restricted." |                                                                                                                                                                                        
-                                      data_archive == "Dryad;sequence data are archived in the MG-RAST public database (Project ID: 4745987.3)"
+                                      data_archive == "Dryad;sequence data are archived in the MG-RAST public database (Project ID: 4745987.3)" |
+                                      data_archive == "Dryad;MG-RAST"     
                                       ~ "Dryad;Other repo/database",  
                                     
                                       data_archive == "Dryad;NCBI GenBank;Supplementary materials"  
@@ -471,7 +473,8 @@ clean_data_all <-
                                       data_archive == "Zenodo;https://www.fs.usda.gov/rds/archive/Catalog/RDS-2015-0010"  |                                                                                                                                                                                                                                                                                                                                                      
                                       data_archive == "Zenodo;Pangea"    |                                                                                                                                                                                                                                                                                                                                                                                                       
                                       data_archive == "Zenodo;Phenology Observation Portal" |
-                                      data_archive == "GBIF;Zenodo"
+                                      data_archive == "GBIF;Zenodo" |
+                                      data_archive == "Institutional repository;Zenodo" 
                                       ~ "Zenodo;Other repo/database",
                                       
                                       TRUE ~ as.character(data_archive))) %>%
