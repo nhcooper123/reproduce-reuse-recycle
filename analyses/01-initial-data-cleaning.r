@@ -193,7 +193,7 @@ clean_data_all <-
   #------------------------------------------------------------------------------------------------------
   # 3. Journal
   # Fix one paper with incorrect journal name
-  mutate(doi = str_replace(doi, "Ecology and Evolution", "Methods in Ecology and Evolution")) %>%
+  mutate(journal = str_replace(journal, "Ecology and Evolution", "Methods in Ecology and Evolution")) %>%
   #------------------------------------------------------------------------------------------------------
   # DATA!!!                                                                                                                                                                                       
   #------------------------------------------------------------------------------------------------------
@@ -1989,7 +1989,7 @@ clean_data_all <-
   mutate(recorder_ID = case_when(is.na(recorder_ID) ~ 148,
                    TRUE ~ as.numeric(recorder_ID)))
   # ------------------------------------------------------------------------------------------------------
- 
+  # End of cleaning!
 
 # ------------------------------------------------------------------------------------------------------
 # EXTRACT DATA VALIDATION DATASET
