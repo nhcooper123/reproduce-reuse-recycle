@@ -11,6 +11,7 @@ editor: visual
 # Load libraries
 library(tidyverse)
 library(knitr)
+library(here)
 
 # Build colour scheme for the journals
 journal_cols <- c("#9FE2BF", # ESE
@@ -24,7 +25,7 @@ journal_cols <- c("#9FE2BF", # ESE
 
 Read in the data
 ```{r}
-papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
+papers <- read_csv(here("code/BES-data-code-hackathon-cleaned_2025-11-16.csv"))
 ```
 
 ## How many distinct papers do we have data for? ----
@@ -125,22 +126,6 @@ ggplot(paper_summary, aes(x = year_published, y = count, fill = journal)) +
   theme(strip.background = element_rect(colour = "black", fill = "white"), 
         strip.text.x = element_text(size = 9))
 ``` 
-
-[1] "paper_number"            "doi"                     "year_published"         
-[4] "journal"                 "article_type"            "data_used"              
-[7] "data_availability"       "data_availability_text"  "data_link"              
-[10] "data_archive"            "data_doi"                "data_license"           
-[13] "data_license_type"       "data_download"           "data_open"              
-[16] "data_format"             "data_README"             "data_README_scale"      
-[19] "data_completeness"       "code_used"               "code_alert"             
-[22] "code_archived"           "code_availability"       "code_link"              
-[25] "code_archive"            "code_doi"                "code_license"           
-[28] "code_license_type"       "code_CITATION"           "code_download"          
-[31] "code_open"               "code_format"             "code_language"          
-[34] "code_README"             "code_README_scale"       "code_annotation_scale"  
-[37] "code_vignette"           "code_Rpackage_available" "code_application_cited" 
-[40] "code_comments"           "country_first"           "comments"               
-[43] "recorder_ID"
 # Data
 
 ## 1. How many papers have data? 
@@ -149,8 +134,7 @@ data_by_journal <-
   papers %>% 
   group_by(journal, data_used)
 
-ggplot(data_by_journal, 
-       aes(x = journal, fill = data_used)) + 
+ggplot(data_by_journal, aes(x = journal, fill = data_used)) + 
   geom_bar(position = "fill") + 
   coord_flip() + 
   scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
@@ -162,13 +146,12 @@ Note that any papers identified as not having data have been removed for any sub
 ## 2a. Is the data mentioned in the Data Availability statement?
 
 ```{r}
-has_data_by_journal <- 
+data_avail_by_journal <- 
   papers %>% 
   filter(data_used == "Yes") %>% 
   select(journal, data_availability)
 
-ggplot(has_data_by_journal, 
-       aes(x = journal, fill = data_availability)) + 
+ggplot(data_avail_by_journal, aes(x = journal, fill = data_availability)) + 
   geom_bar(position = "fill") + 
   scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
   coord_flip() + 
@@ -178,16 +161,15 @@ ggplot(has_data_by_journal,
 ## 2b. Can the data be accessed via the link? 
 
 ```{r}
-has_data_by_journal <- 
+data_link_by_journal <- 
   papers %>% 
   filter(data_used == "Yes") %>% 
   select(journal, data_link) %>% 
   na.omit()
 
-ggplot(has_data_by_journal, 
-       aes(x = journal, fill = data_link)) + 
+ggplot(data_link_by_journal, aes(x = journal, fill = data_link)) + 
   geom_bar(position = "fill") + 
-  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
   coord_flip() + 
   theme_bw()
 ```
@@ -195,130 +177,78 @@ ggplot(has_data_by_journal,
 ## 2c. Can the data be downloaded? 
 
 ```{r}
-has_data_by_journal <- 
+data_download_by_journal <- 
   papers %>% 
   filter(data_used == "Yes") %>% 
   select(journal, data_download) %>% 
+  mutate(data_download = factor(data_download, levels = c("No", "No, because the data are embargoed",
+                                                          "Yes, but not all data", "Yes" ))) %>%
   na.omit()
 
-ggplot(has_data_by_journal, 
-       aes(x = journal, fill = data_download)) + 
+ggplot(data_download_by_journal, aes(x = journal, fill = data_download)) + 
   geom_bar(position = "fill") + 
-  scale_fill_manual(values = c("#3b2f2f", "#faa773", "#56c8d3", "#f9cf57")) +
+  scale_fill_manual(values = c("#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
   coord_flip() + 
   theme_bw()
 ```
 
 ## 2d. Can the data be opened?
 ```{r}
-has_data_by_journal <- 
+data_open_by_journal <- 
   papers %>% 
   filter(data_used == "Yes") %>% 
   select(journal, data_open) %>% 
+  mutate(data_open = factor(data_open, levels = c("No", "Needs specific software or too large",
+                                                          "Yes, but not all files", "Yes" ))) %>%
   na.omit()
 
-ggplot(has_data_by_journal, 
-       aes(x = journal, fill = data_open)) + 
+ggplot(data_open_by_journal, aes(x = journal, fill = data_open)) + 
   geom_bar(position = "fill") + 
-  scale_fill_manual(values = c("#faa773", "#3b2f2f",  "#56c8d3", "#f9cf57")) +
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
   coord_flip() + 
   theme_bw()
 ```
 
 ## 3. What formats are the data stored in?
 
-This will need some cleaning
+This still needs some cleaning and grouping
 
 ```{r}
-has_data_by_journal <- dat %>% 
+# Top data 10 formats
+summary_data_format <- 
+  papers %>% 
   filter(data_used == "Yes") %>% 
-  select(journal, data_format) %>% 
-  
-  
-  
-  df %>% 
-  pivot_longer(cols = names(df)[1:3],
-                    values_to = "newvar") %>% 
-  select(newvar, ID)
-  
-  
-  
-  
-  
-  
-  na.omit() %>% 
-  mutate(data_format = case_when(
-    data_format %in% c(".csv/tsv",
-                       ".doc(x)",
-                       ".nex",
-                       ".odt",
-                       ".ods",
-                       ".pdf",
-                       ".sql(ite)",
-                       ".txt",
-                       ".xls(x)") ~ data_format, 
-    TRUE ~ "Other/Multiple"),
-    data_format = factor(data_format, levels = c(".csv/tsv",
-                       ".doc(x)",
-                       ".nex",
-                       ".odt",
-                       ".ods",
-                       ".pdf",
-                       ".sql(ite)",
-                       ".txt",
-                       ".xls(x)", 
-                       "Other/Multiple")))
+  select(data_format) %>%
+  separate_longer_delim(cols = data_format, delim = ";") %>%
+  na.omit() %>%
+  group_by(data_format) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>% 
+  slice(1:10)
 
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = data_format)) + 
-  geom_bar(position = "fill") + 
-  coord_flip() + 
-  theme_bw()
+kable(summary_data_format)
+
 ```
 
 ## 4. Where are the data archived? 
 
-This is also going to require cleaning
-
 ```{r}
-has_data_by_journal <- dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(journal = `4. Journal  (on spreadsheet)`,
-         repo = `3. Where are the data archived?`) %>% 
-  select(journal, repo) %>% 
-  na.omit() %>% 
-  mutate(repo = case_when(
-    repo %in% c("DataVerse",
-                "Dryad",
-                "Figshare",
-                "GBIF",
-                "GitHub, GitLab, Codeberg or similar platform",
-                "Institutional repository",
-                "NCBI GenBank",
-                "OSF",
-                "Personal website",
-                "Supplementary materials",
-                "Zenodo") ~ repo, 
-    TRUE ~ "Other/Multiple"
-  ),
-  repo = factor(repo, levels = c("DataVerse",
-                "Dryad",
-                "Figshare",
-                "GBIF",
-                "GitHub, GitLab, Codeberg or similar platform",
-                "Institutional repository",
-                "NCBI GenBank",
-                "OSF",
-                "Personal website",
-                "Supplementary materials",
-                "Zenodo",
-                "Other/Multiple"))) 
+data_archive_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_archive) %>% 
+  na.omit() %>%
+  separate_longer_delim(cols = data_archive, delim = ";")
 
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = repo)) + 
+# split by journal
+ggplot(data_archive_by_journal, aes(x = journal, fill = data_archive)) + 
   geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+
+# Without splitting by journal
+ggplot(data_archive_by_journal, aes(x = data_archive)) + 
+  geom_bar() + 
   coord_flip() + 
   theme_bw()
 ```
@@ -326,145 +256,88 @@ ggplot(has_data_by_journal,
 ## 5. Does the data have a license? Which?
 
 ```{r}
-has_data_by_journal <- dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(journal = `4. Journal  (on spreadsheet)`,
-         licence = `11. Does the data have a license?`) %>% 
-  select(journal, licence) %>% 
-  na.omit() %>% 
-  mutate(licence = case_when(
-    licence %in% c("Yes", "No", "Unsure") ~ licence, 
-    TRUE ~ "Other"),
-    licence = factor(licence, 
-                     levels = c("Other", "Unsure", "No", "Yes")))
+data_license_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_license) %>% 
+  mutate(data_license = factor(data_license, levels = c("No", "Unsure", "Yes, but not for all data archived", "Yes"))) %>%
+  na.omit() 
 
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = licence)) + 
+ggplot(data_license_by_journal, aes(x = journal, fill = data_license)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 5b. If it does have a license what type? 
+
+```{r}
+data_license_type_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes" & data_license_type != "No") %>% 
+  select(journal, data_license_type) %>% 
+  na.omit() 
+
+ggplot(data_license_type_by_journal, aes(x = journal, fill = data_license_type)) + 
   geom_bar(position = "fill") + 
   coord_flip() + 
   theme_bw()
 ```
 
-Top 10 licence types: 
+
+## 6. Does the data have a DOI?
 
 ```{r}
-dat %>% 
-  rename(licence = "12. If yes, what license?") %>%
-  filter(!is.na(licence)) %>% 
-  group_by(licence) %>% 
-  summarise(count = n()) %>% 
-  arrange(-count) %>% 
-  slice(1:10) %>% 
-  kable()
-```
-
-
-## 6. Does the data have a DOI
-
-```{r}
-has_data_by_journal <- dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(journal = `4. Journal  (on spreadsheet)`,
-         doi = `4. Does the dataset have a DOI?`) %>% 
-  select(journal, doi) %>% 
-  na.omit() %>% 
-  mutate(doi = case_when(
-    doi %in% c("Yes", 
-                   "No", 
-                   "Unsure", 
-                   "Yes but DOI not found/incorrect") ~ doi, 
-    TRUE ~ "Other"),
-    doi = factor(doi, levels = c("Other", "Unsure", "No", "Yes but DOI not found/incorrect", "Yes")))
-
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = doi)) + 
+data_doi_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_doi) %>% 
+  na.omit() 
+ 
+ggplot(data_doi_by_journal, aes(x = journal, fill = data_doi)) + 
   geom_bar(position = "fill") + 
   coord_flip() + 
   theme_bw()
 ```
-
-## 7. Has the data been cited? 
-
-```{r}
-has_data_by_journal <- dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(journal = `4. Journal  (on spreadsheet)`,
-         cited = `15. Has the data been cited by someone other than the original authors? You can find this by clicking on the citations and looking at the papers that cite the data.`) %>% 
-  select(journal, cited) %>% 
-  na.omit() %>% 
-  mutate(cited = case_when(
-    cited %in% c("Yes","No", "Unsure") ~ cited, 
-    TRUE ~ "Other"),
-    cited = factor(cited, levels = c("Other", "Unsure", "No", "Yes")))
-
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = cited)) + 
-  geom_bar(position = "fill") + 
-  coord_flip() + 
-  theme_bw()
-```
-
-```{r}
-dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(doi = `2. DOI of paper (please copy paste to avoid errors)`, journal = `4. Journal  (on spreadsheet)`,
-         cited = `16. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear`) %>% 
-  select(journal, doi, cited) %>%
-  filter(!cited %in% c(
-    "NULL", "Unsure", "Unclear", "N/A", "0")
-    ) %>% 
-  mutate(cited = as.numeric(cited)) %>% 
-  na.omit() %>%
-  arrange(-cited) %>% 
-  kable()
-```
-
 
 ## 8a. Does the data have a readme? 
 
 ```{r}
-has_data_by_journal <- dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(journal = `4. Journal  (on spreadsheet)`,
-         readme = `8. Does the data have a README/metadata?`) %>% 
-  select(journal, readme) %>%
-  na.omit() %>% 
-  mutate(readme = case_when(
-    readme %in% c("Yes", "No", "Unsure") ~ readme, 
-    TRUE ~ "Other"),
-    readme = factor(readme, levels = c("Other", "Unsure", "No", "Yes")))
+data_readme_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_README) %>%
+  na.omit()
 
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = readme)) + 
+ggplot(data_readme_by_journal, aes(x = journal, fill = data_README)) + 
   geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
   coord_flip() + 
   theme_bw()
 ```
 ## 8b. How useful is the readme? 
 
 ```{r}
-has_data_by_journal <- dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(journal = `4. Journal  (on spreadsheet)`,
-         readme = `9. How useful is the README/metadata? Read the notes in the protocol to help with decisions here. SKIP THIS Q IF NO README EXISTS.`) %>% 
-  select(journal, readme) %>% 
-  mutate(readme_useful = as.factor(readme)) %>% 
+data_readme_scale_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_README_scale) %>%
   na.omit()
 
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = readme_useful)) + 
-  geom_bar(position = "fill") + 
-  coord_flip() + 
-  theme_bw()
+ggplot(data_readme_scale_by_journal, aes(x = data_README_scale, fill = journal)) + 
+  geom_bar() + 
+  theme_bw() +
+  scale_fill_manual(values = journal_cols) +
+  facet_wrap(~journal) +
+  theme(legend.position = "none")
+```
 
-has_data_by_journal %>% 
+```{r}
+# Average usefulness of README
+data_readme_scale_by_journal %>% 
   group_by(journal) %>% 
-  summarise(`Average README usefulness` = mean(readme, na.rm = TRUE)) %>% 
+  summarise(`Average README usefulness` = mean(data_README_scale, na.rm = TRUE)) %>% 
   arrange(-`Average README usefulness`) %>% 
   kable()
 
@@ -472,32 +345,319 @@ has_data_by_journal %>%
 
 ## 9. How complete are the archived data? 
 ```{r}
-has_data_by_journal <- dat %>% 
-  filter(`7. Does the paper have data?` == "Yes") %>% 
-  rename(journal = `4. Journal  (on spreadsheet)`,
-         data_complete = `10. How complete is the archived data?`) %>% 
-  select(journal, data_complete) %>% 
-  na.omit() %>% 
-  mutate(data_complete = case_when(
-    data_complete == "The main analyses of the paper cannot be repeated with the data that has been archived." ~ "No",
-    data_complete == "Some analyses can be repeated but not all (~50% of analyses can be repeated)." ~ "50%",
-    data_complete == "Most data are provided with only small omissions, for example exploratory analyses (~75% of analyses can be repeated)." ~ "75%",
-    data_complete == "All the data necessary to reproduce all analyses and results are archived." ~ "100%",
-    data_complete == "Unsure" ~ "Unsure",
-    TRUE ~ "Other")) 
+data_completeness_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_completeness) %>% 
+  mutate(data_completeness = factor(data_completeness, levels = c("Unsure", "Low", "Fair", 
+                                                                  "High", "Complete"))) %>%
+  na.omit() 
 
-ggplot(has_data_by_journal, 
-       aes(x = journal,
-           fill = data_complete)) + 
+ggplot(data_completeness_by_journal, aes(x = journal, fill = data_completeness)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+# Code
+
+## 1a. How many papers have code? 
+```{r}
+code_by_journal <- 
+  papers %>% 
+  group_by(journal, code_used)
+
+ggplot(code_by_journal, aes(x = journal, fill = code_used)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_manual(values = c("#3b2f2f", "yellow", "#56c8d3")) +
+  theme_bw()
+```
+
+Note that any papers identified as not having code have been removed for any subsequent analysis.
+
+## 1b. How many papers have archived code? 
+```{r}
+code_archived_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>%
+  select(journal, code_archived) %>%
+  na.omit()
+
+ggplot(code_archived_by_journal, aes(x = journal, fill = code_archived)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw()
+```
+
+## 2a. Is the code mentioned in the code Availability statement?
+
+```{r}
+code_avail_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_availability) %>%
+  na.omit()
+
+ggplot(code_avail_by_journal, aes(x = journal, fill = code_availability)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2b. Can the code be accessed via the link? 
+
+```{r}
+code_link_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_link) %>% 
+  na.omit()
+
+ggplot(code_link_by_journal, aes(x = journal, fill = code_link)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2c. Can the code be downloaded? 
+
+```{r}
+code_download_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_download) %>% 
+  na.omit()
+
+ggplot(code_download_by_journal, aes(x = journal, fill = code_download)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2d. Can the code be opened?
+```{r}
+code_open_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_open) %>%
+  na.omit()
+
+ggplot(code_open_by_journal, aes(x = journal, fill = code_open)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#faa773", "#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 3. What formats are the code stored in?
+
+```{r}
+code_format_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_format) %>%
+  separate_longer_delim(cols = code_format, delim = ";") %>%
+  na.omit()
+
+ggplot(code_format_by_journal, aes(x = journal, fill = code_format)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+
+```
+
+## 4. Where are the code archived? 
+
+```{r}
+code_archive_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_archive) %>% 
+  na.omit() %>%
+  separate_longer_delim(cols = code_archive, delim = ";")
+
+# split by journal
+ggplot(code_archive_by_journal, aes(x = journal, fill = code_archive)) + 
   geom_bar(position = "fill") + 
   coord_flip() + 
   theme_bw()
 ```
 
-# Validation
+```{r}
+# Without splitting by journal
+ggplot(code_archive_by_journal, aes(x = code_archive)) + 
+  geom_bar() + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 5. Does the code have a license? Which?
 
 ```{r}
-val_dat <- filter(dat, `1. Paper number` == "2272")
+code_license_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_license) %>% 
+  na.omit() 
+
+ggplot(code_license_by_journal, aes(x = journal, fill = code_license)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 5b. If it does have a license what type? 
+
+```{r}
+code_license_type_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes" & code_license_type != "No") %>% 
+  select(journal, code_license_type) %>% 
+  na.omit() 
+
+ggplot(code_license_type_by_journal, aes(x = journal, fill = code_license_type)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+
+## 6. Does the code have a DOI?
+
+```{r}
+code_doi_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_doi) %>% 
+  na.omit() 
+ 
+ggplot(code_doi_by_journal, aes(x = journal, fill = code_doi)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 8a. Does the code have a readme? 
+
+```{r}
+code_readme_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_README) %>%
+  na.omit()
+
+ggplot(code_readme_by_journal, aes(x = journal, fill = code_README)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+## 8b. How useful is the readme? 
+
+```{r}
+code_readme_scale_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_README_scale) %>%
+  na.omit()
+
+ggplot(code_readme_scale_by_journal, aes(x = code_README_scale, fill = journal)) + 
+  geom_bar() + 
+  theme_bw() +
+  scale_fill_manual(values = journal_cols) +
+  facet_wrap(~journal) +
+  theme(legend.position = "none")
+```
+
+```{r}
+# Average usefulness of README
+code_readme_scale_by_journal %>% 
+  group_by(journal) %>% 
+  summarise(`Average README usefulness` = mean(code_README_scale, na.rm = TRUE)) %>% 
+  arrange(-`Average README usefulness`) %>% 
+  kable()
 
 ```
 
+## 9. How good is the annotation of the code?
+```{r}
+code_annotation_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_annotation_scale) %>%
+  na.omit()
+
+ggplot(code_annotation_by_journal, aes(x = code_annotation_scale, fill = journal)) + 
+  geom_bar() + 
+  theme_bw() +
+  scale_fill_manual(values = journal_cols) +
+  facet_wrap(~journal) +
+  theme(legend.position = "none")
+```
+```{r}
+# Average completeness of annotation
+code_annotation_by_journal %>% 
+  group_by(journal) %>% 
+  summarise(`Average annotation` = mean(code_annotation_scale, na.rm = TRUE)) %>% 
+  arrange(-`Average annotation`) %>% 
+  kable()
+
+```
+
+## 10. Does the code have a CITATION file?
+```{r}
+code_CITATION_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_CITATION) %>%
+  na.omit() 
+
+ggplot(code_CITATION_by_journal, aes(x = journal, fill = code_CITATION)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 10. Does the code have a manual?
+
+```{r}
+code_manual_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_vignette) %>%
+  na.omit() 
+
+ggplot(code_manual_by_journal, aes(x = journal, fill = code_vignette)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+```
+
+
+## 11. What language is the code in?
+
+```{r}
+# Top code 10 languages
+summary_code_language <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(code_language) %>%
+  separate_longer_delim(cols = code_language, delim = ";") %>%
+  na.omit() %>%
+  group_by(code_language) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>% 
+  slice(1:10)
+
+kable(summary_code_language)
+
+```
