@@ -25,7 +25,7 @@ journal_cols <- c("#9FE2BF", # ESE
 
 Read in the data
 ```{r}
-papers <- read_csv(here("code/BES-data-code-hackathon-cleaned_2025-11-16.csv"))
+papers <- read_csv(here("data/BES-data-code-hackathon-cleaned_2025-11-16.csv"))
 ```
 
 ## How many distinct papers do we have data for? ----
