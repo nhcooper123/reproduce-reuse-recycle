@@ -14,7 +14,7 @@ journal_cols <- c("#9FE2BF", # ESE
                   "#F2D2BD") # People and Nature
 
 # Read in the data
-papers <- read_csv(here("data/BES-data-code-hackathon-cleaned_2025-11-16.csv"))
+papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
 
 #--------------------------------------------------------------------------------
 # 1. Does the paper use code/data, and is it archived?
