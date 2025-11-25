@@ -147,18 +147,10 @@ dataFAplot + codeFAplot + plot_annotation(tag_levels = 'A')
 # 3. Are data/code interoperable?
 # What format are they saved in? What programming language is code written in?
 #--------------------------------------------------------------------------------  
-
-ggplot(papers, aes(x = data_format)) + 
-  geom_bar() +
-  coord_flip() +
-  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
-  theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
-  xlab("")
-
-
-summary_data_format <- 
+# Data format
+# First work out how many entries are not in the top ten 
+# these should be added to the plot as "other"
+topten <-
   papers %>% 
   filter(data_used == "Yes") %>% 
   select(data_format) %>%
@@ -167,6 +159,153 @@ summary_data_format <-
   group_by(data_format) %>%
   summarise(count = n()) %>% 
   arrange(-count) %>% 
-  slice(1:10)
+  slice(1:10) %>%
+  summarise(sum(count))
 
-kable(summary_data_format)
+total <-
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(data_format) %>%
+  separate_longer_delim(cols = data_format, delim = ";") %>%
+  na.omit() %>%
+  group_by(data_format) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>% 
+  summarise(sum(count))
+
+# How many are "other"
+other_count <- as.numeric(total-topten)
+
+# Create summary dataset for data format
+# Select just the top 10 or it gets very large
+summary_data_format <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(data_format) %>%
+  separate_longer_delim(cols = data_format, delim = ";") %>%
+  na.omit() %>%
+  # Combine RDS and Rdata
+  mutate(data_format = case_when(data_format == ".RDS" | data_format == ".Rdata" 
+                                 ~ ".rda/.rdata/.rds",
+                                 TRUE ~ as.character(data_format))) %>%
+  group_by(data_format) %>%
+  summarise(count = n()) %>% 
+  # arrange in reverse order
+  arrange(-count) %>%
+  # select just top ten
+  slice(1:10) %>%
+  # add "other" option
+  rbind(data.frame(data_format = "other", count = other_count))
+
+# Plot
+data_format_plot <-
+  ggplot(summary_data_format, aes(x = data_format, y = count)) + 
+  geom_col() +
+  theme_bw(base_size = 14) +
+  coord_flip() +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("data format")
+#--------------------------------------------------------------------------------
+# Code format
+# Create summary dataset for code format
+summary_code_format <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(code_format) %>%
+  separate_longer_delim(cols = code_format, delim = ";") %>%
+  na.omit() %>%
+  group_by(code_format) %>%
+  summarise(count = n()) %>% 
+  arrange(-count)
+
+# Plot
+code_format_plot <-
+  ggplot(summary_code_format, aes(x = code_format, y = count)) + 
+  geom_col() +
+  theme_bw(base_size = 14) +
+  coord_flip() +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("code format")
+
+#---------------------
+# Combine two plots
+(data_format_plot + code_format_plot) + plot_annotation(tag_levels = "A")
+
+#-------------------------------------------------------------------------------
+# Code language
+# Create summary dataset for code language
+summary_code_language <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(code_language) %>%
+  separate_longer_delim(cols = code_language, delim = ";") %>%
+  na.omit() %>%
+  group_by(code_language) %>%
+  summarise(count = n()) %>% 
+  arrange(-count)
+
+# Plot
+code_language_plot <-
+  ggplot(summary_code_language, aes(x = code_language, y = count)) + 
+  geom_col() +
+  coord_flip() +
+  theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("code language")
+
+#--------------------------------------------------------------------------------
+# 4. Where are data/code archived?
+#-------------------------------------------------------------------------------
+# Create summary dataset for data archive
+summary_data_archive <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(data_archive) %>%
+  separate_longer_delim(cols = data_archive, delim = ";") %>%
+  na.omit() %>%
+  group_by(data_archive) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>%
+  # Add a column to id this as for data
+  mutate(type = rep("data", n()))  %>%
+  # rename column so the two datasets match
+  rename(archive = data_archive)
+
+# Create summary dataset for code archive
+summary_code_archive <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(code_archive) %>%
+  separate_longer_delim(cols = code_archive, delim = ";") %>%
+  na.omit() %>%
+  group_by(code_archive) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>%
+  # Add a column to id this as for code
+  mutate(type = rep("code", n())) %>%
+  # rename column so the two datasets match
+  rename(archive = code_archive)
+
+# Stick the two summary datasets together
+summary_all_archive <-
+  rbind(summary_data_archive, summary_code_archive) %>%
+  # change levels so plot is in correct order (data first)
+  mutate(type = factor(type, levels = c("data", "code")))
+
+# Get totals
+summary_all_archive %>% group_by(type) %>% summarise(sum(count))
+
+# Plot
+archive_plot <-
+  ggplot(summary_all_archive, aes(x = archive, y = count)) + 
+  geom_col() +
+  coord_flip() +
+  theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("") +
+  facet_wrap(~type, scales = "free_x") +
+  theme(strip.background = element_rect(fill = "white"))
