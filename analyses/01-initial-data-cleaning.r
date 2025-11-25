@@ -1389,7 +1389,8 @@ clean_data_all <-
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Personal website"
                                   ~ "GitHub, GitLab, Codeberg or similar platform;Other repo/database", 
 
-                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;R CRAN"
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;R CRAN" |
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;CRAN"
                                   ~ "GitHub, GitLab, Codeberg or similar platform;CRAN",
                                   
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;\"available at ftp://pbil.univ-lyon1.fr/pub/datasets/dray/DiazNature/\"" |
@@ -1397,7 +1398,8 @@ clean_data_all <-
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;Software Heritage Library; OpenAIRE"
                                   ~ "GitHub, GitLab, Codeberg or similar platform;Zenodo;Other repo/database", 
 
-                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;R CRAN" 
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;R CRAN" |
+                                  code_archive ==  "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;CRAN"
                                   ~ "GitHub, GitLab, Codeberg or similar platform;Zenodo;CRAN", 
                                   
                                   code_archive == "Institutional repository;Supplementary materials"  |                                                                                                                                            
@@ -1409,9 +1411,24 @@ clean_data_all <-
                                   code_archive == "Supplementary Information" 
                                   ~ "Supplementary materials",
                                   
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform"
+                                  ~ "GitHub, GitLab, Codeberg or similar platform",
+                                  
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Supplementary materials" 
+                                  ~ "GitHub, GitLab, Codeberg or similar platform;Supplementary materials",
+                                  
+                                  code_archive == "Dryad;GitHub, Codeberg, Gitlab, or similar platform"
+                                  ~ "Dryad;GitHub, GitLab, Codeberg or similar platform",
+                                  
+                                  code_archive == "Dryad;GitHub, Codeberg, Gitlab, or similar platform;Zenodo"  
+                                  ~ "Dryad;GitHub, GitLab, Codeberg or similar platform;Zenodo",
+                                  
                                   code_archive == "On rdrr.io with link to code on Zenodo" |
                                   code_archive == "Zenodo;PeerJ"
                                   ~ "Zenodo;Other repo/database",
+                                  
+                                  code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo"
+                                  ~ "GitHub, GitLab, Codeberg or similar platform;Zenodo",
                                   
                                   code_archive == "No code archived" |
                                   code_archive == "The code was said to have been made available in the supplementary information as an Rmarkdown file, but this is not found when you download the supplementary material"
