@@ -1387,18 +1387,18 @@ clean_data_all <-
                                     
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Institutional repository" |
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Personal website"
-                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;Other repo/database", 
+                                  ~ "GitHub, GitLab, Codeberg or similar platform;Other repo/database", 
 
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;R CRAN"
-                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;CRAN",
+                                  ~ "GitHub, GitLab, Codeberg or similar platform;CRAN",
                                   
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;\"available at ftp://pbil.univ-lyon1.fr/pub/datasets/dray/DiazNature/\"" |
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;Hugging Face" |
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;Software Heritage Library; OpenAIRE"
-                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;Other repo/database", 
+                                  ~ "GitHub, GitLab, Codeberg or similar platform;Zenodo;Other repo/database", 
 
                                   code_archive == "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;R CRAN" 
-                                  ~ "GitHub, Codeberg, Gitlab, or similar platform;Zenodo;CRAN", 
+                                  ~ "GitHub, GitLab, Codeberg or similar platform;Zenodo;CRAN", 
                                   
                                   code_archive == "Institutional repository;Supplementary materials"  |                                                                                                                                            
                                   code_archive == "Institutional repository;Supplementary materials;USGS (https://code.usgs.gov/)" |
