@@ -1,4 +1,5 @@
 # Making figures for the paper
+# Dec 2025
 
 # Load libraries
 library(tidyverse)
@@ -16,6 +17,38 @@ journal_cols <- c("#9FE2BF", # ESE
 # Read in the data
 papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
 
+#------------------------------------------------------------------------------
+# Summary figures
+#------------------------------------------------------------------------------
+# How many paper from each journal?
+journal_summary <-
+  papers %>%
+  group_by(journal) %>%
+  summarise(count = n())
+
+journals <-
+  ggplot(journal_summary, aes(x = journal, y = count, fill = journal)) +
+  geom_col() +
+  theme_bw(base_size = 14) +
+  scale_fill_manual(values = journal_cols) +
+  coord_flip() +
+  theme(legend.position = "none") +
+  xlab("")
+
+# How many papers per year?
+year_summary <-
+  papers %>%
+  group_by(year_published) %>%
+  summarise(count = n())
+
+years <-
+  ggplot(year_summary, aes(x = year_published, y = count)) +
+  geom_col(fill = "lightgrey") +
+  theme_bw(base_size = 14) +
+  xlab("year published")
+
+# combine the two figures
+journals + years + plot_annotation(tag_levels = "A")
 #--------------------------------------------------------------------------------
 # 1. Does the paper use code/data, and is it archived?
 # Very small numbers for data not archived is data that is embargoed
@@ -24,12 +57,13 @@ papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
 # Make a dataframe for plotting
 data_code_by_journal <- 
   papers %>% 
+  # select just required variables
   select(journal, data_used, data_availability, code_used, code_archived) %>%
-  # reshape the data so that we can plot all fur variables together
+  # reshape the data so that we can plot all four variables together
   pivot_longer(data_used:code_archived, names_to = "var") %>%
   # reorder the factors so the order is correct in the plot
   mutate(var = factor(var, levels = c("data_used", "data_availability", "code_used", "code_archived"))) %>%
-  # change the names
+  # change the names so they look better on the plots
   mutate(var = case_when(var == "data_used" ~ "data used",
                          var == "data_availability" ~ "data archived",
                          var == "code_used" ~ "code used",
@@ -37,7 +71,7 @@ data_code_by_journal <-
   # Recode the available on request as No since there are so few of these
   mutate(value = case_when(value == "No, but they are available on request" ~ "No",
                            TRUE ~ as.character(value))) %>%
-  # Get the totals for each variable to plot
+  # Get the totals for each variable to plot grouped by journal
   group_by(journal, var, value) %>%
   summarise(papers = n()) %>%
   # Exclude NAs
@@ -145,7 +179,7 @@ dataFAplot + codeFAplot + plot_annotation(tag_levels = 'A')
 
 #--------------------------------------------------------------------------------
 # 3. Are data/code interoperable?
-# What format are they saved in? What programming language is code written in?
+# A. What format are they saved in? 
 #--------------------------------------------------------------------------------  
 # Data format
 # First work out how many entries are not in the top ten 
@@ -229,13 +263,15 @@ code_format_plot <-
   theme(legend.title = element_blank()) +
   xlab("code format")
 
-#---------------------
-# Combine two plots
+#---------------------------------------------
+# Combine two plots for data and code into one
 (data_format_plot + code_format_plot) + plot_annotation(tag_levels = "A")
 
 #-------------------------------------------------------------------------------
-# Code language
+# 3. Are data/code interoperable? 
+# B. What programming language is code written in?
 # Create summary dataset for code language
+#-------------------------------------------------------------------------------
 summary_code_language <- 
   papers %>% 
   filter(code_used == "Yes") %>% 
@@ -309,3 +345,55 @@ archive_plot <-
   xlab("") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white"))
+
+#--------------------------------------------------------------------------------
+# 5. Are data/code reusable?
+# A. DATA
+# Readme
+# Complete
+#-------------------------------------------------------------------------------
+# Make a dataframe for plotting
+data_reuse <- 
+  papers %>%
+  filter(data_availability == "Yes") %>% 
+  select(data_README, data_README_scale, data_completeness) %>%
+  # reshape the data so that we can plot all four variables together
+  pivot_longer(data_README:data_completeness, names_to = "var") %>%
+  # reorder the factors so the order is correct in the plot
+  mutate(var = factor(var, levels = c("data_README", "data_README_scale", "data_completeness"))) %>%
+  # Recode the available on request and embargoed data as No since there are so few of these
+  # And shorten the other options to Maybe
+  #mutate(value = case_when(value == "No, but they are available on request" ~ "No",
+     #                      value == "No, because the data are embargoed" ~ "No",
+    #                       value == "Needs specific software or too large" ~ "Maybe",
+     #                      value == "Yes, but not all files" ~ "Yes",
+     #                      value == "Yes, but not all data" ~ "Yes",
+     #                      TRUE ~ as.character(value))) %>%
+ # mutate(value = factor(value, levels = c("No", "Maybe", "Yes"))) %>%
+  # Get the totals for each variable to plot
+  group_by(var, value) %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() 
+
+data_reuse_plot <-
+  ggplot(data_reuse, aes(x = var, y = papers, fill = value)) + 
+  geom_bar(position = "stack", stat = "identity") +
+  coord_flip() +
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  theme_bw(base_size = 14) +
+  # Remove legend
+  theme(legend.position = "none") +
+  xlab("") 
+
+#--------------------------------------------------------------------------------
+# 5. Are data/code reusable?
+# B. CODE
+# Readme
+# Complete
+Vignette
+Annotation
+package
+
+#-------------------------------------------------------------------------------
+
