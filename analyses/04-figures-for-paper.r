@@ -490,7 +490,7 @@ data_doi <-
   filter(data_availability == "Yes") %>% 
   select(data_doi) %>%
   group_by(data_doi) %>%
-  summarise(papers = n()) %>%
+  summarise(count = n()) %>%
   # Exclude NAs
   na.omit() %>%
   # Add a column to id this as for data
@@ -504,7 +504,7 @@ code_doi <-
   filter(code_archived == "Yes") %>% 
   select(code_doi) %>%
   group_by(code_doi) %>%
-  summarise(papers = n()) %>%
+  summarise(count = n()) %>%
   # Exclude NAs
   na.omit() %>%
   # Add a column to id this as for code
@@ -516,23 +516,25 @@ code_doi <-
 all_doi <-
   rbind(code_doi, data_doi) %>%
   # change levels so plot is in correct order (data first)
-  mutate(type = factor(type, levels = c("data", "code")))
+  mutate(type = factor(type, levels = c("data", "code"))) %>%
+  # exclude smaller options
+  filter(doi == "Yes" | doi == "No")
 
 # Get totals
-all_doi %>% group_by(type) %>% summarise(sum(papers))
+all_doi %>% group_by(type) %>% summarise(sum(count))
 
 # Plot
 doi_plot <-
-  ggplot(all_doi, aes(x = doi, y = papers, fill = doi)) + 
+  ggplot(all_doi, aes(x = doi, y = count, fill = doi)) + 
   geom_col() +
   coord_flip() +
   theme_bw(base_size = 14) +
   # Remove legend title
   theme(legend.title = element_blank()) +
-  xlab("") +
+  xlab("DOI") +
   facet_wrap(~type, scales = "free_x", ncol = 1) +
   theme(strip.background = element_rect(fill = "white")) +
-  #scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
   # Remove legend
   theme(legend.position = "none")
 
@@ -546,7 +548,7 @@ data_license <-
   filter(data_availability == "Yes") %>% 
   select(data_license) %>%
   group_by(data_license) %>%
-  summarise(papers = n()) %>%
+  summarise(count = n()) %>%
   # Exclude NAs
   na.omit() %>%
   # Add a column to id this as for data
@@ -560,7 +562,7 @@ code_license <-
   filter(code_archived == "Yes") %>% 
   select(code_license) %>%
   group_by(code_license) %>%
-  summarise(papers = n()) %>%
+  summarise(count = n()) %>%
   # Exclude NAs
   na.omit() %>%
   # Add a column to id this as for code
@@ -572,48 +574,71 @@ code_license <-
 all_license <-
   rbind(code_license, data_license) %>%
   # change levels so plot is in correct order (data first)
-  mutate(type = factor(type, levels = c("data", "code")))
+  mutate(type = factor(type, levels = c("data", "code"))) %>%
+  # exclude smaller groupings
+  filter(license == "Yes" | license == "No")
 
 # Get totals
-all_license %>% group_by(type) %>% summarise(sum(papers))
+all_license %>% group_by(type) %>% summarise(sum(count))
 
 # Plot
 license_plot <-
-  ggplot(all_license, aes(x = license, y = papers, fill = license)) + 
-  geom_col() +
+  ggplot(all_license, aes(x = license, fill = license)) + 
+  geom_bar(position = "fill") +
   coord_flip() +
   theme_bw(base_size = 14) +
   # Remove legend title
   theme(legend.title = element_blank()) +
-  xlab("") +
+  xlab("license") +
   facet_wrap(~type, scales = "free_x", ncol = 1) +
   theme(strip.background = element_rect(fill = "white")) +
-  #scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
   # Remove legend
   theme(legend.position = "none")
 
 #---------------------
 # C. License type
 # --------------------
-papers %>% 
-  filter(data_used == "Yes") %>% 
+# data
+data_license_type <-
+  papers %>% 
+  filter(data_used == "Yes" & data_license_type != "No") %>% 
   select(data_license_type) %>%
-  #separate_longer_delim(cols = data_archive, delim = ";") %>%
   na.omit() %>%
   group_by(data_license_type)  %>%
-  summarise(papers = n()) %>%
+  summarise(count  = n()) %>%
   # Exclude NAs
   na.omit() 
 
+data_ltype_plot <-
+  ggplot(data_license_type, aes(x = data_license_type, y = count)) + 
+  geom_col() +
+  coord_flip() +
+  theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("")
 
-papers %>% 
-  filter(code_archived == "Yes") %>% 
+code_license_type <-
+  papers %>% 
+  filter(code_archived == "Yes" & code_license_type != "Unsure") %>% 
   select(code_license_type) %>%
-  #separate_longer_delim(cols = data_archive, delim = ";") %>%
   na.omit() %>%
   group_by(code_license_type)  %>%
-  summarise(papers = n()) %>%
+  summarise(count = n()) %>%
   # Exclude NAs
   na.omit() 
 
+code_ltype_plot <-
+  ggplot(code_license_type, aes(x = code_license_type, y = count)) + 
+  geom_col() +
+  coord_flip() +
+  theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("")
+
+#--------------
+# Combine plots
+(license_plot) + (data_ltype_plot + code_ltype_plot) + plot_annotation(tag_levels = "A")
 
