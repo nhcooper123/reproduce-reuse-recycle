@@ -477,3 +477,143 @@ papers %>% summarise(median(data_README_scale, na.rm = TRUE))
 papers %>% summarise(median(code_README_scale, na.rm = TRUE))
 papers %>% summarise(median(code_annotation_scale, na.rm = TRUE))
 
+#--------------------------------------------------------------------------------
+# 6. Are data/code citable?
+# DOI + license + license type
+#-------------------------------------------------------------------------------
+# A. DOI
+#-----------------
+# Make a dataframes for plotting
+# data
+data_doi <- 
+  papers %>%
+  filter(data_availability == "Yes") %>% 
+  select(data_doi) %>%
+  group_by(data_doi) %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # Add a column to id this as for data
+  mutate(type = rep("data", n())) %>%
+  # rename column so the two datasets match
+  rename(doi = data_doi)
+
+# code
+code_doi <- 
+  papers %>%
+  filter(code_archived == "Yes") %>% 
+  select(code_doi) %>%
+  group_by(code_doi) %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # Add a column to id this as for code
+  mutate(type = rep("code", n())) %>%
+  # rename column so the two datasets match
+  rename(doi = code_doi)
+
+# combine the two
+all_doi <-
+  rbind(code_doi, data_doi) %>%
+  # change levels so plot is in correct order (data first)
+  mutate(type = factor(type, levels = c("data", "code")))
+
+# Get totals
+all_doi %>% group_by(type) %>% summarise(sum(papers))
+
+# Plot
+doi_plot <-
+  ggplot(all_doi, aes(x = doi, y = papers, fill = doi)) + 
+  geom_col() +
+  coord_flip() +
+  theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("") +
+  facet_wrap(~type, scales = "free_x", ncol = 1) +
+  theme(strip.background = element_rect(fill = "white")) +
+  #scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  # Remove legend
+  theme(legend.position = "none")
+
+#-----------------
+# B. License
+#-----------------
+# Make a dataframes for plotting
+# data
+data_license <- 
+  papers %>%
+  filter(data_availability == "Yes") %>% 
+  select(data_license) %>%
+  group_by(data_license) %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # Add a column to id this as for data
+  mutate(type = rep("data", n())) %>%
+  # rename column so the two datasets match
+  rename(license = data_license)
+
+# code
+code_license <- 
+  papers %>%
+  filter(code_archived == "Yes") %>% 
+  select(code_license) %>%
+  group_by(code_license) %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # Add a column to id this as for code
+  mutate(type = rep("code", n())) %>%
+  # rename column so the two datasets match
+  rename(license = code_license)
+
+# combine the two
+all_license <-
+  rbind(code_license, data_license) %>%
+  # change levels so plot is in correct order (data first)
+  mutate(type = factor(type, levels = c("data", "code")))
+
+# Get totals
+all_license %>% group_by(type) %>% summarise(sum(papers))
+
+# Plot
+license_plot <-
+  ggplot(all_license, aes(x = license, y = papers, fill = license)) + 
+  geom_col() +
+  coord_flip() +
+  theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("") +
+  facet_wrap(~type, scales = "free_x", ncol = 1) +
+  theme(strip.background = element_rect(fill = "white")) +
+  #scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  # Remove legend
+  theme(legend.position = "none")
+
+#---------------------
+# C. License type
+# --------------------
+papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(data_license_type) %>%
+  #separate_longer_delim(cols = data_archive, delim = ";") %>%
+  na.omit() %>%
+  group_by(data_license_type)  %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() 
+
+
+papers %>% 
+  filter(code_archived == "Yes") %>% 
+  select(code_license_type) %>%
+  #separate_longer_delim(cols = data_archive, delim = ";") %>%
+  na.omit() %>%
+  group_by(code_license_type)  %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() 
+
+
