@@ -640,5 +640,5 @@ code_ltype_plot <-
 
 #--------------
 # Combine plots
-(license_plot) + (data_ltype_plot + code_ltype_plot) + plot_annotation(tag_levels = "A")
+(doi_plot + license_plot) / data_ltype_plot / code_ltype_plot + plot_annotation(tag_levels = "A")
 
