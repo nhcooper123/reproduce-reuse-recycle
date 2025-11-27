@@ -49,6 +49,7 @@ years <-
 
 # combine the two figures
 journals + years + plot_annotation(tag_levels = "A")
+ggsave(file = "figures/summary-journal-year.jpg", width = 8)
 #--------------------------------------------------------------------------------
 # 1. Does the paper use code/data, and is it archived?
 # Very small numbers for data not archived is data that is embargoed
@@ -348,52 +349,131 @@ archive_plot <-
 
 #--------------------------------------------------------------------------------
 # 5. Are data/code reusable?
-# A. DATA
-# Readme
-# Complete
+# README + completeness + annotation
 #-------------------------------------------------------------------------------
-# Make a dataframe for plotting
-data_reuse <- 
+# A. README
+#-----------------
+# Make a dataframes for plotting
+# data
+data_readme <- 
   papers %>%
   filter(data_availability == "Yes") %>% 
-  select(data_README, data_README_scale, data_completeness) %>%
-  # reshape the data so that we can plot all four variables together
-  pivot_longer(data_README:data_completeness, names_to = "var") %>%
-  # reorder the factors so the order is correct in the plot
-  mutate(var = factor(var, levels = c("data_README", "data_README_scale", "data_completeness"))) %>%
-  # Recode the available on request and embargoed data as No since there are so few of these
-  # And shorten the other options to Maybe
-  #mutate(value = case_when(value == "No, but they are available on request" ~ "No",
-     #                      value == "No, because the data are embargoed" ~ "No",
-    #                       value == "Needs specific software or too large" ~ "Maybe",
-     #                      value == "Yes, but not all files" ~ "Yes",
-     #                      value == "Yes, but not all data" ~ "Yes",
-     #                      TRUE ~ as.character(value))) %>%
- # mutate(value = factor(value, levels = c("No", "Maybe", "Yes"))) %>%
-  # Get the totals for each variable to plot
-  group_by(var, value) %>%
+  select(data_README) %>%
+  filter(data_README != "Unsure") %>%
+  group_by(data_README) %>%
   summarise(papers = n()) %>%
   # Exclude NAs
-  na.omit() 
+  na.omit() %>%
+  # Add a column to id this as for data
+  mutate(type = rep("data", n())) %>%
+  # rename column so the two datasets match
+  rename(README = data_README)
 
-data_reuse_plot <-
-  ggplot(data_reuse, aes(x = var, y = papers, fill = value)) + 
-  geom_bar(position = "stack", stat = "identity") +
+# code
+code_readme <- 
+  papers %>%
+  filter(code_archived == "Yes") %>% 
+  select(code_README) %>%
+  group_by(code_README) %>%
+  summarise(papers = n()) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # Add a column to id this as for code
+  mutate(type = rep("code", n())) %>%
+  # rename column so the two datasets match
+  rename(README = code_README)
+
+# combine the two
+all_readme <-
+  rbind(code_readme, data_readme) %>%
+  # change levels so plot is in correct order (data first)
+  mutate(type = factor(type, levels = c("data", "code")))
+
+# Get totals
+all_readme %>% group_by(type) %>% summarise(sum(papers))
+
+# Plot
+readme_plot <-
+  ggplot(all_readme, aes(x = README, y = papers, fill = README)) + 
+  geom_col() +
   coord_flip() +
-  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
   theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("") +
+  facet_wrap(~type, scales = "free_x", ncol = 1) +
+  theme(strip.background = element_rect(fill = "white")) +
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
   # Remove legend
-  theme(legend.position = "none") +
-  xlab("") 
+  theme(legend.position = "none")
 
-#--------------------------------------------------------------------------------
-# 5. Are data/code reusable?
-# B. CODE
-# Readme
-# Complete
-Vignette
-Annotation
-package
+#-----------------
+# B. README scales
+#-----------------
+# data plot
+scale_data_plot <- 
+  ggplot(papers, aes(x = data_README_scale)) +
+  geom_histogram(bins = 10, colour = "white", fill = "darkgrey") +
+  theme_bw(base_size = 14) +
+  xlab("data README scale") +
+  scale_x_continuous(breaks = c(1:10)) +
+  ylab("papers")
 
-#-------------------------------------------------------------------------------
+# code plot
+scale_code_plot <- 
+  ggplot(papers, aes(x = code_README_scale)) +
+  geom_histogram(bins = 10, colour = "white", fill = "darkgrey") +
+  theme_bw(base_size = 14) +
+  xlab("code README scale") +
+  scale_x_continuous(breaks = c(1:10)) +
+  ylab("papers")
+
+#---------------------
+# C. Data completeness
+#---------------------
+# Make dataframe for plot
+data_complete <- 
+  papers %>%
+  filter(data_availability == "Yes") %>% 
+  select(data_completeness) %>%
+  group_by(data_completeness) %>%
+  summarise(papers = n()) %>%
+  # Fix level of factor
+  mutate(data_completeness = factor(data_completeness, 
+                                    levels = c("Unsure", "Low", "Fair", "High", "Complete"))) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # fix levels
+  mutate()
+
+# Plot
+complete_data_plot <- 
+  ggplot(data_complete, aes(x = data_completeness, y = papers)) +
+  geom_col() +
+  theme_bw(base_size = 14) +
+  xlab("data completeness") +
+  scale_x_discrete(labels = c("Unsure" = "Unsure", "Low" = "1",
+                              "Fair" = "2", "High" = "3",
+                              "Complete" = "4"))
+#-------------------
+# D. Code annotation
+#-------------------
+# Plot
+annotate_code_plot <- 
+  ggplot(papers, aes(x = code_annotation_scale)) +
+  geom_histogram(bins = 10, colour = "white", fill = "darkgrey") +
+  theme_bw(base_size = 14) +
+  xlab("code annotation scale") +
+  scale_x_continuous(breaks = c(1:10)) +
+  ylab("papers")
+
+#-----------------
+# Combine plots
+readme_plot + scale_data_plot/scale_code_plot + complete_data_plot/annotate_code_plot + plot_annotation(tag_levels = "A")
+
+#-----------------
+# Get median scores
+papers %>% summarise(median(data_README_scale, na.rm = TRUE))
+papers %>% summarise(median(code_README_scale, na.rm = TRUE))
+papers %>% summarise(median(code_annotation_scale, na.rm = TRUE))
 
