@@ -1,6 +1,6 @@
 # reproduce-reuse-recycle
 
-Code and data for pinniped macroevolution paper
+Code and data for MEE paper
 
 Author(s): Natalie Cooper and the hack-a-thon gang
 
