@@ -228,6 +228,22 @@ clean_data_all <-
                                        paper_number == 346 ~ "Yes",
                                        paper_number == 1132 ~ "Yes",
                                        paper_number == 1595 ~ "Yes",
+                                       # Correct entries with specified available on request but answered yes
+                                       data_archive == "According to ethical requirements data is available only upon request to the authors." |
+                                       data_archive == "Data held by one author and the Missouri Department of Conservation" |                                                                                                                                                                                                                                                                                                                                                    
+                                       data_archive == "Data is only available on request." |                                                                                                                                                                                                                                                                                                                                                                                      
+                                       data_archive == "Data NOT archived because of twitter privacy terms." |
+                                       data_archive == "As a list of citations to third-party data sources" |
+                                       data_archive == "Figure 3 in the methods section, and the immediaately proceeding paragraph." |                                                                                                                                                                                                                                                                                                                                            
+                                       data_archive == "From other cited documents, but not findable in Google Scholar. So no access to data." |
+                                       data_archive == "In the manuscript" |                                                                                                                                                                                                                                                                                                                                                                                                      
+                                       data_archive == "In the paper itself" |
+                                       data_archive == "It is a metaanalysis, point interested readers to the list of revised papers" |                                                                                                                                                                                                                                                                                                                                           
+                                       data_archive == "Kenyan STR profiles are unshareable." |  
+                                       data_archive == "nowhere" |
+                                       data_archive == "On request" |
+                                       data_archive == "The aphid and plankton data used for this study can be obtained after getting permission from the data owners, the Rothamsted Insect Survey and the Sir Alister Hardy Foundation for Ocean Science, which is part of the Marine Biological Association of the UK. Chlorophyll data from the California current were processed from https://coastwatch.pfeg.noaa.gov/erddap/tabledap/index.html?page=1&itemsPerPage=1000."
+                                       ~ "No, but they are available on request",
                                        TRUE ~ as.character(data_availability))) %>%
   #------------------------------------------------------------------------------------------------------
   # IF DATA ARE ONLY AVAILABLE ON REQUEST, OR NOT IN THE DATA AVAILABILITY STATEMENT AT ALL,
@@ -258,7 +274,6 @@ clean_data_all <-
   # 7. Data archive 
   # Correcting errors in data archive. Some should have NA here as no data are available. 
   # Lots are institutional repos
-  # ### CHECK THESE NA ONES AS THEY SHOULD NOT SAY DATA IS ARCHIVED
   mutate(data_archive = case_when(data_archive == "According to ethical requirements data is available only upon request to the authors." |
                                       data_archive == "Data held by one author and the Missouri Department of Conservation" |                                                                                                                                                                                                                                                                                                                                                    
                                       data_archive == "Data is only available on request." |                                                                                                                                                                                                                                                                                                                                                                                      
@@ -2067,4 +2082,4 @@ naniar::vis_miss(clean_data_all_noduplicates)
 # ------------------------------------------------------------------------------------------------------
 # WRITE TO FILE
 # ------------------------------------------------------------------------------------------------------ 
-write_csv(clean_data_all_noduplicates, file = "data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
+write_csv(clean_data_all_noduplicates, file = "data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
