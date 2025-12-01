@@ -15,7 +15,7 @@ journal_cols <- c("#9FE2BF", # ESE
                   "#F2D2BD") # People and Nature
 
 # Read in the data
-papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
+papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
 
 #------------------------------------------------------------------------------
 # Summary figures
@@ -357,7 +357,7 @@ archive_plot <-
 # data
 data_readme <- 
   papers %>%
-  filter(data_availability == "Yes") %>% 
+  filter(data_used == "Yes") %>% 
   select(data_README) %>%
   filter(data_README != "Unsure") %>%
   group_by(data_README) %>%
@@ -372,7 +372,7 @@ data_readme <-
 # code
 code_readme <- 
   papers %>%
-  filter(code_archived == "Yes") %>% 
+  filter(code_used == "Yes") %>% 
   select(code_README) %>%
   group_by(code_README) %>%
   summarise(papers = n()) %>%
@@ -481,120 +481,63 @@ papers %>% summarise(median(code_annotation_scale, na.rm = TRUE))
 # 6. Are data/code citable?
 # DOI + license + license type
 #-------------------------------------------------------------------------------
-# A. DOI
-#-----------------
+# A + B. DOI + license
+#-----------------------
 # Make a dataframes for plotting
 # data
-data_doi <- 
+data_doi_license <- 
   papers %>%
-  filter(data_availability == "Yes") %>% 
-  select(data_doi) %>%
-  group_by(data_doi) %>%
-  summarise(count = n()) %>%
+  select(data_doi, data_license) %>%
+  # reshape the data so that we can plot all variables together
+  pivot_longer(data_doi:data_license, names_to = "var") %>%
+  # change the names
+  mutate(var = case_when(var == "data_doi" ~ "data DOI",
+                         var == "data_license" ~ "data license")) %>%
+  mutate(value = factor(value, levels = c("No", "Yes"))) %>%
+  # Get the totals for each variable to plot
+  group_by(var, value) %>%
+  summarise(papers = n()) %>%
   # Exclude NAs
-  na.omit() %>%
-  # Add a column to id this as for data
-  mutate(type = rep("data", n())) %>%
-  # rename column so the two datasets match
-  rename(doi = data_doi)
-
-# code
-code_doi <- 
-  papers %>%
-  filter(code_archived == "Yes") %>% 
-  select(code_doi) %>%
-  group_by(code_doi) %>%
-  summarise(count = n()) %>%
-  # Exclude NAs
-  na.omit() %>%
-  # Add a column to id this as for code
-  mutate(type = rep("code", n())) %>%
-  # rename column so the two datasets match
-  rename(doi = code_doi)
-
-# combine the two
-all_doi <-
-  rbind(code_doi, data_doi) %>%
-  # change levels so plot is in correct order (data first)
-  mutate(type = factor(type, levels = c("data", "code"))) %>%
-  # exclude smaller options
-  filter(doi == "Yes" | doi == "No")
-
-# Get totals
-all_doi %>% group_by(type) %>% summarise(sum(count))
+  na.omit() 
 
 # Plot
-doi_plot <-
-  ggplot(all_doi, aes(x = doi, y = count, fill = doi)) + 
-  geom_col() +
+data_doi_license_plot <-
+  ggplot(data_doi_license, aes(x = var, y = papers, fill = value)) + 
+  geom_bar(position = "stack", stat = "identity") +
   coord_flip() +
-  theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
-  xlab("DOI") +
-  facet_wrap(~type, scales = "free_x", ncol = 1) +
-  theme(strip.background = element_rect(fill = "white")) +
   scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw(base_size = 14) +
   # Remove legend
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  xlab("") 
 
-#-----------------
-# B. License
-#-----------------
-# Make a dataframes for plotting
-# data
-data_license <- 
-  papers %>%
-  filter(data_availability == "Yes") %>% 
-  select(data_license) %>%
-  group_by(data_license) %>%
-  summarise(count = n()) %>%
-  # Exclude NAs
-  na.omit() %>%
-  # Add a column to id this as for data
-  mutate(type = rep("data", n())) %>%
-  # rename column so the two datasets match
-  rename(license = data_license)
-
+#-----
 # code
-code_license <- 
+code_doi_license <- 
   papers %>%
-  filter(code_archived == "Yes") %>% 
-  select(code_license) %>%
-  group_by(code_license) %>%
-  summarise(count = n()) %>%
+  select(code_doi, code_license) %>%
+  # reshape the data so that we can plot all variables together
+  pivot_longer(code_doi:code_license, names_to = "var") %>%
+  # change the names
+  mutate(var = case_when(var == "code_doi" ~ "code DOI",
+                         var == "code_license" ~ "code license")) %>%
+  mutate(value = factor(value, levels = c("No", "Yes"))) %>%
+  # Get the totals for each variable to plot
+  group_by(var, value) %>%
+  summarise(papers = n()) %>%
   # Exclude NAs
-  na.omit() %>%
-  # Add a column to id this as for code
-  mutate(type = rep("code", n())) %>%
-  # rename column so the two datasets match
-  rename(license = code_license)
-
-# combine the two
-all_license <-
-  rbind(code_license, data_license) %>%
-  # change levels so plot is in correct order (data first)
-  mutate(type = factor(type, levels = c("data", "code"))) %>%
-  # exclude smaller groupings
-  filter(license == "Yes" | license == "No")
-
-# Get totals
-all_license %>% group_by(type) %>% summarise(sum(count))
+  na.omit() 
 
 # Plot
-license_plot <-
-  ggplot(all_license, aes(x = license, fill = license)) + 
-  geom_bar(position = "fill") +
+code_doi_license_plot <-
+  ggplot(code_doi_license, aes(x = var, y = papers, fill = value)) + 
+  geom_bar(position = "stack", stat = "identity") +
   coord_flip() +
-  theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
-  xlab("license") +
-  facet_wrap(~type, scales = "free_x", ncol = 1) +
-  theme(strip.background = element_rect(fill = "white")) +
   scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
-  # Remove legend
-  theme(legend.position = "none")
+  theme_bw(base_size = 14) +
+  xlab("") +
+  # Remove legend title
+  theme(legend.title = element_blank())
 
 #---------------------
 # C. License type
@@ -640,5 +583,292 @@ code_ltype_plot <-
 
 #--------------
 # Combine plots
-(doi_plot + license_plot) / data_ltype_plot / code_ltype_plot + plot_annotation(tag_levels = "A")
+(data_doi_license_plot + code_doi_license_plot) / (data_ltype_plot + code_ltype_plot) + plot_annotation(tag_levels = "A")
 
+#--------------------------------------
+# How have things changed through time?
+#--------------------------------------
+# DATA
+#--------------------------------------
+# used
+data_used_year_plot <-
+  ggplot(papers, aes(x = year_published, fill = data_used)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# archived
+papers_archived_year <-
+  papers %>%
+  select(year_published, data_availability) %>%
+  na.omit() %>%
+  mutate(data_availability = case_when(data_availability == "No, but they are available on request" ~ "No",
+                                       TRUE ~ as.character(data_availability)))
+data_archived_year_plot <-
+  ggplot(papers_archived_year, aes(x = year_published, fill = data_availability)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# link
+papers_link_year <-
+  papers %>%
+  select(year_published, data_link) %>%
+  na.omit() 
+
+data_link_year_plot <-
+  ggplot(papers_link_year, aes(x = year_published, fill = data_link)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# download
+papers_download_year <-
+  papers %>%
+  select(year_published, data_download) %>%
+  na.omit() %>%
+  mutate(data_download = case_when(data_download == "No, because the data are embargoed" ~ "No",
+                                   data_download == "Yes, but not all data" ~ "Yes",
+                                   TRUE ~ as.character(data_download)))
+
+data_download_year_plot <-
+  ggplot(papers_download_year, aes(x = year_published, fill = data_download)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# open
+papers_open_year <-
+  papers %>%
+  select(year_published, data_open) %>%
+  na.omit() %>%
+  mutate(data_open = case_when(data_open == "Needs specific software or too large" ~ "Maybe",
+                               data_open == "Yes, but not all files" ~ "Yes",
+                               TRUE ~ as.character(data_open))) %>%
+  mutate(data_open = factor(data_open, levels = c("No", "Maybe", "Yes")))
+
+data_open_year_plot <-
+  ggplot(papers_open_year, aes(x = year_published, fill = data_open)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# readme
+papers_readme_year <-
+  papers %>%
+  select(year_published, data_README) %>%
+  na.omit() %>%
+  filter(data_README != "Unsure")
+
+data_readme_year_plot <-
+  ggplot(papers_readme_year, aes(x = year_published, fill = data_README)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# DOI
+papers_doi_year <-
+  papers %>%
+  select(year_published, data_doi) %>%
+  na.omit() %>%
+  filter(data_doi != "Unsure") %>%
+  mutate(data_doi = case_when(data_doi == "Yes, but not for all data archived" ~ "Yes",
+                              data_doi == "Yes, but DOI not found/incorrect" ~ "No",
+                              TRUE ~ as.character(data_doi)))
+
+data_doi_year_plot <-
+  ggplot(papers_doi_year, aes(x = year_published, fill = data_doi)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# license
+papers_license_year <-
+  papers %>%
+  select(year_published, data_license) %>%
+  na.omit() %>%
+  filter(data_license != "Unsure") %>%
+  mutate(data_license = case_when(data_license == "Yes, but not for all data archived" ~ "Yes",
+                               TRUE ~ as.character(data_license)))
+  
+data_license_year_plot <-
+  ggplot(papers_license_year, aes(x = year_published, fill = data_license)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+#------------------------------------
+# Combine!
+data_used_year_plot + data_archived_year_plot + data_link_year_plot + data_download_year_plot +
+  data_open_year_plot + data_readme_year_plot + data_doi_year_plot + data_license_year_plot + plot_annotation(tag_levels = "A")
+
+#--------------------------------------
+# CODE
+#--------------------------------------
+# used
+code_used_year_plot <-
+  ggplot(papers, aes(x = year_published, fill = code_used)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57","#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# archived
+papers_archived_year <-
+  papers %>%
+  select(year_published, code_archived) %>%
+  na.omit() 
+
+code_archived_year_plot <-
+  ggplot(papers_archived_year, aes(x = year_published, fill = code_archived)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# link
+papers_link_year <-
+  papers %>%
+  select(year_published, code_link) %>%
+  na.omit() 
+
+code_link_year_plot <-
+  ggplot(papers_link_year, aes(x = year_published, fill = code_link)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# download
+papers_download_year <-
+  papers %>%
+  select(year_published, code_download) %>%
+  na.omit() 
+
+code_download_year_plot <-
+  ggplot(papers_download_year, aes(x = year_published, fill = code_download)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# open
+papers_open_year <-
+  papers %>%
+  select(year_published, code_open) %>%
+  na.omit() %>%
+  mutate(code_open = case_when(code_open == "Maybe if I had the right software" ~ "Maybe",
+                               TRUE ~ as.character(code_open))) %>%
+  mutate(code_open = factor(code_open, levels = c("No", "Maybe", "Yes")))
+
+code_open_year_plot <-
+  ggplot(papers_open_year, aes(x = year_published, fill = code_open)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# readme
+papers_readme_year <-
+  papers %>%
+  select(year_published, code_README) %>%
+  na.omit() %>%
+  filter(code_README != "Unsure")
+
+code_readme_year_plot <-
+  ggplot(papers_readme_year, aes(x = year_published, fill = code_README)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# DOI
+papers_doi_year <-
+  papers %>%
+  select(year_published, code_doi) %>%
+  na.omit() %>%
+  filter(code_doi != "Unsure") %>%
+  mutate(code_doi = case_when(code_doi == "Yes, same as data" ~ "Yes",
+                              TRUE ~ as.character(code_doi)))
+
+code_doi_year_plot <-
+  ggplot(papers_doi_year, aes(x = year_published, fill = code_doi)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+# license
+papers_license_year <-
+  papers %>%
+  select(year_published, code_license) %>%
+  na.omit() %>%
+  filter(code_license != "Unsure")
+
+code_license_year_plot <-
+  ggplot(papers_license_year, aes(x = year_published, fill = code_license)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion")
+
+#------------------------------------
+# Combine!
+code_used_year_plot + code_archived_year_plot + code_link_year_plot + code_download_year_plot +
+  code_open_year_plot + code_readme_year_plot + code_doi_year_plot + code_license_year_plot + plot_annotation(tag_levels = "A")
