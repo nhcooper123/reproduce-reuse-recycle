@@ -1,0 +1,12 @@
+data_format,count,percent
+.csv/.tsv,796,37.905
+.doc(x),34,1.619
+.fasta,14,0.667
+.pdf,16,0.762
+.rda/.rdata/.rds,85,4.048
+.shp,29,1.381
+.tif,22,1.048
+.txt,195,9.286
+.xls(x),664,31.619
+.xml,16,0.762
+other,243,11.571

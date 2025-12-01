@@ -1,0 +1,10 @@
+code_format,count,percent
+.csv/.tsv,4,0.62
+.doc(x),16,2.481
+.html,5,0.775
+.pdf,18,2.791
+.txt,22,3.411
+Other,4,0.62
+Unsure,2,0.31
+native source code,473,73.333
+notebook,101,15.659
