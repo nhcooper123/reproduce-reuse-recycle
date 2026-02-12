@@ -210,8 +210,6 @@ ggplot(data_open_by_journal, aes(x = journal, fill = data_open)) +
 
 ## 3. What formats are the data stored in?
 
-This still needs some cleaning and grouping
-
 ```{r}
 # Top data 10 formats
 summary_data_format <- 
@@ -638,9 +636,6 @@ ggplot(code_manual_by_journal, aes(x = journal, fill = code_vignette)) +
   coord_flip() + 
   theme_bw()
 ```
-
-```
-
 
 ## 11. What language is the code in?
 
