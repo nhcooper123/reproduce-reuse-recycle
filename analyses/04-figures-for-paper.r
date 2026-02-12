@@ -1,18 +1,17 @@
 # Making figures for the paper
-# Dec 2025
 
 # Load libraries
 library(tidyverse)
 library(patchwork)
 
 # Build colour scheme for the journals
-journal_cols <- c("#9FE2BF", # ESE
-                  "#F4C430", # Functional Ecology
-                  "#2AAA8A", # J Applied Ecology
-                  "#C3B1E1", # J Animal Ecology
-                  "#A7C7E7", # J Ecology
-                  "#DE3163", # MEE
-                  "#F2D2BD") # People and Nature
+journal_cols <- c("#A2DACC", # ESE
+                  "#EDC04E", # Functional Ecology
+                  "#45B599", # J Applied Ecology
+                  "#AC92ED", # J Animal Ecology
+                  "#AECEF6", # J Ecology
+                  "#e3626f", # MEE
+                  "#DDAC93") # People and Nature
 
 # Read in the data
 papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
