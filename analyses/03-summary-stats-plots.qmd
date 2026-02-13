@@ -66,7 +66,8 @@ ggplot(journal_summary, aes(x = journal, y = count, fill = journal)) +
 year_summary <-
   papers %>%
   group_by(year_published) %>%
-  summarise(count = n())
+  summarise(count = n(), precent = count/1861*100)
+  
 
 # Look at results
 kable(year_summary)
