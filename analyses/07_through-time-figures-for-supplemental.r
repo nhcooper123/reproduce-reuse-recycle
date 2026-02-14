@@ -128,3 +128,106 @@ time_code_fig <-
 
 # Save figure
 ggsave(time_code_fig, file = "figures/supp-fig_code-through-time.jpg", width = 10, height = 5)
+
+#--------------------------------------
+# CODE @ MEE only
+#--------------------------------------
+# Create a long dataframe for plotting
+time_code_MEE <- 
+  papers %>%
+  filter(journal == "Methods in Ecology and Evolution") %>%
+  # Select just variables of interest
+  select(year_published, code_used, code_availability, code_link, code_download,
+         code_open, code_doi, code_license, code_README) %>%
+  # Recode as appropriate to clean options up a bit
+  mutate(code_open = case_when(code_open == "Maybe if I had the right software" ~ "Maybe",
+                               TRUE ~ as.character(code_open))) %>%
+  mutate(code_doi = case_when(code_doi == "Yes, same as data" ~ "Yes",
+                              TRUE ~ as.character(code_doi))) %>%
+  # Reshape to make columns into rows 
+  pivot_longer(c(code_used:code_README), names_to = "var") %>%
+  # change the names so they look better on the plots
+  mutate(var = case_when(var == "code_used" ~ "used",
+                         var == "code_availability" ~ "archived",
+                         var == "code_link" ~ "link",
+                         var == "code_download" ~ "download",
+                         var == "code_open" ~ "open",
+                         var == "code_README" ~ "README",
+                         var == "code_doi" ~ "doi",
+                         var == "code_license" ~ "license")) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # Order levels of value
+  mutate(value = factor(value, levels = c("No", "Maybe", "Yes"))) %>%
+  # reorder the factors so the order is correct in the plot
+  mutate(var = factor(var, levels = c("used", "archived", "link",
+                                      "download", "open", "README",
+                                      "doi", "license")))
+
+# Plot
+time_code_MEE_fig <- 
+  ggplot(time_code_MEE, aes(x = year_published, fill = value)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57","#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion") +
+  facet_wrap(~var) +
+  theme(strip.background = element_rect(fill = "white"))
+
+# Save figure
+ggsave(time_code_MEE_fig, file = "figures/supp-fig_code-through-time-MEE.jpg", width = 10, height = 5)
+
+
+#--------------------------------------
+# CODE excluding MEE
+#--------------------------------------
+# Create a long dataframe for plotting
+time_code_noMEE <- 
+  papers %>%
+  filter(journal != "Methods in Ecology and Evolution") %>%
+  # Select just variables of interest
+  select(year_published, code_used, code_availability, code_link, code_download,
+         code_open, code_doi, code_license, code_README) %>%
+  # Recode as appropriate to clean options up a bit
+  mutate(code_open = case_when(code_open == "Maybe if I had the right software" ~ "Maybe",
+                               TRUE ~ as.character(code_open))) %>%
+  mutate(code_doi = case_when(code_doi == "Yes, same as data" ~ "Yes",
+                              TRUE ~ as.character(code_doi))) %>%
+  # Reshape to make columns into rows 
+  pivot_longer(c(code_used:code_README), names_to = "var") %>%
+  # change the names so they look better on the plots
+  mutate(var = case_when(var == "code_used" ~ "used",
+                         var == "code_availability" ~ "archived",
+                         var == "code_link" ~ "link",
+                         var == "code_download" ~ "download",
+                         var == "code_open" ~ "open",
+                         var == "code_README" ~ "README",
+                         var == "code_doi" ~ "doi",
+                         var == "code_license" ~ "license")) %>%
+  # Exclude NAs
+  na.omit() %>%
+  # Order levels of value
+  mutate(value = factor(value, levels = c("No", "Maybe", "Yes"))) %>%
+  # reorder the factors so the order is correct in the plot
+  mutate(var = factor(var, levels = c("used", "archived", "link",
+                                      "download", "open", "README",
+                                      "doi", "license")))
+
+# Plot
+time_code_noMEE_fig <- 
+  ggplot(time_code_noMEE, aes(x = year_published, fill = value)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57","#56c8d3")) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = c(2017:2024), labels = 2017:2024) +
+  xlab("") +
+  ylab("proportion") +
+  facet_wrap(~var) +
+  theme(strip.background = element_rect(fill = "white"))
+
+# Save figure
+ggsave(time_code_noMEE_fig, file = "figures/supp-fig_code-through-time-noMEE.jpg", width = 10, height = 5)
