@@ -406,7 +406,7 @@ readme_plot <-
 # data plot
 scale_data_plot <- 
   ggplot(papers, aes(x = data_README_scale)) +
-  geom_histogram(bins = 10, colour = "white", fill = "darkgrey") +
+  geom_bar(fill = "darkgrey") +
   theme_bw(base_size = 14) +
   xlab("data README scale") +
   scale_x_continuous(breaks = c(1:10)) +
@@ -415,7 +415,7 @@ scale_data_plot <-
 # code plot
 scale_code_plot <- 
   ggplot(papers, aes(x = code_README_scale)) +
-  geom_histogram(bins = 10, colour = "white", fill = "darkgrey") +
+  geom_bar(fill = "darkgrey") +
   theme_bw(base_size = 14) +
   xlab("code README scale") +
   scale_x_continuous(breaks = c(1:10)) +
@@ -442,7 +442,7 @@ data_complete <-
 # Plot
 complete_data_plot <- 
   ggplot(data_complete, aes(x = data_completeness, y = papers)) +
-  geom_col() +
+  geom_col(fill = "darkgrey") +
   theme_bw(base_size = 14) +
   xlab("data completeness") +
   scale_x_discrete(labels = c("Unsure" = "Unsure", "Low" = "1",
@@ -454,7 +454,7 @@ complete_data_plot <-
 # Plot
 annotate_code_plot <- 
   ggplot(papers, aes(x = code_annotation_scale)) +
-  geom_histogram(bins = 10, colour = "white", fill = "darkgrey") +
+  geom_bar(fill = "darkgrey") +
   theme_bw(base_size = 14) +
   xlab("code annotation scale") +
   scale_x_continuous(breaks = c(1:10)) +
