@@ -1,0 +1,571 @@
+# Figures by journal for supplemental
+
+# Load libraries
+library(tidyverse)
+
+# Build colour scheme for the journals
+journal_cols <- c("#A2DACC", # ESE
+                  "#EDC04E", # Functional Ecology
+                  "#45B599", # J Applied Ecology
+                  "#AC92ED", # J Animal Ecology
+                  "#AECEF6", # J Ecology
+                  "#e3626f", # MEE
+                  "#DDAC93") # People and Nature
+
+# Read in the data
+papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
+
+#-------------------------------------------------------------------------------
+# 1. Papers per year
+#--------------------
+# Summarise papers per year per journal
+paper_summary <-
+  papers %>%
+  group_by(journal, year_published) %>%
+  summarise(count = n())
+
+# Plot
+ggplot(paper_summary, aes(x = year_published, y = count, fill = journal)) +
+  geom_col() +
+  theme_bw(base_size = 14) +
+  scale_fill_manual(values = journal_cols) +
+  theme(legend.position = "none") +
+  facet_wrap(~ journal) +
+  theme(strip.background = element_rect(colour = "black", fill = "white"), 
+        strip.text.x = element_text(size = 9)) +
+  xlab("year published")
+
+#-------------------------------------------------------------------------------
+# 2. How many papers have data?
+#------------------------------
+data_by_journal <- 
+  papers %>% 
+  group_by(journal, data_used)
+
+ggplot(data_by_journal, aes(x = journal, fill = data_used)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_manual(values = c(No ="#3b2f2f", Yes = c("red","blue"))) +
+  theme_bw()
+
+## 2a. Is the data mentioned in the Data Availability statement?
+
+data_avail_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_availability)
+
+ggplot(data_avail_by_journal, aes(x = journal, fill = data_availability)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#f9cf57", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2b. Can the data be accessed via the link?
+
+```{r}
+data_link_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_link) %>% 
+  na.omit()
+
+ggplot(data_link_by_journal, aes(x = journal, fill = data_link)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2c. Can the data be downloaded?
+
+```{r}
+data_download_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_download) %>% 
+  mutate(data_download = factor(data_download, levels = c("No", "No, because the data are embargoed",
+                                                          "Yes, but not all data", "Yes" ))) %>%
+  na.omit()
+
+ggplot(data_download_by_journal, aes(x = journal, fill = data_download)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2d. Can the data be opened?
+
+```{r}
+data_open_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_open) %>% 
+  mutate(data_open = factor(data_open, levels = c("No", "Needs specific software or too large",
+                                                  "Yes, but not all files", "Yes" ))) %>%
+  na.omit()
+
+ggplot(data_open_by_journal, aes(x = journal, fill = data_open)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 3. What formats are the data stored in?
+
+```{r}
+# Top data 10 formats
+summary_data_format <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(data_format) %>%
+  separate_longer_delim(cols = data_format, delim = ";") %>%
+  na.omit() %>%
+  group_by(data_format) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>% 
+  slice(1:10)
+
+kable(summary_data_format)
+
+```
+
+## 4. Where are the data archived?
+
+```{r}
+data_archive_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_archive) %>% 
+  na.omit() %>%
+  separate_longer_delim(cols = data_archive, delim = ";")
+
+# split by journal
+ggplot(data_archive_by_journal, aes(x = journal, fill = data_archive)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+
+# Without splitting by journal
+ggplot(data_archive_by_journal, aes(x = data_archive)) + 
+  geom_bar() + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 5. Does the data have a license? Which?
+
+```{r}
+data_license_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_license) %>% 
+  mutate(data_license = factor(data_license, levels = c("No", "Unsure", "Yes, but not for all data archived", "Yes"))) %>%
+  na.omit() 
+
+ggplot(data_license_by_journal, aes(x = journal, fill = data_license)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 5b. If it does have a license what type?
+
+```{r}
+data_license_type_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes" & data_license_type != "No") %>% 
+  select(journal, data_license_type) %>% 
+  na.omit() 
+
+ggplot(data_license_type_by_journal, aes(x = journal, fill = data_license_type)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 6. Does the data have a DOI?
+
+```{r}
+data_doi_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_doi) %>% 
+  na.omit() 
+
+ggplot(data_doi_by_journal, aes(x = journal, fill = data_doi)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 8a. Does the data have a readme?
+
+```{r}
+data_readme_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_README) %>%
+  na.omit()
+
+ggplot(data_readme_by_journal, aes(x = journal, fill = data_README)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#f9cf57", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 8b. How useful is the readme?
+
+```{r}
+data_readme_scale_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_README_scale) %>%
+  na.omit()
+
+ggplot(data_readme_scale_by_journal, aes(x = data_README_scale, fill = journal)) + 
+  geom_bar() + 
+  theme_bw() +
+  scale_fill_manual(values = journal_cols) +
+  facet_wrap(~journal) +
+  theme(legend.position = "none")
+```
+
+```{r}
+# Average usefulness of README
+data_readme_scale_by_journal %>% 
+  group_by(journal) %>% 
+  summarise(`Average README usefulness` = mean(data_README_scale, na.rm = TRUE)) %>% 
+  arrange(-`Average README usefulness`) %>% 
+  kable()
+
+```
+
+## 9. How complete are the archived data?
+
+```{r}
+data_completeness_by_journal <- 
+  papers %>% 
+  filter(data_used == "Yes") %>% 
+  select(journal, data_completeness) %>% 
+  mutate(data_completeness = factor(data_completeness, levels = c("Unsure", "Low", "Fair", 
+                                                                  "High", "Complete"))) %>%
+  na.omit() 
+
+ggplot(data_completeness_by_journal, aes(x = journal, fill = data_completeness)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+# Code
+
+## 1a. How many papers have code?
+
+```{r}
+code_by_journal <- 
+  papers %>% 
+  group_by(journal, code_used)
+
+ggplot(code_by_journal, aes(x = journal, fill = code_used)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_manual(values = c("#3b2f2f", "yellow", "#56c8d3")) +
+  theme_bw()
+```
+
+Note that any papers identified as not having code have been removed for any subsequent analysis.
+
+## 1b. How many papers have archived code?
+
+```{r}
+code_archived_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>%
+  select(journal, code_archived) %>%
+  na.omit()
+
+ggplot(code_archived_by_journal, aes(x = journal, fill = code_archived)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  theme_bw()
+```
+
+## 2a. Is the code mentioned in the code Availability statement?
+
+```{r}
+code_avail_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_availability) %>%
+  na.omit()
+
+ggplot(code_avail_by_journal, aes(x = journal, fill = code_availability)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2b. Can the code be accessed via the link?
+
+```{r}
+code_link_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_link) %>% 
+  na.omit()
+
+ggplot(code_link_by_journal, aes(x = journal, fill = code_link)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2c. Can the code be downloaded?
+
+```{r}
+code_download_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_download) %>% 
+  na.omit()
+
+ggplot(code_download_by_journal, aes(x = journal, fill = code_download)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 2d. Can the code be opened?
+
+```{r}
+code_open_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_open) %>%
+  na.omit()
+
+ggplot(code_open_by_journal, aes(x = journal, fill = code_open)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#faa773", "#3b2f2f", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 3. What formats are the code stored in?
+
+```{r}
+code_format_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_format) %>%
+  separate_longer_delim(cols = code_format, delim = ";") %>%
+  na.omit()
+
+ggplot(code_format_by_journal, aes(x = journal, fill = code_format)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+
+```
+
+## 4. Where are the code archived?
+
+```{r}
+code_archive_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_archive) %>% 
+  na.omit() %>%
+  separate_longer_delim(cols = code_archive, delim = ";")
+
+# split by journal
+ggplot(code_archive_by_journal, aes(x = journal, fill = code_archive)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+```{r}
+# Without splitting by journal
+ggplot(code_archive_by_journal, aes(x = code_archive)) + 
+  geom_bar() + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 5. Does the code have a license? Which?
+
+```{r}
+code_license_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_license) %>% 
+  na.omit() 
+
+ggplot(code_license_by_journal, aes(x = journal, fill = code_license)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 5b. If it does have a license what type?
+
+```{r}
+code_license_type_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes" & code_license_type != "No") %>% 
+  select(journal, code_license_type) %>% 
+  na.omit() 
+
+ggplot(code_license_type_by_journal, aes(x = journal, fill = code_license_type)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 6. Does the code have a DOI?
+
+```{r}
+code_doi_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_doi) %>% 
+  na.omit() 
+
+ggplot(code_doi_by_journal, aes(x = journal, fill = code_doi)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  theme_bw()
+```
+
+## 8a. Does the code have a readme?
+
+```{r}
+code_readme_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_README) %>%
+  na.omit()
+
+ggplot(code_readme_by_journal, aes(x = journal, fill = code_README)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 8b. How useful is the readme?
+
+```{r}
+code_readme_scale_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_README_scale) %>%
+  na.omit()
+
+ggplot(code_readme_scale_by_journal, aes(x = code_README_scale, fill = journal)) + 
+  geom_bar() + 
+  theme_bw() +
+  scale_fill_manual(values = journal_cols) +
+  facet_wrap(~journal) +
+  theme(legend.position = "none")
+```
+
+```{r}
+# Average usefulness of README
+code_readme_scale_by_journal %>% 
+  group_by(journal) %>% 
+  summarise(`Average README usefulness` = mean(code_README_scale, na.rm = TRUE)) %>% 
+  arrange(-`Average README usefulness`) %>% 
+  kable()
+
+```
+
+## 9. How good is the annotation of the code?
+
+```{r}
+code_annotation_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_annotation_scale) %>%
+  na.omit()
+
+ggplot(code_annotation_by_journal, aes(x = code_annotation_scale, fill = journal)) + 
+  geom_bar() + 
+  theme_bw() +
+  scale_fill_manual(values = journal_cols) +
+  facet_wrap(~journal) +
+  theme(legend.position = "none")
+```
+
+```{r}
+# Average completeness of annotation
+code_annotation_by_journal %>% 
+  group_by(journal) %>% 
+  summarise(`Average annotation` = mean(code_annotation_scale, na.rm = TRUE)) %>% 
+  arrange(-`Average annotation`) %>% 
+  kable()
+
+```
+
+## 10. Does the code have a CITATION file?
+
+```{r}
+code_CITATION_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_CITATION) %>%
+  na.omit() 
+
+ggplot(code_CITATION_by_journal, aes(x = journal, fill = code_CITATION)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 10. Does the code have a manual?
+
+```{r}
+code_manual_by_journal <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(journal, code_vignette) %>%
+  na.omit() 
+
+ggplot(code_manual_by_journal, aes(x = journal, fill = code_vignette)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_manual(values = c( "#3b2f2f", "#faa773", "#56c8d3")) +
+  coord_flip() + 
+  theme_bw()
+```
+
+## 11. What language is the code in?
+
+```{r}
+# Top code 10 languages
+summary_code_language <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(code_language) %>%
+  separate_longer_delim(cols = code_language, delim = ";") %>%
+  na.omit() %>%
+  group_by(code_language) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>% 
+  slice(1:10)
+
+kable(summary_code_language)
+
+```
