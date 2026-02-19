@@ -7,8 +7,8 @@ library(patchwork)
 # Build colour scheme for the journals
 journal_cols <- c("#A2DACC", # ESE
                   "#EDC04E", # Functional Ecology
-                  "#45B599", # J Applied Ecology
                   "#AC92ED", # J Animal Ecology
+                  "#45B599", # J Applied Ecology
                   "#AECEF6", # J Ecology
                   "#e3626f", # MEE
                   "#DDAC93") # People and Nature

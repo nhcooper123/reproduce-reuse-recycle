@@ -15,14 +15,15 @@ library(here)
 # Build colour scheme for the journals
 journal_cols <- c("#A2DACC", # ESE
                   "#EDC04E", # Functional Ecology
-                  "#45B599", # J Applied Ecology
                   "#AC92ED", # J Animal Ecology
+                  "#45B599", # J Applied Ecology
                   "#AECEF6", # J Ecology
                   "#e3626f", # MEE
                   "#DDAC93") # People and Nature
 ```
 
 Read in the data
+
 ```{r}
 papers <- read_csv(here("data/BES-data-code-hackathon-cleaned_2025-11-16.csv"))
 ```
@@ -56,7 +57,7 @@ ggplot(journal_summary, aes(x = journal, y = count, fill = journal)) +
   scale_fill_manual(values = journal_cols) +
   coord_flip() +
   theme(legend.position = "none")
-```  
+```
 
 ## Years ----
 
@@ -83,6 +84,7 @@ ggplot(year_summary, aes(x = year_published, y = count)) +
 ## Article type ----
 
 ### How many of each article type?
+
 ```{r}
 article_summary <-
   papers %>%
@@ -125,10 +127,12 @@ ggplot(paper_summary, aes(x = year_published, y = count, fill = journal)) +
   facet_wrap(~ journal) +
   theme(strip.background = element_rect(colour = "black", fill = "white"), 
         strip.text.x = element_text(size = 9))
-``` 
+```
+
 # Data
 
-## 1. How many papers have data? 
+## 1. How many papers have data?
+
 ```{r}
 data_by_journal <- 
   papers %>% 
@@ -158,7 +162,7 @@ ggplot(data_avail_by_journal, aes(x = journal, fill = data_availability)) +
   theme_bw()
 ```
 
-## 2b. Can the data be accessed via the link? 
+## 2b. Can the data be accessed via the link?
 
 ```{r}
 data_link_by_journal <- 
@@ -174,7 +178,7 @@ ggplot(data_link_by_journal, aes(x = journal, fill = data_link)) +
   theme_bw()
 ```
 
-## 2c. Can the data be downloaded? 
+## 2c. Can the data be downloaded?
 
 ```{r}
 data_download_by_journal <- 
@@ -193,6 +197,7 @@ ggplot(data_download_by_journal, aes(x = journal, fill = data_download)) +
 ```
 
 ## 2d. Can the data be opened?
+
 ```{r}
 data_open_by_journal <- 
   papers %>% 
@@ -228,7 +233,7 @@ kable(summary_data_format)
 
 ```
 
-## 4. Where are the data archived? 
+## 4. Where are the data archived?
 
 ```{r}
 data_archive_by_journal <- 
@@ -268,7 +273,7 @@ ggplot(data_license_by_journal, aes(x = journal, fill = data_license)) +
   theme_bw()
 ```
 
-## 5b. If it does have a license what type? 
+## 5b. If it does have a license what type?
 
 ```{r}
 data_license_type_by_journal <- 
@@ -282,7 +287,6 @@ ggplot(data_license_type_by_journal, aes(x = journal, fill = data_license_type))
   coord_flip() + 
   theme_bw()
 ```
-
 
 ## 6. Does the data have a DOI?
 
@@ -299,7 +303,7 @@ ggplot(data_doi_by_journal, aes(x = journal, fill = data_doi)) +
   theme_bw()
 ```
 
-## 8a. Does the data have a readme? 
+## 8a. Does the data have a readme?
 
 ```{r}
 data_readme_by_journal <- 
@@ -314,7 +318,8 @@ ggplot(data_readme_by_journal, aes(x = journal, fill = data_README)) +
   coord_flip() + 
   theme_bw()
 ```
-## 8b. How useful is the readme? 
+
+## 8b. How useful is the readme?
 
 ```{r}
 data_readme_scale_by_journal <- 
@@ -341,7 +346,8 @@ data_readme_scale_by_journal %>%
 
 ```
 
-## 9. How complete are the archived data? 
+## 9. How complete are the archived data?
+
 ```{r}
 data_completeness_by_journal <- 
   papers %>% 
@@ -356,9 +362,11 @@ ggplot(data_completeness_by_journal, aes(x = journal, fill = data_completeness))
   coord_flip() + 
   theme_bw()
 ```
+
 # Code
 
-## 1a. How many papers have code? 
+## 1a. How many papers have code?
+
 ```{r}
 code_by_journal <- 
   papers %>% 
@@ -373,7 +381,8 @@ ggplot(code_by_journal, aes(x = journal, fill = code_used)) +
 
 Note that any papers identified as not having code have been removed for any subsequent analysis.
 
-## 1b. How many papers have archived code? 
+## 1b. How many papers have archived code?
+
 ```{r}
 code_archived_by_journal <- 
   papers %>% 
@@ -404,7 +413,7 @@ ggplot(code_avail_by_journal, aes(x = journal, fill = code_availability)) +
   theme_bw()
 ```
 
-## 2b. Can the code be accessed via the link? 
+## 2b. Can the code be accessed via the link?
 
 ```{r}
 code_link_by_journal <- 
@@ -420,7 +429,7 @@ ggplot(code_link_by_journal, aes(x = journal, fill = code_link)) +
   theme_bw()
 ```
 
-## 2c. Can the code be downloaded? 
+## 2c. Can the code be downloaded?
 
 ```{r}
 code_download_by_journal <- 
@@ -437,6 +446,7 @@ ggplot(code_download_by_journal, aes(x = journal, fill = code_download)) +
 ```
 
 ## 2d. Can the code be opened?
+
 ```{r}
 code_open_by_journal <- 
   papers %>% 
@@ -468,7 +478,7 @@ ggplot(code_format_by_journal, aes(x = journal, fill = code_format)) +
 
 ```
 
-## 4. Where are the code archived? 
+## 4. Where are the code archived?
 
 ```{r}
 code_archive_by_journal <- 
@@ -509,7 +519,7 @@ ggplot(code_license_by_journal, aes(x = journal, fill = code_license)) +
   theme_bw()
 ```
 
-## 5b. If it does have a license what type? 
+## 5b. If it does have a license what type?
 
 ```{r}
 code_license_type_by_journal <- 
@@ -523,7 +533,6 @@ ggplot(code_license_type_by_journal, aes(x = journal, fill = code_license_type))
   coord_flip() + 
   theme_bw()
 ```
-
 
 ## 6. Does the code have a DOI?
 
@@ -540,7 +549,7 @@ ggplot(code_doi_by_journal, aes(x = journal, fill = code_doi)) +
   theme_bw()
 ```
 
-## 8a. Does the code have a readme? 
+## 8a. Does the code have a readme?
 
 ```{r}
 code_readme_by_journal <- 
@@ -555,7 +564,8 @@ ggplot(code_readme_by_journal, aes(x = journal, fill = code_README)) +
   coord_flip() + 
   theme_bw()
 ```
-## 8b. How useful is the readme? 
+
+## 8b. How useful is the readme?
 
 ```{r}
 code_readme_scale_by_journal <- 
@@ -583,6 +593,7 @@ code_readme_scale_by_journal %>%
 ```
 
 ## 9. How good is the annotation of the code?
+
 ```{r}
 code_annotation_by_journal <- 
   papers %>% 
@@ -597,6 +608,7 @@ ggplot(code_annotation_by_journal, aes(x = code_annotation_scale, fill = journal
   facet_wrap(~journal) +
   theme(legend.position = "none")
 ```
+
 ```{r}
 # Average completeness of annotation
 code_annotation_by_journal %>% 
@@ -608,6 +620,7 @@ code_annotation_by_journal %>%
 ```
 
 ## 10. Does the code have a CITATION file?
+
 ```{r}
 code_CITATION_by_journal <- 
   papers %>% 
