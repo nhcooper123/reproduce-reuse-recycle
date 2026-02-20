@@ -32,7 +32,8 @@ journals <-
   scale_fill_manual(values = journal_cols) +
   coord_flip() +
   theme(legend.position = "none") +
-  xlab("")
+  xlab("") +
+  ylab("papers")
 
 # How many papers per year?
 year_summary <-
@@ -138,12 +139,13 @@ summary_all_archive %>% group_by(type) %>% summarise(sum(count))
 # Plot
 fig3 <-
   ggplot(summary_all_archive, aes(x = archive, y = count)) + 
-  geom_col() +
+  geom_col(fill = "lightgrey") +
   coord_flip() +
   theme_bw(base_size = 14) +
   # Remove legend title
   theme(legend.title = element_blank()) +
   xlab("") +
+  ylab("papers") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white")) +
   expand_limits(y = c(0,300))
@@ -164,12 +166,11 @@ data_FA <-
   pivot_longer(data_availability:data_open, names_to = "var") %>%
   # change the names
   mutate(var = case_when(var == "data_availability" ~ "statement",
-                         var == "data_link" ~ "link",
+                         var == "data_link" ~ "locate",
                          var == "data_download" ~ "download",
                          var == "data_open" ~ "open")) %>%
   # reorder the factors so the order is correct in the plot
-  mutate(var = factor(var, levels = c("statement", "link", 
-                                      "download", "open"))) %>%
+  mutate(var = factor(var, levels = c("open", "download", "locate", "statement"))) %>%
   # Recode the available on request and embargoed data as No since there are so few of these
   # And shorten the other options to Maybe
   mutate(value = case_when(value == "No, but they are available on request" ~ "No",
@@ -198,12 +199,11 @@ code_FA <-
   pivot_longer(code_availability:code_open, names_to = "var") %>%
   # change the names
   mutate(var = case_when(var == "code_availability" ~ "statement",
-                         var == "code_link" ~ "link",
+                         var == "code_link" ~ "locate",
                          var == "code_download" ~ "download",
                          var == "code_open" ~ "open")) %>%
   # reorder the factors so the order is correct in the plot
-  mutate(var = factor(var, levels = c("statement", 
-                                      "link", "download", "open"))) %>%
+  mutate(var = factor(var, levels = c("open", "download", "locate", "statement"))) %>%
   # Recode the available on request and embargoed data as No since there are so few of these
   # And shorten the other options to Maybe
   mutate(value = case_when(value == "No, but they are available on request" ~ "No",
@@ -298,12 +298,13 @@ summary_data_format <-
 # Plot
 data_format_plot <-
   ggplot(summary_data_format, aes(x = forcats::fct_reorder(data_format, count), y = count)) + 
-  geom_col() +
+  geom_col(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   coord_flip() +
   # Remove legend title
   theme(legend.title = element_blank()) +
-  xlab("data file extension")
+  xlab("data file extension") +
+  ylab("unique file x extension combinations")
 #--------------------------------------------------------------------------------
 # Code format
 # Create summary dataset for code format
@@ -320,7 +321,7 @@ summary_code_format <-
 # Plot
 code_format_plot <-
   ggplot(summary_code_format, aes(x = forcats::fct_reorder(code_format, count), y = count)) + 
-  geom_col() +
+  geom_col(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   coord_flip() +
   # Remove legend title
@@ -406,7 +407,7 @@ readme_plot <-
 # data plot
 scale_data_plot <- 
   ggplot(papers, aes(x = data_README_scale)) +
-  geom_bar(fill = "darkgrey") +
+  geom_bar(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("data README scale") +
   scale_x_continuous(breaks = c(1:10)) +
@@ -415,7 +416,7 @@ scale_data_plot <-
 # code plot
 scale_code_plot <- 
   ggplot(papers, aes(x = code_README_scale)) +
-  geom_bar(fill = "darkgrey") +
+  geom_bar(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("code README scale") +
   scale_x_continuous(breaks = c(1:10)) +
@@ -442,7 +443,7 @@ data_complete <-
 # Plot
 complete_data_plot <- 
   ggplot(data_complete, aes(x = data_completeness, y = papers)) +
-  geom_col(fill = "darkgrey") +
+  geom_col(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("data completeness") +
   scale_x_discrete(labels = c("Unsure" = "Unsure", "Low" = "1",
@@ -454,7 +455,7 @@ complete_data_plot <-
 # Plot
 annotate_code_plot <- 
   ggplot(papers, aes(x = code_annotation_scale)) +
-  geom_bar(fill = "darkgrey") +
+  geom_bar(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("code annotation scale") +
   scale_x_continuous(breaks = c(1:10)) +
