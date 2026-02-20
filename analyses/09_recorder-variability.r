@@ -17,7 +17,7 @@ check <- read_csv("data/data-validation_2025-11-16.csv")
 # data plot
 scale_data_plot <- 
   ggplot(check, aes(x = data_README_scale)) +
-  geom_bar(fill = "darkgrey") +
+  geom_bar(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("data README scale") +
   ylab("recorders") +
@@ -26,7 +26,7 @@ scale_data_plot <-
 # code plot
 scale_code_plot <- 
   ggplot(check, aes(x = code_README_scale)) +
-  geom_bar(fill = "darkgrey") +
+  geom_bar(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("code README scale") +
   ylab("recorders") +
@@ -53,7 +53,7 @@ data_complete <-
 # Plot
 complete_data_plot <- 
   ggplot(data_complete, aes(x = data_completeness, y = papers)) +
-  geom_col(fill = "darkgrey") +
+  geom_col(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("data completeness") +
   scale_x_discrete(labels = c("Unsure" = "Unsure", "Low" = "1",
@@ -66,7 +66,7 @@ complete_data_plot <-
 # Plot
 annotate_code_plot <- 
   ggplot(check, aes(x = code_annotation_scale)) +
-  geom_bar(fill = "darkgrey") +
+  geom_bar(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   xlab("code annotation scale") +
   ylab("recorders") +
@@ -83,4 +83,4 @@ check %>% summarise(median(code_README_scale, na.rm = TRUE))
 check %>% summarise(median(code_annotation_scale, na.rm = TRUE))
 
 # Save figure
-ggsave(variability_figs, file = "figures/supp_fig_recorder-variability.jpg", width = 6, height = 6)
+ggsave(variability_figs, file = "figures/supp-fig_recorder-variability.jpg", width = 6, height = 6)
