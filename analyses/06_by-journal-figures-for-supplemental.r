@@ -68,6 +68,9 @@ ggplot(paper_summary, aes(x = year_published, y = count, fill = journal)) +
         strip.text.x = element_text(size = 9)) +
   xlab("year published") 
 
+# Save figure
+ggsave(file = "figures/supp-fig_journals-year.png", width = 8, height = 6)
+
 #-------------------------------------------------------------------------------
 # 2. How many papers have data?
 #------------------------------
@@ -98,8 +101,7 @@ B <-
   scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
   coord_flip() + 
   theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
+  theme(legend.position = "none") +
   remove_y +
   remove_x
 
@@ -112,7 +114,7 @@ data_archive_by_journal <-
   select(journal, data_archive) %>% 
   na.omit() %>%
   separate_longer_delim(cols = data_archive, delim = ";") %>%
-  group_by(journal, data_archive) 
+  group_by(journal, data_archive) %>%
   summarise(count = n())
 
 # split by journal
@@ -129,6 +131,9 @@ ggplot(data_archive_by_journal, aes(x = data_archive, y = count, fill = journal)
         strip.text.x = element_text(size = 9)) +
   xlab("data archive") +
   scale_x_discrete(labels = c("Dryad", "Figshare", "GitHub etc", "Other", "Website", "Supp mat", "Zenodo"))
+
+# Save figure
+ggsave(file = "figures/supp-fig_journals-data-archive.png", width = 8, height = 6)
 
 #--------------------------------------------------------------
 # 5. Can the data be accessed via the link?
@@ -165,8 +170,7 @@ D <-
   scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
   coord_flip() + 
   theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
+  theme(legend.position = "none") +
   remove_y +
   remove_x
 
@@ -215,7 +219,10 @@ ggplot(summary_data_format, aes(x = data_format, y = count, fill = journal)) +
   xlab("data file extension") +
   scale_fill_manual(values = journal_cols) +
   theme(legend.position = "none") +
-  theme(axis.text.x = element_text(angle = 45, size = 6, hjust = 0.8, ))
+  theme(axis.text.x = element_text(angle = 45, size = 6, hjust = 0.8))
+
+# Save figure
+ggsave(file = "figures/supp-fig_journals-data-file-extension.png", width = 8, height = 6)
 
 #--------------------------------------------------------------
 # 9. Does the data have a readme?
@@ -232,8 +239,7 @@ F <-
   scale_fill_manual(values = c( "#3b2f2f","#f9cf57", "#56c8d3")) +
   coord_flip() + 
   theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
+  theme(legend.position = "none") +
   remove_y +
   remove_x
 
@@ -257,6 +263,9 @@ ggplot(data_readme_scale_by_journal, aes(x = data_README_scale, fill = journal))
   facet_wrap(~journal, scales = "free_y") +
   xlab("data README quality") +
   scale_x_continuous(breaks = 1:10)
+
+# Save figure
+ggsave(file = "figures/supp-fig_journals-data-readme-quality.png", width = 8, height = 6)
 
 # Average usefulness of README
 data_readme_scale_by_journal %>% 
@@ -284,6 +293,9 @@ ggplot(data_completeness_by_journal, aes(x = data_completeness, fill = journal))
         strip.text.x = element_text(size = 9)) +
   facet_wrap(~journal, scales = "free_y") +
   xlab("data completeness")
+
+# Save figure
+ggsave(file = "figures/supp-fig_journals-data-completeness.png", width = 8, height = 6)
 
 #--------------------------------------------------------------
 # 12. Does the data have a DOI?
@@ -349,6 +361,18 @@ ggplot(data_license_type_by_journal, aes(fill = journal, x = data_license_type))
   xlab("data license") +
   theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 0.8, ))
 
+# Save figure
+ggsave(file = "figures/supp-fig_journals-data-license.png", width = 8, height = 6)
+
+#--------------------------------------------------------------
+# Combine plots
+#--------------------------------------------------------------
+
+(A + B) / (C + D) / (E + F) + (G + H) + plot_annotation(tag_levels = "A")
+
+# Save figure
+ggsave(file = "figures/supp-fig_journals-data-variables.png", width = 8, height = 8)
+
 #------------------------------
 # CODE
 #------------------------------------------------------------------------------
@@ -382,8 +406,7 @@ B1 <-
   scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
   coord_flip() + 
   theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
+  theme(legend.position = "none") +
   remove_y +
   remove_x
 #--------------------------------------------------------------
@@ -413,6 +436,8 @@ ggplot(code_archive_by_journal, aes(x = code_archive, y = count, fill = journal)
   xlab("code archive") +
   scale_x_discrete(labels = c("Dryad", "Figshare", "GitHub etc", "Other", "Website", "Supp mat", "Zenodo"))
 
+# Save figure
+ggsave(file = "figures/supp-fig_journals-code-archive.png", width = 8, height = 6)
   
 #--------------------------------------------------------------
 # 5. Can the code be accessed via the link?
@@ -449,8 +474,7 @@ D1 <-
   scale_fill_manual(values = c("#3b2f2f", "#56c8d3")) +
   coord_flip() + 
   theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
+  theme(legend.position = "none") +
   remove_y +
   remove_x
 
@@ -501,6 +525,9 @@ ggplot(summary_code_format, aes(x = code_format, y = count, fill = journal)) +
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, size = 6, hjust = 0.8, ))
 
+# Save figure
+ggsave(file = "figures/supp-fig_journals-code-file-extension.png", width = 8, height = 6)
+
 #--------------------------------------------------------------
 # 9. Does the code have a readme?
 #--------------------------------------------------------------
@@ -518,8 +545,7 @@ F1 <-
   scale_fill_manual(values = c( "#3b2f2f", "#56c8d3")) +
   coord_flip() + 
   theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
+  theme(legend.position = "none") +
   remove_y +
   remove_x
 
@@ -543,6 +569,9 @@ ggplot(code_readme_scale_by_journal, aes(x = code_README_scale, fill = journal))
   facet_wrap(~journal, scales = "free_y") +
   xlab("code README quality") +
   scale_x_continuous(breaks = 1:10)
+
+# Save figure
+ggsave(file = "figures/supp-fig_journals-code-readme-quality.png", width = 8, height = 6)
 
 # Average usefulness of README
 code_readme_scale_by_journal %>% 
@@ -570,6 +599,9 @@ ggplot(code_annotation_by_journal, aes(x = code_annotation_scale, fill = journal
   facet_wrap(~journal, scales = "free_y") +
   xlab("code annotation") +
   scale_x_continuous(breaks = 1:10)
+
+# Save figure
+ggsave(file = "figures/supp-fig_journals-code-annotation.png", width = 8, height = 6)
 
 # Average completeness of annotation
 code_annotation_by_journal %>% 
@@ -640,6 +672,10 @@ ggplot(code_license_type_by_journal, aes(fill = journal, x = code_license_type))
   xlab("code license") +
   theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 0.8))
 
+# Save figure
+ggsave(file = "figures/supp-fig_journals-code-license.png", width = 8, height = 6)
+
+
 #--------------------------------------------------------------
 # 15. What language is the code in?
 
@@ -667,16 +703,16 @@ ggplot(summary_code_language, aes(fill = journal, x = code_language, y = count))
   xlab("programming language") +
   theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 0.8))
 
+# Save figure
+ggsave(file = "figures/supp-fig_journals-code-language.png", width = 8, height = 6)
+
 #--------------------------------------------------------------
 # Combine plots
 #--------------------------------------------------------------
 
 (A1 + B1) / (C1 + D1) / (E1 + F1) + (G1 + H1) + plot_annotation(tag_levels = "A")
 
+# Save figure
+ggsave(file = "figures/supp-fig_journals-code-variables.png", width = 8, height = 8)
+
 #--------------------------------------------------------------
-
-
-
-
-
-
