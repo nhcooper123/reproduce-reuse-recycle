@@ -131,21 +131,26 @@ summary_code_archive <-
 summary_all_archive <-
   rbind(summary_data_archive, summary_code_archive) %>%
   # change levels so plot is in correct order (data first)
-  mutate(type = factor(type, levels = c("data", "code")))
+  mutate(type = factor(type, levels = c("data", "code"))) %>%
+  # change name of github option
+  mutate(archive = case_when(archive == "GitHub, GitLab, Codeberg or similar platform" ~ "Git hosting services",
+         TRUE ~ as.character(archive))) %>%
+  # remove personal website as it only has two entries
+  filter(archive != "Personal website")
 
 # Get totals
 summary_all_archive %>% group_by(type) %>% summarise(sum(count))
 
 # Plot
 fig3 <-
-  ggplot(summary_all_archive, aes(x = archive, y = count)) + 
+  ggplot(summary_all_archive, aes(x = forcats::fct_reorder(archive, count), y = count)) + 
   geom_col(fill = "lightgrey") +
   coord_flip() +
   theme_bw(base_size = 14) +
   # Remove legend title
   theme(legend.title = element_blank()) +
   xlab("") +
-  ylab("papers") +
+  ylab("files") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white")) +
   expand_limits(y = c(0,300))
