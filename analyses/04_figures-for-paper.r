@@ -524,17 +524,13 @@ data_license_type <-
   group_by(data_license_type)  %>%
   summarise(count  = n()) %>%
   # Exclude NAs
-  na.omit() 
+  na.omit() %>%
+  # Add a column to id this as for code
+  mutate(type = rep("data", n())) %>%
+  # rename column so the two datasets match
+  rename(license_type = data_license_type)
 
-data_ltype_plot <-
-  ggplot(data_license_type, aes(x = forcats::fct_reorder(data_license_type, count), y = count)) + 
-  geom_col() +
-  coord_flip() +
-  theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
-  xlab("license")
-
+# code
 code_license_type <-
   papers %>% 
   filter(code_archived == "Yes" & code_license_type != "Unsure") %>% 
@@ -546,20 +542,30 @@ code_license_type <-
   group_by(code_license_type)  %>%
   summarise(count = n()) %>%
   # Exclude NAs
-  na.omit() 
+  na.omit() %>%
+  # Add a column to id this as for code
+  mutate(type = rep("code", n())) %>%
+  # rename column so the two datasets match
+  rename(license_type = code_license_type)
 
-code_ltype_plot <-
-  ggplot(code_license_type, aes(x = forcats::fct_reorder(code_license_type, count), y = count)) + 
-  geom_col() +
+# Stick the two summary datasets together
+summary_all_lt <-
+  rbind(data_license_type, code_license_type) %>%
+  # change levels so plot is in correct order (data first)
+  mutate(type = factor(type, levels = c("data", "code")))
+
+fig7 <-
+  ggplot(summary_all_lt, aes(x = forcats::fct_reorder(license_type, count), y = count)) + 
+  geom_col(fill = "lightgrey") +
   coord_flip() +
   theme_bw(base_size = 14) +
   # Remove legend title
   theme(legend.title = element_blank()) +
-  xlab("")
-
-#--------------
-# Combine plots
-fig8 <- data_ltype_plot + code_ltype_plot + plot_annotation(tag_levels = "A")
+  xlab("") +
+  ylab("unique file/license combinations") +
+  facet_wrap(~type, scales = "free_x") +
+  theme(strip.background = element_rect(fill = "white")) +
+  expand_limits(y = c(0,300))
 
 # Save figure
-ggsave(fig8, file = "figures/fig7_licenses.jpg", width = 6, height = 4)
+ggsave(fig7, file = "figures/fig7_licenses.jpg", width = 6, height = 4)
