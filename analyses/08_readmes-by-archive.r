@@ -30,11 +30,11 @@ readme_summary <-
 # Plot 
 readme_archive_fig <-
 ggplot(readme, aes(x = data_README_scale)) +
-  geom_bar() +
+  geom_bar(fill = "lightgrey") +
   facet_wrap(~data_archive, scales = "free_y") +
   theme_bw(base_size = 14) +
   xlab("README scale") +
-  ylab("") +
+  ylab("count") +
   scale_x_continuous(breaks = c(1:10)) +
   theme(strip.background = element_rect(fill = "white"))
 
