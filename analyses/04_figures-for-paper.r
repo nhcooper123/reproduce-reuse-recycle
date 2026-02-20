@@ -498,15 +498,16 @@ summary_code_language <-
 # Plot
 fig7 <-
   ggplot(summary_code_language, aes(x = forcats::fct_reorder(code_language,count), y = count)) + 
-  geom_col() +
+  geom_col(fill = "lightgrey") +
   coord_flip() +
   theme_bw(base_size = 14) +
   # Remove legend title
   theme(legend.title = element_blank()) +
-  xlab("programming language")
+  xlab("programming language") +
+  ylab("unique language/file combinations")
 
 # Save figure
-ggsave(fig7, file = "figures/fig7_language.jpg", width = 6, height = 4)
+ggsave(fig7, file = "figures/supp-fig_language.jpg", width = 6, height = 4)
 
 #--------------------------------------------------------------------------------
 # 9. What licenses are used?
@@ -561,4 +562,4 @@ code_ltype_plot <-
 fig8 <- data_ltype_plot + code_ltype_plot + plot_annotation(tag_levels = "A")
 
 # Save figure
-ggsave(fig8, file = "figures/fig8_licenses.jpg", width = 6, height = 4)
+ggsave(fig8, file = "figures/fig7_licenses.jpg", width = 6, height = 4)
