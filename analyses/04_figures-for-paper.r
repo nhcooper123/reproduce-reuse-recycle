@@ -298,20 +298,12 @@ summary_data_format <-
   # select just top ten
   slice(1:10) %>%
   # add "other" option
-  rbind(data.frame(data_format = "Other", count = other_count))
+  rbind(data.frame(data_format = "Other", count = other_count)) %>%
+  # Add a column to id this as for data
+  mutate(type = rep("data", n()))  %>%
+  # rename column so the two datasets match
+  rename(format = data_format)
 
-# Plot
-data_format_plot <-
-  ggplot(summary_data_format, aes(x = forcats::fct_reorder(data_format, count), y = count)) + 
-  geom_col(fill = "lightgrey") +
-  theme_bw(base_size = 14) +
-  coord_flip() +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
-  xlab("data file extension") +
-  ylab("unique file x extension combinations")
-#--------------------------------------------------------------------------------
-# Code format
 # Create summary dataset for code format
 summary_code_format <- 
   papers %>% 
@@ -321,21 +313,30 @@ summary_code_format <-
   na.omit() %>%
   group_by(code_format) %>%
   summarise(count = n()) %>% 
-  arrange(-count)
+  arrange(-count) %>% 
+  # Add a column to id this as for data
+  mutate(type = rep("code", n()))  %>%
+  # rename column so the two datasets match
+  rename(format = code_format)
+
+# Stick the two summary datasets together
+summary_all_format <-
+  rbind(summary_data_format, summary_code_format) %>%
+  # change levels so plot is in correct order (data first)
+  mutate(type = factor(type, levels = c("data", "code")))
 
 # Plot
-code_format_plot <-
-  ggplot(summary_code_format, aes(x = forcats::fct_reorder(code_format, count), y = count)) + 
+fig5 <-
+  ggplot(summary_all_format, aes(x = forcats::fct_reorder(format, count), y = count)) + 
   geom_col(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   coord_flip() +
   # Remove legend title
   theme(legend.title = element_blank()) +
-  xlab("code file extension")
-
-#---------------------------------------------
-# Combine two plots for data and code into one
-fig5 <- (data_format_plot + code_format_plot) + plot_annotation(tag_levels = "A")
+  xlab("file extension") +
+  ylab("unique file/file extension combinations") +
+  facet_wrap(~type, scales = "free_x") +
+  theme(strip.background = element_rect(fill = "white")) 
 
 # Save figure
 ggsave(fig5, file = "figures/fig5_file-extensions.jpg", width = 8, height = 4)
