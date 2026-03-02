@@ -52,13 +52,6 @@ summary_all_total_journal <-
   arrange(journal)
 
 #write_csv(summary_all_total_journal, file = "tables/table_summary-all-data-code-use-by-journal.csv")
-
-# ChiSquared test
-summary1 <- 
-  summary_all_total_journal %>%
-  
-x <- xtabs(var ~ journal, data = summary_all_total_journal)
-
 #--------------------------------------------------------------------------------
 # 2. Are data/code findable and accessible?
 # Only for where there is data used or code used
