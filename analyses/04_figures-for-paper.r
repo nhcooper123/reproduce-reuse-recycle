@@ -325,7 +325,10 @@ summary_code_format <-
 summary_all_format <-
   rbind(summary_data_format, summary_code_format) %>%
   # change levels so plot is in correct order (data first)
-  mutate(type = factor(type, levels = c("data", "code")))
+  mutate(type = factor(type, levels = c("data", "code"))) %>%
+  mutate(format = case_when(format == "Other" ~ "other",
+                            format == "Unsure" ~ "unsure",
+                            TRUE ~ as.character(format)))
 
 # Plot
 fig5 <-
@@ -336,7 +339,7 @@ fig5 <-
   # Remove legend title
   theme(legend.title = element_blank()) +
   xlab("file extension") +
-  ylab("unique file/file extension combinations") +
+  ylab("files") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white")) 
 
@@ -495,10 +498,12 @@ summary_code_language <-
   na.omit() %>%
   group_by(code_language) %>%
   summarise(count = n()) %>% 
-  arrange(-count)
+  arrange(-count) %>%
+  mutate(code_language = case_when(code_language == "Other" ~ "other",
+                                   TRUE ~ as.character(code_language)))
 
 # Plot
-fig7 <-
+fig_lang <-
   ggplot(summary_code_language, aes(x = forcats::fct_reorder(code_language,count), y = count)) + 
   geom_col(fill = "lightgrey") +
   coord_flip() +
@@ -506,10 +511,10 @@ fig7 <-
   # Remove legend title
   theme(legend.title = element_blank()) +
   xlab("programming language") +
-  ylab("unique language/file combinations")
+  ylab("files")
 
 # Save figure
-ggsave(fig7, file = "figures/supp-fig_language.jpg", width = 6, height = 4)
+ggsave(fig_lang, file = "figures/supp-fig_language.jpg", width = 6, height = 4)
 
 #--------------------------------------------------------------------------------
 # 9. What licenses are used?
@@ -554,7 +559,10 @@ code_license_type <-
 summary_all_lt <-
   rbind(data_license_type, code_license_type) %>%
   # change levels so plot is in correct order (data first)
-  mutate(type = factor(type, levels = c("data", "code")))
+  mutate(type = factor(type, levels = c("data", "code"))) %>%
+  mutate(license_type = case_when(license_type == "Other" ~ "other",
+                                   TRUE ~ as.character(license_type)))
+
 
 fig7 <-
   ggplot(summary_all_lt, aes(x = forcats::fct_reorder(license_type, count), y = count)) + 
@@ -564,7 +572,7 @@ fig7 <-
   # Remove legend title
   theme(legend.title = element_blank()) +
   xlab("") +
-  ylab("unique file/license combinations") +
+  ylab("files") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white")) +
   expand_limits(y = c(0,300))
