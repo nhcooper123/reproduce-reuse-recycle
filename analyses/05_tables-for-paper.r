@@ -16,7 +16,7 @@ papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
 summary_all_total <- 
   papers %>%
   select(data_used, code_used) %>%
-  # reshape the data so that we can plot all fur variables together
+  # reshape the data so that we can plot all four variables together
   pivot_longer(data_used:code_used, names_to = "var") %>%
   # Get counts
   add_count(var, name = "total") %>%
@@ -52,6 +52,12 @@ summary_all_total_journal <-
   arrange(journal)
 
 #write_csv(summary_all_total_journal, file = "tables/table_summary-all-data-code-use-by-journal.csv")
+
+# ChiSquared test
+summary1 <- 
+  summary_all_total_journal %>%
+  
+x <- xtabs(var ~ journal, data = summary_all_total_journal)
 
 #--------------------------------------------------------------------------------
 # 2. Are data/code findable and accessible?
