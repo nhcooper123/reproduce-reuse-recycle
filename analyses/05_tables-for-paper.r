@@ -400,6 +400,30 @@ summary_code_archive <-
 
 #write_csv(summary_code_archive, file = "tables/table_summary-code-archive.csv")
 
+# How many in github and zenodo?
+zenodo <-
+papers %>% 
+filter(code_used == "Yes") %>% 
+  select(paper_number, code_archive) %>%
+  separate_longer_delim(cols = code_archive, delim = ";") %>%
+  na.omit() %>%
+  filter(code_archive == "Zenodo") %>%
+  select(paper_number) %>%
+  distinct() 
+
+github <-
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(paper_number, code_archive) %>%
+  separate_longer_delim(cols = code_archive, delim = ";") %>%
+  na.omit() %>%
+  filter(code_archive == "GitHub, GitLab, Codeberg or similar platform") %>%
+  select(paper_number) %>%
+  distinct() 
+
+length(github$paper_number) # 177
+intersect(github$paper_number, zenodo$paper_number) # 106
+106/177
 #--------------------------------------------------------------------------------
 # 5. Are data/code reusable?
 # README + completeness + annotation
