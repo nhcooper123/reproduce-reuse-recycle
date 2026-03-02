@@ -66,7 +66,9 @@ ggplot(paper_summary, aes(x = year_published, y = count, fill = journal)) +
   facet_wrap(~ journal) +
   theme(strip.background = element_rect(colour = "black", fill = "white"), 
         strip.text.x = element_text(size = 9)) +
-  xlab("year published") 
+  xlab("year published") +
+  scale_x_continuous(breaks = 2017:2024) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 
 # Save figure
 ggsave(file = "figures/supp-fig_journals-year.png", width = 8, height = 6)
