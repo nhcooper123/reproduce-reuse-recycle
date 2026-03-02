@@ -77,10 +77,32 @@ annotate_code_plot <-
 variability_figs <- (scale_data_plot + scale_code_plot) / (complete_data_plot+annotate_code_plot) + plot_annotation(tag_levels = "A")
 
 #-----------------
-# Get median scores
-check %>% summarise(median(data_README_scale, na.rm = TRUE))
-check %>% summarise(median(code_README_scale, na.rm = TRUE))
-check %>% summarise(median(code_annotation_scale, na.rm = TRUE))
+# Get median scores and SE
+check %>% summarise(median = median(data_README_scale, na.rm = TRUE), 
+                    se = sqrt(var(data_README_scale, na.rm = TRUE)/length(data_README_scale))) #8
+check %>% summarise(median = median(code_README_scale, na.rm = TRUE), 
+                    se = sqrt(var(code_README_scale, na.rm = TRUE)/length(code_README_scale))) #4
+check %>% summarise(median = median(code_annotation_scale, na.rm = TRUE), 
+                    se = sqrt(var(code_annotation_scale, na.rm = TRUE)/length(code_annotation_scale))) #7
+# IQ range
+summary(check$data_README_scale)
+summary(check$code_README_scale)
+summary(check$code_annotation_scale)
+#--------------------------------------------
+# Get numbers with modal score
+length(which(check$data_README_scale == 9))
+length(which(check$code_README_scale == 3))
+length(which(check$code_annotation_scale == 8))
+
+# Mean agreement
+x <- c(rep(100, 24), 96, 31, 86, 99, 99, 98, 88, 87, 88, 17, 22)
+mean(x)
+sqrt(var(x)/length(x))
+
+# Excluding scaled variables
+x1 <- c(rep(100, 24), 96, 86, 99, 99, 98, 88, 87, 88)
+mean(x1)
+sqrt(var(x1)/length(x1))
 
 # Save figure
 ggsave(variability_figs, file = "figures/supp-fig_recorder-variability.jpg", width = 6, height = 6)
