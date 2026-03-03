@@ -6,7 +6,7 @@ Author(s): Natalie Cooper and the hack-a-thon gang
 
 *This README is a work in progess*
 
-This repository contains all the code and some data used in the [paper](XXX). 
+This repository contains all the data and code used in the [paper](XXX), EXCEPT the non-anonymised raw data and the script used to anonymise it.
 
 To cite the paper: 
 >  Natalie Cooper and the BES Data and Code Hackathon Group. YEAR. Data- and code-archiving in the British Ecological Society journals: present status and recommendations for future improvements.
@@ -19,21 +19,155 @@ This code is shared under an MIT License.
 ![alt text](https://github.com/nhcooper123/reproduce-reuse-recycle/raw/main/figures/summary-journal-year.jpg)
 
 -------
-## Data
+## DATA
+
+### Data collection and processing (in brief)
+
+1. We first assembled a list of papers published in the seven BES journals between 2017 and the end of 2024 from Wiley. These are listed in `raw-data/BES_2015-2024_article_data_2025-09-02.csv`. We used script `00-wrangle-raw-data.R` to clean this, excluding reviews, perspectives, forum articles, commentaries and opinion pieces that rarely have data or code to archive, leaving 8,112 eligible papers in `data/2025-09-29_BES-article-metadata-2015-2024.csv`.
+
+2. Next, data on data- and code-archiving were collected as part of a hackathon event (29-30th September 2025), where 145 (in-person and online) participants randomly selected papers from the 8,112 eligible papers in `data/2025-09-29_BES-article-metadata-2015-2024.csv`, and then followed a bespoke protocol to collect data from randomly selected subset of papers. The full data collection protocol is in the Supporting Information of the paper and in the `/supporting-information` folder. In addition, all participants collected data for one common paper (paper number 2272) to explore data recorder variability. This data was then anonymised using script `01_anonymise-recorders.r` to remove participant identities resulting in `raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv`. 
+
+3. Finally, the data were cleaned using script `02_initial-data-cleaning.r` described below, to result in datasets `BES-data-code-hackathon-cleaned_2025-12-01.csv` and `data-validation_2025-11-16.csv` which are used in the subsequent analyses. 
 
 ### Raw data
 
 Note that non-anonymised data are not available here for privacy/GDPR reasons. 
 
-* BES_2015-2024_article_data_2025-09-02.csv
-* **BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
-* **fixing-papers-with-issues.csv**
+1. **BES_2015-2024_article_data_2025-09-02.csv**
+
+This dataset contains article data given to us by Wiley. Note that the names of the file suggests data from 2015 onwards were available but in reality only data from 2017 onwards was provided. This is raw data that was provided to us, so it is messier than it would have been if we collected it ourselves (e.g. we would never use DD-Mon-YY format for dates!)
+
+Column headers are as follows:
+
+* **Journal**. Journal code. FEC = Functional Ecology, MEE3 = Methods in Ecology and Evolution, PAN3 = People and Nature, JANE = Journal of Animal Ecology, JEC = Journal of Ecology, JPE = Journal of Applied Ecology, ESO3 = Ecological Solutions and Evidence.
+* **Article ID**. ID number for paper.
+* **Vol Iss**.	Volume and issue number in format Volume:Issue.
+* **Article Title**. Title of paper. 
+* **Editorial Reference Code**.	Reference code used by editorial office.	
+* **DOI**. Digital object identifier.
+* **DOI Link**.	DOI link to the webpage for the paper.
+* **Submitting Editor**. Senior Editor who handled the paper.
+* **Classification (Base Article Type)**. Paper type using editorial system classifications. Can be ignored to use Category (Display Article Type) instead.	
+* **Category (Display Article Type)**. Paper type using standard names. We selected options: Research Article, Applications, Practical Tools, Data Articles and Long Term Study. We excluded options: Biological Flora, Commentary, Concept, Correction, Correspondence, Corrigendum, Editorial, Editorial Note, Erratum, Essay Review, FE Spotlight, Forum, From Practice, Guest Editorial, How To, In Focus, Mini review, Perspectives, Policy Directions, Practice Insights, Practitioner Perspective, Registered Reports, Research Highlights, Research Methods Guides, Review, Review and Synthesis, Synthesis.
+* **Corresponding Author Country**.	Country for corresponding author. Care needed here as further research showed this was often incorrect (people forget to update ScholarOne so these are often very out of date).
+* **EarlyView Actual**.	Date (DD-Mon-YY) when paper appeared online on Early View.
+* **First Online Actual**. Date (DD-Mon-YY) when paper published online in final format.
+
+2. **BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
+
+This is the horribly messy raw output from the Google Form we used to collect the data. As such each column header is the full question asked in the form, so they are very long and convoluted.
+
+* **Timestamp**                                                                                        * **1. Paper number**                                                                                                                                                                                                                                                                                           
+* **2. DOI of paper (please copy paste to avoid errors)"                                                                                                                                                                                                                                                       
+* **3. Year of publication (on spreadsheet)"                                                                                                                                                                                                                                                                   
+* **4. Journal  (on spreadsheet)"                                                                                                                                                                                                                                                                              
+* **5. Article type  (on spreadsheet)"                                                                                                                                                                                                                                                                         
+* **6. Please paste the text of the Data Availability statement here"                                                                                                                                                                                                                                          
+* **7. Does the paper have data?"                                                                                                                                                                                                                                                                              
+* **1. Country of corresponding author  (on spreadsheet)"                                                                                                                                                                                                                                                      
+* **2. Country of first author. Use their main address on the paper. There may be more than one. We mean the address that is next to their name on the paper, NOT any “current address” that may be added for people who have recently moved institutions."                                                    
+* **3. What georegion(s) were any novel data used in the paper collected from? Select all that apply. NOTE THIS MEANS DATA THAT WERE PHYSICALLY COLLECTED IN THESE COUNTRIES, DO NOT INCLUDE THINGS WHERE THE AUTHORS USED A DATASET FROM FRANCE BUT DID NOT ACTUALLY GO TO FRANCE TO COLLECT DATA :)"         
+* **4. Are any authors (use their main address on the paper) based in the georegion the data were collected from?  Also check the Acknowledgments to see if data labourers from the georegion who are not authors are mentioned there instead."                                                                
+* **Any comments about data equity that these Qs don't cover?"                                                                                                                                                                                                                                                 
+* **1. Are the data mentioned in the Data Availability statement?"                                                                                                                                                                                                                                             
+* **2. Are you able to find the data using the link/instructions in the Data Availability statement?"                                                                                                                                                                                                          
+* **3. Where are the data archived?"                                                                                                                                                                                                                                                                           
+* **4. Does the dataset have a DOI?"                                                                                                                                                                                                                                                                           
+* **5. Can you download the data?"                                                                                                                                                                                                                                                                             
+* **6. Can you open the data?"                                                                                                                                                                                                                                                                                 
+* **7. What format are the data in?"                                                                                                                                                                                                                                                                           
+* **8. Does the data have a README/metadata?"                                                                                                                                                                                                                                                                  
+* **9. How useful is the README/metadata? Read the notes in the protocol to help with decisions here. SKIP THIS Q IF NO README EXISTS."                                                                                                                                                                        
+* **10. How complete is the archived data?"                                                                                                                                                                                                                                                                    
+* **11. Does the data have a license?"                                                                                                                                                                                                                                                                         
+* **12. If yes, what license?"                                                                                                                                                                                                                                                                                 
+* **13. Has the data been cited (excluding the original paper it was archived for)? You can find this information on the Dryad and Figshare landing pages for the dataset on the right hand side. For other repositories it varies. If you can't find out easily just pick Unsure."                            
+* **14. If yes, how many times?  Enter number or Unclear"                                                                                                                                                                                                                                                      
+* **15. Has the data been cited by someone other than the original authors? You can find this by clicking on the citations and looking at the papers that cite the data."                                                                                                                                      
+* **16. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear"                                                                                                                                                                                                    
+* **17. For any paper(s) citing the data, what georegions are on the authors main addresses (i.e. when doing the work)? Please select all relevant options."                                                                                                                                                   
+* **0.1 Does the paper use code?"                                                                                                                                                                                                                                                                              
+* **0.2 If the paper uses code, and this is NOT archived (i.e. they mention using R or Python but don't provide any scripts) please copy-paste the text from the paper that alerted you to them using code..."                                                                                                 
+* **0.3 Does the paper have archived code?"                                                                                                                                                                                                                                                                    
+* **1. Is the code archiving described in the Data Availability (or equivalent) statement?"                                                                                                                                                                                                                    
+* ** *Please paste the section of the text that refers to the archived code if this is NOT part of the Data Availability Statement*."                                                                                                                                                                           
+* **2. Are you able to find the code using the link/instructions in the Data Availability (or equivalent) statement?"                                                                                                                                                                                          
+* **3. Where are the code archived?"                                                                                                                                                                                                                                                                           
+* **4. Does the code have a DOI?"                                                                                                                                                                                                                                                                              
+* **5. Can you download the code?"                                                                                                                                                                                                                                                                             
+* **6. Can you open the code?"                                                                                                                                                                                                                                                                                 
+* **7. What language is the code written in?"                                                                                                                                                                                                                                                                  
+* **8. What format is the code in?"                                                                                                                                                                                                                                                                            
+* **9. Does the code have a README?"                                                                                                                                                                                                                                                                           
+* **10. How useful is the README? See the protocol for help with making decisions about this. SKIP THIS Q IF NO README EXISTS."                                                                                                                                                                                
+* **11. How well is the code annotated? See the protocol for help with making decisions about this."                                                                                                                                                                                                           
+* **12. Does the code have a separate vignette with examples of how the code should be used?"                                                                                                                                                                                                                  
+* **13. If the code is an R Package, and it was previously available on CRAN/Bioconductor (as stated in the Data Availability statement), is it still available? Check this by trying to install it on the most recent version of R. If you don't know how to do this/can't do this choose \"Unable to check\""
+* **14. If the code is a package in another language (e.g. Python) published on PyPI please put the name of the package here and where it has been deposited we will see if it is still available. If you know how to look this up yourself, please do and mention whether it is still available here (Yes/No)"
+* **15. Does the code have a CITATION file?"                                                                                                                                                                                                                                                                   
+* **16. Does the code have a license?"                                                                                                                                                                                                                                                                         
+* **17. If yes, what license?"                                                                                                                                                                                                                                                                                 
+* **18. APPLICATION papers only. How many times has the paper been cited? You can find this on the landing page of the paper."                                                                                                                                                                                 
+* **19. Has the code been cited (excluding the original paper it was archived for)? Code = the archived code (not the paper or package)."                                                                                                                                                                      
+* **20. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear"                                                                                                                                                                                                    
+* **21. Do you have any other comments about the code? For example for those familiar with these processes, does the code use unit test? Doe it have continuous integration? Does it use docker/other containers?"                                                                                             
+* **21. Has the code been cited by someone other than the original authors?"                                                                                                                                                                                                                                   
+* **22. If yes, how many times? Enter number or Unclear"                                                                                                                                                                                                                                                       
+* **1. Did you have any issues recording data for this paper? If yes we will go back and check it for you later."                                                                                                                                                                                              
+* **2. Any other comments about this paper?"                                                                                                                                                                                                                                                                   
+* **2. What date did you do this? (YYYY-MM-DD)"                                                                                                                                                                                                                                                                
+* **...61"                                                                                                                                                                                                                                                                                                     
+* **...62"                                                                                                                                                                                                                                                                                                     
+* **...63"                                                                                                                                                                                                                                                                                                     
+* **...64"                                                                                                                                                                                                                                                                                                     
+* **...65"                                                                                                                                                                                                                                                                                                     
+* **...66"                                                                                                                                                                                                                                                                                                     
+* **recorder_ID"  
+
+3. **fixing-papers-with-issues.csv**
+
+Same as columns in the above except,
+
+
+
+1. **BES_2015-2024_article_data_2025-09-02.csv**
+
+This dataset contains article data given to us by Wiley. Note that the names of the file suggests data from 2015 onwards were available but in reality only data from 2017 onwards was provided. 
+
+2. **BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
+
+This is the horribly messy raw output from the Google Form we used to collect the data. As such each column header is the full question asked in the form, so they are very long and convoluted.
+
+3. **fixing-papers-with-issues.csv**
+
+This is a list of papers flagged with issues and fixes for these issues. The columns are the same as the dataset above but have undergone some minimal cleaning to make the column headers readable. 
 
 ### Data
 
-"data/2025-09-29_BES-article-metadata-2015-2024.csv"
-BES-data-code-hackathon-cleaned_2025-12-01.csv
-data-validation_2025-11-16.csv
+* **2025-09-29_BES-article-metadata-2015-2024.csv**
+
+
+
+* **BES-data-code-hackathon-cleaned_2025-12-01.csv**
+
+[1] "paper_number"                "doi"                         "year_published"             
+ [4] "journal"                     "article_type"                "data_used"                  
+ [7] "data_availability"           "data_availability_text"      "data_link"                  
+[10] "data_archive"                "data_doi"                    "data_license"               
+[13] "data_license_type"           "data_download"               "data_open"                  
+[16] "data_format"                 "data_README"                 "data_README_scale"          
+[19] "data_completeness"           "code_used"                   "code_alert"                 
+[22] "code_archived"               "code_availability"           "code_link"                  
+[25] "code_archive"                "code_doi"                    "code_license"               
+[28] "code_license_type"           "code_CITATION"               "code_download"              
+[31] "code_open"                   "code_format"                 "code_language"              
+[34] "code_README"                 "code_README_scale"           "code_annotation_scale"      
+[37] "code_vignette"               "code_Rpackage_available"     "code_OTHERpackage_available"
+[40] "code_application_cited"      "code_comments"               "country_first"              
+[43] "comments"                    "recorder_ID"    
+
+
+* **data-validation_2025-11-16.csv**
 
 -------
 ## Analyses
@@ -54,6 +188,7 @@ This script uses the  `raw-data/BES_2015-2024_article_data_2025-09-02.csv` datas
 We used this list during the hackathon.
 
 * **01_anonymise-recorders.r**. 
+*Note that this script cannot be shared as it contains GDPR sensitive information.*
 
 Next the collected data from the hackathon had to be anonymised due to GDPR legislation. Each unique data recorder (or group of data recorders where people were working as a team) was given a unique recorder ID number, then their names and details were removed from the data.
 
@@ -61,9 +196,9 @@ This script uses `raw-data/non-anonymised-data/BES-data-code-hackathon-raw-outpu
 
 * **02_initial-data-cleaning.r**.
 
-This script takes the raw data (`BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv`) and (slowly and painfully) cleans it so it can be used in the analyses. The script removes excess variables we did not use in the final analyses, standardises write up answers, fixes typos, removes duplicate entries etc. It also selects all entries for paper 2272 which we used to look at data recorder variability.
+This script takes the anonymised data collected at the hackthon from `raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv` and (slowly and painfully!) cleans it so it can be used in the analyses. The script uses `fixing-papers-with-issues.csv` to fix particular issues flagged by participants of the hackathon and followed up on by the organising team. The script then removes excess variables we did not use in the final analyses, standardises write up answers, fixes typos, removes duplicate entries etc. It also selects all entries for paper 2272 which we used to look at data recorder variability and outputs these separately - only one entry for 2272 is retained in the main dataset.
 
- This script uses `raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv` and outputs `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` and `data/data-validation_2025-11-16.csv` the processed datasets used in all subsequent analyses.
+The script outputs `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` and `data/data-validation_2025-11-16.csv`, the processed datasets used in all subsequent analyses.
 
 * **03_summary-stats-plots.qmd**
 
@@ -98,6 +233,7 @@ This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to invest
 
 * `/figures` contains all figures for the paper and supporting information.
 * `/tables` contains all tables for the paper and supporting information. 
+* `/supporting-information` contains the full data collection protocol and the Supporting Information from the paper in PDF format.
 
 -------
 ## Session Info
@@ -192,3 +328,8 @@ To rerun all the code with packages as they existed on CRAN at time of our analy
 ```{r}
 checkpoint("2026-03-02")
 ```
+
+------------
+
+### Raw data metadata
+
