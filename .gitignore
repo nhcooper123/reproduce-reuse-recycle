@@ -1,6 +1,6 @@
 # Exclude sensitive data and analyses
 raw-data/non-anonymised-data*
-analyses/01-anonymise-recorders.r
+analyses/01_anonymise-recorders.r
 
 # History files
 .Rhistory
