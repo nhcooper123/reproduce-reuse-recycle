@@ -14,7 +14,7 @@ journal_cols <- c("#A2DACC", # ESE
                   "#DDAC93") # People and Nature
 
 # Read in the data
-papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-11-16.csv")
+papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
 
 remove_x <- theme(axis.title.x=element_blank(),
                   axis.text.x=element_blank(),
