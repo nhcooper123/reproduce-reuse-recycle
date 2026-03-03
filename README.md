@@ -41,7 +41,7 @@ This dataset contains article data given to us by Wiley. Note that the names of 
 
 Column headers are as follows:
 
-* **Journal**. Journal code. Options are: FEC = Functional Ecology, MEE3 = Methods in Ecology and Evolution, PAN3 = People and Nature, JANE = Journal of Animal Ecology, JEC = Journal of Ecology, JPE = Journal of Applied Ecology, ESO3 = Ecological Solutions and Evidence.
+* **Journal**. Journal code. Options are: *FEC* = Functional Ecology, *MEE3* = Methods in Ecology and Evolution, *PAN3* = People and Nature, *JANE* = Journal of Animal Ecology, *JEC* = Journal of Ecology, *JPE* = Journal of Applied Ecology, *ESO3* = Ecological Solutions and Evidence.
 * **Article ID**. ID number for paper.
 * **Vol Iss**.	Volume and issue number in format Volume:Issue.
 * **Article Title**. Title of paper. 
@@ -50,7 +50,7 @@ Column headers are as follows:
 * **DOI Link**.	DOI link to the webpage for the paper.
 * **Submitting Editor**. Senior Editor who handled the paper.
 * **Classification (Base Article Type)**. Paper type using editorial system classifications. Can be ignored to use Category (Display Article Type) instead.	
-* **Category (Display Article Type)**. Paper type using standard names. We selected options: Research Article, Applications, Practical Tools, Data Articles and Long Term Study. We excluded options: Biological Flora, Commentary, Concept, Correction, Correspondence, Corrigendum, Editorial, Editorial Note, Erratum, Essay Review, FE Spotlight, Forum, From Practice, Guest Editorial, How To, In Focus, Mini review, Perspectives, Policy Directions, Practice Insights, Practitioner Perspective, Registered Reports, Research Highlights, Research Methods Guides, Review, Review and Synthesis, Synthesis.
+* **Category (Display Article Type)**. Paper type using standard names. We selected options: *Research Article*, *Applications*, *Practical Tools*, *Data Articles* and *Long Term Study*. We excluded options: *Biological Flora, Commentary, Concept, Correction, Correspondence, Corrigendum, Editorial, Editorial Note, Erratum, Essay Review, FE Spotlight, Forum, From Practice, Guest Editorial, How To, In Focus, Mini review, Perspectives, Policy Directions, Practice Insights, Practitioner Perspective, Registered Reports, Research Highlights, Research Methods Guides, Review, Review and Synthesis, Synthesis*.
 * **Corresponding Author Country**.	Country for corresponding author. Care needed here as further research showed this was often incorrect (people forget to update ScholarOne so these are often very out of date).
 * **EarlyView Actual**.	Date (DD-Mon-YY) when paper appeared online on Early View.
 * **First Online Actual**. Date (DD-Mon-YY) when paper published online in its final format.
@@ -82,7 +82,7 @@ Column headers are as follows:
 * **doi_link**. Digital object identifier (DOI) link to the webpage for the paper.                      
 * **doi**. Digital object identifier (DOI).                         
 * **journal** Journal. Options are: *Ecological Solutions and Evidence*, *Functional Ecology*, *Journal of Animal Ecology*, *Journal of Applied Ecology*, *Journal of Ecology*, *Methods in Ecology and Evolution*, and *People and Nature*.                          
-* **article_type**. Article type. Options are: Research Article, Applications, Practical Tools, Data Articles and Long Term Study.                 
+* **article_type**. Article type. Options are: *Research Article*, *Applications*, *Practical Tools*, *Data Articles* and *Long Term Study*.                 
 * **article_title**. Title of published paper.               
 * **date_published**. Date the paper was published online in its final format (DD-Mon-YY).                
 * **corresponding_author_country**. Country listed for corresponding author.
@@ -97,15 +97,15 @@ Column headers are as follows:
 * **doi**. Digital object identifier (DOI).                          
 * **year_published**. Year the final version was published online (2017-2024)             
 * **journal**. Journal. Options are: *Ecological Solutions and Evidence*, *Functional Ecology*, *Journal of Animal Ecology*, *Journal of Applied Ecology*, *Journal of Ecology*, *Methods in Ecology and Evolution*, *People and Nature*.                     
-* **article_type**. Article type. Options are: Research Article, Applications, Practical Tools, Data Articles, Long Term Study.                
-* **data_used**. Were data used? Options are: Yes, No.                   
-* **data_availability**. Are data mentioned in the data availability statement? Options are: Yes, No, No, but they are available on request.               
+* **article_type**. Article type. Options are: *Research Article*, *Applications*, *Practical Tools*, *Data Articles*, *Long Term Study*.                
+* **data_used**. Were data used? Options are: *Yes*, *No*.                   
+* **data_availability**. Are data mentioned in the data availability statement? Options are: *Yes*, *No*, *No, but they are available on request*.               
 * **data_availability_text**. Full text from the Data Availability statement.      
 * **data_link**. Does the link direct you to the dataset. Options are: Yes, No.                 
-* **data_archive**. Where are the data archived? Multiple options can be selected. Options are: Dryad, Figshare, GitHub, GitLab, Codeberg or similar platform, Other repo/database, Personal website, Supplementary materials, Zenodo.               
-* **data_doi**. Does the data have a DOI? Options are: Yes, No, Unsure, Yes but DOI not found/incorrect, Yes but not for all data archived.                    
-* **data_license**. Does the data have a license? Options are: Yes, No, Unsure, Yes but not for all data archived.              
-* **data_license_type** What type of license does the data have? Options are: CC BY, CC BY derivatives, CC0, No, OGL, Other. Note that CC BY derivatives means licenses like CC BY-SA.         
+* **data_archive**. Where are the data archived? Multiple options can be selected. Options are: *Dryad, Figshare, GitHub, GitLab, Codeberg or similar platform, Other repo/database, Personal website, Supplementary materials, Zenodo*.               
+* **data_doi**. Does the data have a DOI? Options are: *Yes*, *No*, *Unsure*, *Yes, but DOI not found/incorrect*, *Yes, but not for all data archived*.                    
+* **data_license**. Does the data have a license? Options are: *Yes*, *No*, *Unsure*, *Yes, but not for all data archived*.              
+* **data_license_type** What type of license does the data have? Options are: *CC BY, CC BY derivatives, CC0, No, OGL, Other*. Note that CC BY derivatives means licenses like CC BY-SA.         
 * **data_download**. Can the data be downloaded? Options are: Yes, No, No, because the data are embargoed, Yes, but not all data.               
 * **data_open**                  
 * **data_format**                 
