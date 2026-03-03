@@ -103,7 +103,7 @@ This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to invest
 ## Session Info
 For reproducibility purposes, here is the output of `devtools::session_info()` used to perform the analyses in the publication.
 
-─ Session info    ─────────────────────────────────────────────────────────────────────────────────────────────────────
+    ─ Session info    ─────────────────────────────────────────────────────────────────────────────────────────────────────
     setting  value
     version  R version 4.5.0 (2025-04-11)
     os       macOS Sequoia 15.5
@@ -118,7 +118,7 @@ For reproducibility purposes, here is the output of `devtools::session_info()` u
     pandoc   3.7.0.2 @ /usr/local/bin/pandoc
     quarto   1.8.25 @ /Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto
 
-─ Packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ─ Packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────
     package      * version date (UTC) lib source
     bit            4.6.0   2025-03-06 [1] CRAN (R 4.5.0)
     bit64          4.6.0-1 2025-01-16 [1] CRAN (R 4.5.0)
