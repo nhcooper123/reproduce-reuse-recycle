@@ -1,6 +1,5 @@
 # Exclude sensitive data and analyses
 raw-data/non-anonymised-data*
-analyses/prepare-paper-list/*
 analyses/00-anonymise-recorders.r
 
 # History files
