@@ -1,10 +1,11 @@
-# Recorder variability
-# 
-# Load libraries
-library(tidyverse)
-library(patchwork)
+# Recorder variability using paper 2272
+# Create Figure S15 and results in the supplemental
 
-# Read in the data
+# Load libraries
+library(tidyverse) # for data manipulation and plotting
+library(patchwork) # for multi panel plots
+
+# Read in the data for paper 2272 only
 check <- read_csv("data/data-validation_2025-11-16.csv")
 
 #--------------------------------------
