@@ -39,19 +39,19 @@ This dataset contains article data given to us by Wiley. Note that the names of 
 
 Column headers are as follows:
 
-* **Journal**. Journal code. Options are: *FEC* = Functional Ecology; *MEE3* = Methods in Ecology and Evolution; *PAN3* = People and Nature; *JANE* = Journal of Animal Ecology; *JEC* = Journal of Ecology; *JPE* = Journal of Applied Ecology; *ESO3* = Ecological Solutions and Evidence.
-* **Article ID**. ID number for paper.
-* **Vol Iss**.	Volume and issue number in format Volume:Issue.
-* **Article Title**. Title of paper. 
-* **Editorial Reference Code**.	Reference code used by editorial office.	
-* **DOI**. Digital object identifier.
-* **DOI Link**.	DOI link to the webpage for the paper.
-* **Submitting Editor**. Senior Editor who handled the paper.
-* **Classification (Base Article Type)**. Paper type using editorial system classifications. Can be ignored to use Category (Display Article Type) instead.	
-* **Category (Display Article Type)**. Paper type using standard names. We selected options: *Research Article*; *Applications*; *Practical Tools*; *Data Articles* and *Long Term Study*. We excluded options: *Biological Flora; Commentary; Concept; Correction; Correspondence; Corrigendum; Editorial; Editorial Note; Erratum; Essay Review; FE Spotlight; Forum; From Practice; Guest Editorial; How To; In Focus; Mini review; Perspectives; Policy Directions; Practice Insights; Practitioner Perspective; Registered Reports; Research Highlights; Research Methods Guides; Review; Review and Synthesis; Synthesis*.
-* **Corresponding Author Country**.	Country for corresponding author. Care needed here as further research showed this was often incorrect (people forget to update ScholarOne so these are often very out of date).
-* **EarlyView Actual**.	Date (DD-Mon-YY) when paper appeared online on Early View.
-* **First Online Actual**. Date (DD-Mon-YY) when paper published online in its final format.
+> * **Journal**. Journal code. Options are: *FEC* = Functional Ecology; *MEE3* = Methods in Ecology and Evolution; *PAN3* = People and Nature; *JANE* = Journal of Animal Ecology; *JEC* = Journal of Ecology; *JPE* = Journal of Applied Ecology; *ESO3* = Ecological Solutions and Evidence.
+> * **Article ID**. ID number for paper.
+> * **Vol Iss**.	Volume and issue number in format Volume:Issue.
+> * **Article Title**. Title of paper. 
+> * **Editorial Reference Code**.	Reference code used by editorial office.	
+> * **DOI**. Digital object identifier.
+> * **DOI Link**.	DOI link to the webpage for the paper.
+> * **Submitting Editor**. Senior Editor who handled the paper.
+> * **Classification (Base Article Type)**. Paper type using editorial system classifications. Can be ignored to use Category (Display Article Type) instead.	
+> * **Category (Display Article Type)**. Paper type using standard names. We selected options: *Research Article*; *Applications*; *Practical Tools*; *Data Articles* and *Long Term Study*. We excluded options: *Biological Flora; Commentary; Concept; Correction; Correspondence; Corrigendum; Editorial; Editorial Note; Erratum; Essay Review; FE Spotlight; Forum; From Practice; Guest Editorial; How To; In Focus; Mini review; Perspectives; Policy Directions; Practice Insights; Practitioner Perspective; Registered Reports; Research Highlights; Research Methods Guides; Review; Review and Synthesis; Synthesis*.
+> * **Corresponding Author Country**.	Country for corresponding author. Care needed here as further research showed this was often incorrect (people forget to update ScholarOne so these are often very out of date).
+> * **EarlyView Actual**.	Date (DD-Mon-YY) when paper appeared online on Early View.
+> * **First Online Actual**. Date (DD-Mon-YY) when paper published online in its final format.
 
 2.  **BES-article-metadata-2015-2024_2025-09-29.csv**
 
@@ -59,14 +59,14 @@ This is the cleaned version of `raw-data/BES_2015-2024_article_data_2025-09-02.c
 
 Column headers are as follows:
 
-* **paper_number**. The unique paper number.                
-* **doi_link**. Digital object identifier (DOI) link to the webpage for the paper.                      
-* **doi**. Digital object identifier (DOI).                         
-* **journal** Journal. Options are: *Ecological Solutions and Evidence*; *Functional Ecology*; *Journal of Animal Ecology*; *Journal of Applied Ecology*; *Journal of Ecology*; *Methods in Ecology and Evolution*; and *People and Nature*.                          
-* **article_type**. Article type. Options are: *Research Article*; *Applications*; *Practical Tools*; *Data Articles* and *Long Term Study*.                 
-* **article_title**. Title of published paper.               
-* **date_published**. Date the paper was published online in its final format (DD-Mon-YY).                
-* **corresponding_author_country**. Country listed for corresponding author.
+> * **paper_number**. The unique paper number.                
+> * **doi_link**. Digital object identifier (DOI) link to the webpage for the paper.                      
+> * **doi**. Digital object identifier (DOI).                         
+> * **journal** Journal. Options are: *Ecological Solutions and Evidence*; *Functional Ecology*; *Journal of Animal Ecology*; *Journal of Applied Ecology*; *Journal of Ecology*; *Methods in Ecology and Evolution*; and *People and Nature*.                          
+> * **article_type**. Article type. Options are: *Research Article*; *Applications*; *Practical Tools*; *Data Articles* and *Long Term Study*.                 
+> * **article_title**. Title of published paper.               
+> * **date_published**. Date the paper was published online in its final format (DD-Mon-YY).                
+> * **corresponding_author_country**. Country listed for corresponding author.
 
 3. **BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
 
@@ -78,8 +78,8 @@ This dataset contains papers flagged with issues by participants, and the sugges
 
 The columns headers are all the same as those in `BES-data-code-hackathon-cleaned_2025-12-01.csv` below except the addition of:
 
-* **course_of_action**.	What should we do to fix this paper? Options: *Edit; Delete; Delete duplicate; None*.
-* **justification**. Long form text explanation of why the course of action was recommended.
+> * **course_of_action**.	What should we do to fix this paper? Options: *Edit; Delete; Delete duplicate; None*.
+> * **justification**. Long form text explanation of why the course of action was recommended.
 
 ### Processed/cleaned data used in analyses (`/data`)
 
@@ -92,49 +92,49 @@ This is the cleaned version of the anonymised dataset (`raw-data/BES-data-code-h
 Column headers are as follows:
 
 > * **paper_number**. Unique paper number.                
-* **doi**. Digital object identifier (DOI).                          
-* **year_published**. Year the final version was published online (2017-2024)             
-* **journal**. Journal. Options are: *Ecological Solutions and Evidence*; *Functional Ecology*; *Journal of Animal Ecology*; *Journal of Applied Ecology*; *Journal of Ecology*; *Methods in Ecology and Evolution*; *People and Nature*.                     
-* **article_type**. Article type. Options are: *Research Article*; *Applications*; *Practical Tools*; *Data Articles*; *Long Term Study*.                
-* **data_used**. Were data used? Options are: *Yes*; *No*.                   
-* **data_availability**. Are data mentioned in the data availability statement? Options are: *Yes*; *No*; *No, but they are available on request*.               
-* **data_availability_text**. Full text from the Data Availability statement. Long form text.     
-* **data_link**. Does the link direct you to the dataset? Options are: *Yes*; *No*.                 
-* **data_archive**. Where are the data archived? Multiple options can be selected. Options are: *Dryad; Figshare; GitHub; GitLab; Codeberg or similar platform; Other repo/database; Personal website; Supplementary materials; Zenodo*.               
-* **data_doi**. Does the data have a DOI? Options are: *Yes*; *No*; *Unsure*; *Yes, but DOI not found/incorrect*; *Yes, but not for all data archived*.                    
-* **data_license**. Does the data have a license? Options are: *Yes*; *No*; *Unsure*; *Yes, but not for all data archived*.              
-* **data_license_type** What type of license does the data have? Multiple options can be selected. Options are: *CC BY; CC BY derivatives; CC0; OGL; Other*. Note that CC BY derivatives means licenses like CC BY-SA.         
-* **data_download**. Can the data be downloaded? Options are: *Yes*; *No*; *No, because the data are embargoed*; *Yes, but not all data*.               
-* **data_open**. Can the data be opened? Options are: *Yes*; *No*; *Needs specific software or too large*; *Yes, but not all files*.                   
-* **data_format**. File extension the data file(s) were saved in. Multiple options can be selected. Options are: *7z*; *.adf*; *.asc*; *.aln*; *.avi*; *.bat*; *.cpg*; *.csv/.tsv*; *.dat*;*.db*; *.dbf*; *.doc(x)*; *.dtg*; *.fasta*; *.fastq*; *fastq.gz*; *.fna*; *.fq*; *.gpkg*; *.gh*; *.grd*; *.gri*; *.gz*; *.html*; *.inc*; *.inp*; *.jags*; *.jpg*; *.js*; *.json*; *.lewis*; *.lux*; *.m*; *.mat*; *.md*; *.mp4*; *.mrb*; *.mzTab*; *.mzxml*; *.NEF*; *.nex*; *.nlogo*; *.numbers*; *.nwk*; *.ods*; *.oligos*; *.pdf*; *.phy*; *.pkl*; *.ply*; *.png*; *.print*; *.prj*; *.py*; *.Rdata*; *.RDS*; *.rocrate*; *.rst*; *.rtf*; *.rwl*; *.sav*; *.sbn*; *.sbx*; *.shp*; *.shx*; *.sqlite*; *.smk*; *.stl*; *.tab*; *.table*; *.tar*; *.tif*; *.tre*; *.txt*; *.vcf*; *.vtk*; *.wav*; *.xlsm*; *.xls(x)*; *.xml*; *.yml*; *.zip*; *Unsure*. Note that these options were collapsed down during the analyses as some are equivalent.                
-* **data_README**. Does the data have a README or equivalent? Options are: *Yes*; *No*; *Unsure*; *Quasi-README*. Quasi-README indicated situations where there was something like a README, but not exactly a README. In our analyses we put this into the Yes category.                
-* **data_README_scale**. How useful is the README or equivalent? This is a scale from 1 to 10 where 1 = very brief and incomplete, and 10 = you can understand the dataset in just a few minutes. Contains all column headers, abbreviations, units, data sources, data dictionary, license info, paper info etc.          
-* **data_completeness**. How complete are the data? This is a four point scale. Options are: *low* = the main analyses of the paper cannot be repeated with the data that has been archived; *fair* = some analyses can be repeated but not all (~50% of analyses can be repeated); *high* = most data are provided with only small omissions, for example exploratory analyses (~75% of analyses can be repeated); *complete* = all the data necessary to reproduce all analyses and results are archived.
+> * **doi**. Digital object identifier (DOI).                          
+> * **year_published**. Year the final version was published online (2017-2024)             
+> * **journal**. Journal. Options are: *Ecological Solutions and Evidence*; *Functional Ecology*; *Journal of Animal Ecology*; *Journal of Applied Ecology*; *Journal of Ecology*; *Methods in Ecology and Evolution*; *People and Nature*.                     
+> * **article_type**. Article type. Options are: *Research Article*; *Applications*; *Practical Tools*; *Data Articles*; *Long Term Study*.                
+> * **data_used**. Were data used? Options are: *Yes*; *No*.                   
+> * **data_availability**. Are data mentioned in the data availability statement? Options are: *Yes*; *No*; *No, but they are available on request*.               
+> * **data_availability_text**. Full text from the Data Availability statement. Long form text.     
+> * **data_link**. Does the link direct you to the dataset? Options are: *Yes*; *No*.                 
+> * **data_archive**. Where are the data archived? Multiple options can be selected. Options are: *Dryad; Figshare; GitHub; GitLab; Codeberg or similar platform; Other repo/database; Personal website; Supplementary materials; Zenodo*.               
+> * **data_doi**. Does the data have a DOI? Options are: *Yes*; *No*; *Unsure*; *Yes, but DOI not found/incorrect*; *Yes, but not for all data archived*.                    
+> * **data_license**. Does the data have a license? Options are: *Yes*; *No*; *Unsure*; *Yes, but not for all data archived*.              
+> * **data_license_type** What type of license does the data have? Multiple options can be selected. Options are: *CC BY; CC BY derivatives; CC0; OGL; Other*. Note that CC BY derivatives means licenses like CC BY-SA.         
+> * **data_download**. Can the data be downloaded? Options are: *Yes*; *No*; *No, because the data are embargoed*; *Yes, but not all data*.               
+> * **data_open**. Can the data be opened? Options are: *Yes*; *No*; *Needs specific software or too large*; *Yes, but not all files*.                   
+> * **data_format**. File extension the data file(s) were saved in. Multiple options can be selected. Options are: *7z*; *.adf*; *.asc*; *.aln*; *.avi*; *.bat*; *.cpg*; *.csv/.tsv*; *.dat*;*.db*; *.dbf*; *.doc(x)*; *.dtg*; *.fasta*; *.fastq*; *fastq.gz*; *.fna*; *.fq*; *.gpkg*; *.gh*; *.grd*; *.gri*; *.gz*; *.html*; *.inc*; *.inp*; *.jags*; *.jpg*; *.js*; *.json*; *.lewis*; *.lux*; *.m*; *.mat*; *.md*; *.mp4*; *.mrb*; *.mzTab*; *.mzxml*; *.NEF*; *.nex*; *.nlogo*; *.numbers*; *.nwk*; *.ods*; *.oligos*; *.pdf*; *.phy*; *.pkl*; *.ply*; *.png*; *.print*; *.prj*; *.py*; *.Rdata*; *.RDS*; *.rocrate*; *.rst*; *.rtf*; *.rwl*; *.sav*; *.sbn*; *.sbx*; *.shp*; *.shx*; *.sqlite*; *.smk*; *.stl*; *.tab*; *.table*; *.tar*; *.tif*; *.tre*; *.txt*; *.vcf*; *.vtk*; *.wav*; *.xlsm*; *.xls(x)*; *.xml*; *.yml*; *.zip*; *Unsure*. Note that these options were collapsed down during the analyses as some are equivalent.                
+> * **data_README**. Does the data have a README or equivalent? Options are: *Yes*; *No*; *Unsure*; *Quasi-README*. Quasi-README indicated situations where there was something like a README, but not exactly a README. In our analyses we put this into the Yes category.                
+> * **data_README_scale**. How useful is the README or equivalent? This is a scale from 1 to 10 where 1 = very brief and incomplete, and 10 = you can understand the dataset in just a few minutes. Contains all column headers, abbreviations, units, data sources, data dictionary, license info, paper info etc.          
+> * **data_completeness**. How complete are the data? This is a four point scale. Options are: *low* = the main analyses of the paper cannot be repeated with the data that has been archived; *fair* = some analyses can be repeated but not all (~50% of analyses can be repeated); *high* = most data are provided with only small omissions, for example exploratory analyses (~75% of analyses can be repeated); *complete* = all the data necessary to reproduce all analyses and results are archived.
           
-* **code_used**. Was code used in the paper? Options are: *Yes*; *No*; *Unsure*.                   
-* **code_alert**. If code is not mentioned in the Data Availability statement, what part of the text alerted you that code was used in the paper? Long form text.                 
-* **code_archived**. Was any code archived? Options are: *Yes*; *No*              
-* **code_availability**. Is code mentioned in the data availability statement? Options are: *Yes*; *No*.             
-* **code_link**. Does the link direct you to the code? Options are: *Yes*; *No*.                 
-* **code_archive**. Where are the data archived? Multiple options can be selected. Options are: *CRAN*; *Dryad; Figshare; GitHub; GitLab; Codeberg or similar platform; Other repo/database; Personal website; Supplementary materials; Zenodo*. 
-* **code_doi**. Does the code have a DOI? Options are: *Yes*; *No*; *Unsure*; *Yes, same as data*.                     
-* **code_license**. Does the code have a license? Options are: *Yes*; *No*; *Unsure*.                
-* **code_license_type**. What type of license does the code have? Multiple options can be selected. Options are: *CC BY; CC BY derivatives; CC0; GPL; MIT; Other; Unsure*. Note that CC BY derivatives means licenses like CC BY-SA.            
-* **code_CITATION**. Does the code have a CITATION file or equivalent? Options are: *Yes*; *No*; *Unsure*.                
-* **code_download**. Can the code be downloaded? Options are: *Yes*; *No*.               
-* **code_open**. Can the code be opened? Options are: *Yes*; *No*; *Maybe if I had the right software*.                   
-* **code_format**. File extension the code file(s) were saved in. Multiple options can be selected. Options are: *.csv/.tsv; .doc(x); .html; native source code; notebook; .pdf; .txt; Other; Unsure*. Native source code includes things like .R, .py and .jl. Notebooks include RMarkdown, Quarto and Jypiter notebooks.
-* **code_language**. What programming language is the code written in? Multiple options can be selected. Options are: *BUGS/JAGS; C/C++; HTML; Java; Julia; Mathematica; MATLAB; NetLogo; Perl; Python; Shell, SQL; Stan; TeX/LaTeX; Other*.                                
-* **code_README**. Does the code have a README or equivalent? Options are: *Yes*; *No*; *Quasi-README*. Quasi-README indicated situations where there was something like a README, but not exactly a README. In our analyses we put this into the Yes category.                               
-* **code_README_scale**. How useful is the README or equivalent? This is a scale from 1 to 10. 1 = very brief and incomplete, and 10 = all information about script functionality, outputs, software, packages, workflows comprehensively documented.           
-* **code_annotation_scale**. How good is the code annotation? This is a scale from 1 to 10. of 1 = not annotated at all and 10 = thorough annotation throughout.       
-* **code_vignette**. Does the code have a vignette or similar examples file/manual? Options are: *Yes*; *No*; *Unsure*.                
-* **code_Rpackage_available**. If the paper presented a new R package, can you still access the package on CRAN or Bioconductor? Options are: *Yes*; *No*; *Not an R package*; *Unable to check*.      
-* **code_application_cited**. Number of times an Applications type paper has been cited. Integer.     
-* **code_comments**. Any additional comments about code reproducibility.              
-* **country_first**. Country/region of first author. Selected from UN M49 standard georegions: https://unstats.un.org/unsd/methodology/m49/#geo-regions.            
-* **comments**. Any comments about the paper.                    
-* **recorder_ID**. Who collected this data? Unique ID number for each recorder or group of recorders.
+> * **code_used**. Was code used in the paper? Options are: *Yes*; *No*; *Unsure*.                   
+> * **code_alert**. If code is not mentioned in the Data Availability statement, what part of the text alerted you that code was used in the paper? Long form text.                 
+> * **code_archived**. Was any code archived? Options are: *Yes*; *No*              
+> * **code_availability**. Is code mentioned in the data availability statement? Options are: *Yes*; *No*.             
+> * **code_link**. Does the link direct you to the code? Options are: *Yes*; *No*.                 
+> * **code_archive**. Where are the data archived? Multiple options can be selected. Options are: *CRAN*; *Dryad; Figshare; GitHub; GitLab; Codeberg or similar platform; Other repo/database; Personal website; Supplementary materials; Zenodo*. 
+> * **code_doi**. Does the code have a DOI? Options are: *Yes*; *No*; *Unsure*; *Yes, same as data*.                     
+> * **code_license**. Does the code have a license? Options are: *Yes*; *No*; *Unsure*.                
+> * **code_license_type**. What type of license does the code have? Multiple options can be selected. Options are: *CC BY; CC BY derivatives; CC0; GPL; MIT; Other; Unsure*. Note that CC BY derivatives means licenses like CC BY-SA.            
+> * **code_CITATION**. Does the code have a CITATION file or equivalent? Options are: *Yes*; *No*; *Unsure*.                
+> * **code_download**. Can the code be downloaded? Options are: *Yes*; *No*.               
+> * **code_open**. Can the code be opened? Options are: *Yes*; *No*; *Maybe if I had the right software*.                   
+> * **code_format**. File extension the code file(s) were saved in. Multiple options can be selected. Options are: *.csv/.tsv; .doc(x); .html; native source code; notebook; .pdf; .txt; Other; Unsure*. Native source code includes things like .R, .py and .jl. Notebooks include RMarkdown, Quarto and Jypiter notebooks.
+> * **code_language**. What programming language is the code written in? Multiple options can be selected. Options are: *BUGS/JAGS; C/C++; HTML; Java; Julia; Mathematica; MATLAB; NetLogo; Perl; Python; Shell, SQL; Stan; TeX/LaTeX; Other*.                                
+> * **code_README**. Does the code have a README or equivalent? Options are: *Yes*; *No*; *Quasi-README*. Quasi-README indicated situations where there was something like a README, but not exactly a README. In our analyses we put this into the Yes category.                               
+> * **code_README_scale**. How useful is the README or equivalent? This is a scale from 1 to 10. 1 = very brief and incomplete, and 10 = all information about script functionality, outputs, software, packages, workflows comprehensively documented.           
+> * **code_annotation_scale**. How good is the code annotation? This is a scale from 1 to 10. of 1 = not annotated at all and 10 = thorough annotation throughout.       
+> * **code_vignette**. Does the code have a vignette or similar examples file/manual? Options are: *Yes*; *No*; *Unsure*.                
+> * **code_Rpackage_available**. If the paper presented a new R package, can you still access the package on CRAN or Bioconductor? Options are: *Yes*; *No*; *Not an R package*; *Unable to check*.      
+> * **code_application_cited**. Number of times an Applications type paper has been cited. Integer.     
+> * **code_comments**. Any additional comments about code reproducibility.              
+> * **country_first**. Country/region of first author. Selected from UN M49 standard georegions: https://unstats.un.org/unsd/methodology/m49/#geo-regions.            
+> * **comments**. Any comments about the paper.                    
+> * **recorder_ID**. Who collected this data? Unique ID number for each recorder or group of recorders.
 
 2. **data-validation_2025-11-16.csv**
 
