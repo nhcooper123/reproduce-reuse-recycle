@@ -6,6 +6,8 @@ editor: visual
 
 # Summaries for each variable
 
+This script creates summary numbers and plots for all variables, this is primarily for data exploration and understanding prior to creating figures and tables for the paper itself. Some numbers from this script are used in the body of the text in the paper.
+
 ```{r, message = FALSE}
 # Load libraries
 library(tidyverse)
@@ -67,7 +69,7 @@ ggplot(journal_summary, aes(x = journal, y = count, fill = journal)) +
 year_summary <-
   papers %>%
   group_by(year_published) %>%
-  summarise(count = n(), precent = count/1861*100)
+  summarise(count = n(), percent = count/1861*100)
   
 
 # Look at results
