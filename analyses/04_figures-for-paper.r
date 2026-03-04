@@ -1,8 +1,9 @@
 # Making figures for the paper
+# This script makes figures 1-7 in the main text and figure S16.
 
 # Load libraries
-library(tidyverse)
-library(patchwork)
+library(tidyverse) # for data manipulation and plotting
+library(patchwork) # for multipanel plots
 
 # Build colour scheme for the journals
 journal_cols <- c("#A2DACC", # ESE
@@ -25,6 +26,7 @@ journal_summary <-
   group_by(journal) %>%
   summarise(count = n())
 
+# Make the figure
 journals <-
   ggplot(journal_summary, aes(x = journal, y = count, fill = journal)) +
   geom_col() +
@@ -41,6 +43,7 @@ year_summary <-
   group_by(year_published) %>%
   summarise(count = n())
 
+# Make the figure
 years <-
   ggplot(year_summary, aes(x = year_published, y = count)) +
   geom_col(fill = "lightgrey") +
@@ -278,7 +281,7 @@ total <-
   arrange(-count) %>% 
   summarise(sum(count))
 
-# How many are "other"
+# How many are "other"?
 other_count <- as.numeric(total-topten)
 
 # Create summary dataset for data format
@@ -443,7 +446,7 @@ data_complete <-
   select(data_completeness) %>%
   group_by(data_completeness) %>%
   summarise(papers = n()) %>%
-  # Fix level of factor
+  # Fix levels of factor
   mutate(data_completeness = factor(data_completeness, 
                                     levels = c("Unsure", "Low", "Fair", "High", "Complete"))) %>%
   # Exclude NAs
@@ -474,7 +477,6 @@ annotate_code_plot <-
 
 #-----------------
 # Combine plots
-# (readme_plot + plot_spacer()) / (scale_data_plot + scale_code_plot) / (complete_data_plot+annotate_code_plot) + plot_annotation(tag_levels = "A")
 fig6 <- (scale_data_plot + scale_code_plot) / (complete_data_plot+annotate_code_plot) + plot_annotation(tag_levels = "A")
 
 #-----------------
@@ -486,38 +488,8 @@ papers %>% summarise(median(code_annotation_scale, na.rm = TRUE))
 # Save figure
 ggsave(fig6, file = "figures/fig6_readme-completeness-annonation.jpg", width = 6, height = 6)
 
-#-------------------------------------------------------------------------------
-# 7. What programming language is code written in?
-# Create summary dataset for code language
-#-------------------------------------------------------------------------------
-summary_code_language <- 
-  papers %>% 
-  filter(code_used == "Yes") %>% 
-  select(code_language) %>%
-  separate_longer_delim(cols = code_language, delim = ";") %>%
-  na.omit() %>%
-  group_by(code_language) %>%
-  summarise(count = n()) %>% 
-  arrange(-count) %>%
-  mutate(code_language = case_when(code_language == "Other" ~ "other",
-                                   TRUE ~ as.character(code_language)))
-
-# Plot
-fig_lang <-
-  ggplot(summary_code_language, aes(x = forcats::fct_reorder(code_language,count), y = count)) + 
-  geom_col(fill = "lightgrey") +
-  coord_flip() +
-  theme_bw(base_size = 14) +
-  # Remove legend title
-  theme(legend.title = element_blank()) +
-  xlab("programming language") +
-  ylab("files")
-
-# Save figure
-ggsave(fig_lang, file = "figures/supp-fig_language.jpg", width = 6, height = 4)
-
 #--------------------------------------------------------------------------------
-# 9. What licenses are used?
+# 7. What licenses are used?
 #---------------------
 # data
 data_license_type <-
@@ -563,7 +535,7 @@ summary_all_lt <-
   mutate(license_type = case_when(license_type == "Other" ~ "other",
                                    TRUE ~ as.character(license_type)))
 
-
+# Make the figure
 fig7 <-
   ggplot(summary_all_lt, aes(x = forcats::fct_reorder(license_type, count), y = count)) + 
   geom_col(fill = "lightgrey") +
@@ -579,3 +551,34 @@ fig7 <-
 
 # Save figure
 ggsave(fig7, file = "figures/fig7_licenses.jpg", width = 6, height = 4)
+
+#-------------------------------------------------------------------------------
+# 8. What programming language is code written in?
+# Create summary dataset for code language
+# Note this was removed from the main text and is now figure S16
+#-------------------------------------------------------------------------------
+summary_code_language <- 
+  papers %>% 
+  filter(code_used == "Yes") %>% 
+  select(code_language) %>%
+  separate_longer_delim(cols = code_language, delim = ";") %>%
+  na.omit() %>%
+  group_by(code_language) %>%
+  summarise(count = n()) %>% 
+  arrange(-count) %>%
+  mutate(code_language = case_when(code_language == "Other" ~ "other",
+                                   TRUE ~ as.character(code_language)))
+
+# Plot
+fig_lang <-
+  ggplot(summary_code_language, aes(x = forcats::fct_reorder(code_language,count), y = count)) + 
+  geom_col(fill = "lightgrey") +
+  coord_flip() +
+  theme_bw(base_size = 14) +
+  # Remove legend title
+  theme(legend.title = element_blank()) +
+  xlab("programming language") +
+  ylab("files")
+
+# Save figure
+ggsave(fig_lang, file = "figures/supp-fig_language.png", width = 6, height = 4)
