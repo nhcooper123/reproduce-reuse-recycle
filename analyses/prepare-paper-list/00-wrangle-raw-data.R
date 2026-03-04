@@ -65,7 +65,7 @@ clean_data_random <-
   dplyr::select(paper_number, doi_link:corresponding_author_country)
 
 # Write to file
-write_csv(clean_data_random, file = "data/2025-09-29_BES-article-metadata-2015-2024.csv")
+write_csv(clean_data_random, file = "raw-data/BES-article-metadata-2017-2024_2025-09-29.csv")
 
 # Quick exploratory plots
 ggplot(clean_data_random, aes(x = journal, fill = journal)) +
