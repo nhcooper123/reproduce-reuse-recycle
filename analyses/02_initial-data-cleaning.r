@@ -1,5 +1,5 @@
 # Initial data cleaning
-# NC. Nov 2025
+# Nov 2025
 
 # Prior to running this code I ran a script that tidied and anonymised the recorders. 
 # Each unique recorder or set of recorders has a unique recorder_ID number. recorder_ID 148 is NA.
@@ -9,8 +9,8 @@
 # ---------------
 # Load libraries
 # ---------------
-library(tidyverse)
-library(naniar)
+library(tidyverse) # for data manipulation and plotting
+library(naniar) # for dealing with missing values
 
 # ------------------
 # Read in the data
@@ -23,7 +23,7 @@ rawdata <-
   rawdata %>%
   slice(-(1:127))
 
-# Rename columns to make them easier to deal with
+# Select required columns and rename to make them easier to deal with
 # And simultaneously only select columns we want to use.
 # ------------------------------------------------------------------------------------------------------
 # NOTE that all citations columns have been removed as the data validation showed these questions 
@@ -121,8 +121,8 @@ raw_data_all$article_type[1610] <- "Research Article"
 raw_data_all <- raw_data_all %>% slice(c(-1001, -1246))
 
 #--------------------------------------------------------------------------
-# 179 entries were flagged with issues. These were checked by Bethany A
-# See fixing-papers-with-issues for details of why/how these were editted
+# 179 entries were flagged with issues. These were checked by BA.
+# See fixing-papers-with-issues for details of why/how these were edited
 #--------------------------------------------------------------------------
 # Delete duplicated entry where second instance is correct one
 # Note that there are a few more duplicates, but these will be deleted after we extract the 
@@ -2053,7 +2053,7 @@ clean_data_all <-
   mutate(recorder_ID = case_when(is.na(recorder_ID) ~ 148,
                    TRUE ~ as.numeric(recorder_ID)))
   # ------------------------------------------------------------------------------------------------------
-  # End of cleaning!
+  # End of cleaning! FINALLY!!!
 
 # ------------------------------------------------------------------------------------------------------
 # EXTRACT DATA VALIDATION DATASET
