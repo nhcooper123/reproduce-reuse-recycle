@@ -1,5 +1,6 @@
 # README quality analyses
-# 
+# No longer part of the paper
+
 # Load libraries
 library(tidyverse)
 

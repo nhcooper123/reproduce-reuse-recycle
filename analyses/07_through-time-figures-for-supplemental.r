@@ -1,8 +1,9 @@
-# Through time figures for the supplemental
+# Through time figures
+# No longer part of the paper
 
 # Load libraries
-library(tidyverse)
-library(patchwork)
+library(tidyverse) # for data manipulation and plotting
+library(patchwork) # for multi panel plots
 
 # Build colour scheme for the journals
 journal_cols <- c("#A2DACC", # ESE
