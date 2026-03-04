@@ -2,17 +2,15 @@
 
 Code and data for MEE paper
 
-Author(s): Natalie Cooper and the hack-a-thon gang
+Author(s): Natalie Cooper (natalie.cooper@nhm.ac.uk) and the hackathon gang
 
-*This README is a work in progess*
-
-This repository contains all the data and code used in the [paper](XXX), EXCEPT the non-anonymised raw data and the script used to anonymise it.
+This repository contains all the data and code used in the [paper](LINK TO BE ADDED), EXCEPT the non-anonymised raw data and the script used to anonymise it.
 
 To cite the paper: 
 >  Natalie Cooper and the BES Data and Code Hackathon Group. YEAR. Data- and code-archiving in the British Ecological Society journals: present status and recommendations for future improvements.
 
 To cite this repo: 
->  Natalie Cooper. Code for MEE paper v1.
+>  Natalie Cooper. Data and code for MEE paper v1. TO COMPLETE.
 
 This code is shared under an MIT License.
 
@@ -23,21 +21,21 @@ This code is shared under an MIT License.
 
 ### Data collection and processing (in brief)
 
-1. We first assembled a list of papers published in the seven BES journals between 2017 and the end of 2024 from Wiley. These are listed in `raw-data/BES_2015-2024_article_data_2025-09-02.csv`. We used script `00-wrangle-raw-data.R` to clean this, excluding reviews, perspectives, forum articles, commentaries and opinion pieces that rarely have data or code to archive, leaving 8,112 eligible papers in `data/2025-09-29_BES-article-metadata-2015-2024.csv`.
+1. We first assembled a list of papers published in the seven BES journals between 2017 and the end of 2024 from Wiley. These are listed in `raw-data/BES_2015-2024_article_data_2025-09-02.csv`. We used script `00-wrangle-raw-data.R` to clean this, excluding reviews, perspectives, forum articles, commentaries and opinion pieces that rarely have data or code to archive, leaving 8,112 eligible papers in `raw-data/BES-article-metadata-2017-2024_2025-09-29.csv`.
 
-2. Next, data on data- and code-archiving were collected as part of a hackathon event (29-30th September 2025), where 145 (in-person and online) participants randomly selected papers from the 8,112 eligible papers in `data/2025-09-29_BES-article-metadata-2015-2024.csv`, and then followed a bespoke protocol to collect data from randomly selected subset of papers. The full data collection protocol is in the Supporting Information of the paper and in the `/supporting-information` folder. In addition, all participants collected data for one common paper (paper number 2272) to explore data recorder variability. This data was then anonymised using script `01_anonymise-recorders.r` to remove participant identities resulting in `raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv`and `raw-data/fixing-papers-with-issues.csv`. 
+2. Next, data on data- and code-archiving were collected as part of a hackathon event (29-30th September 2025), where 145 (in-person and online) participants randomly selected papers from the 8,112 eligible papers in `raw-data/BES-article-metadata-2017-2024_2025-09-29_.csv`, and then followed a bespoke protocol to collect data from randomly selected subset of papers. The full data collection protocol is in the Supporting Information of the paper and in the `/supporting-information` folder of this repo. In addition, all participants collected data for one common paper (paper number 2272) to explore data recorder variability. This data was then anonymised using script `01_anonymise-recorders.r` to remove participant identities resulting in `raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv`and `raw-data/fixing-papers-with-issues.csv`. 
 
 3. Finally, the data were cleaned using script `02_initial-data-cleaning.r` described below, to result in datasets `BES-data-code-hackathon-cleaned_2025-12-01.csv` and `data-validation_2025-11-16.csv` which are used in the subsequent analyses. 
 
 ### Raw data (`/raw-data`)
 
-*Note that non-anonymised data are not available here for privacy/GDPR reasons.* 
+*Non-anonymised data are not available here for privacy/GDPR reasons.* 
 
 All datasets use "NA" for missing data.
 
 1. **BES_2015-2024_article_data_2025-09-02.csv**
 
-This dataset contains article data given to us by Wiley. Note that the names of the file suggests data from 2015 onwards were available but in reality only data from 2017 onwards was provided. This is raw data that was provided to us, so it is messier than it would have been if we collected it ourselves (e.g. we would never use DD-Mon-YY format for dates!)
+This dataset contains article data given to us by Wiley. Note that the names of the file suggests data from 2015 onwards were available but in reality only data from 2017 onwards was provided. This is raw data that was provided to us, so it is messier than it would have been if we collected it ourselves (e.g. we would not use DD-Mon-YY format for dates!)
 
 Column headers are as follows:
 
@@ -55,26 +53,9 @@ Column headers are as follows:
 * **EarlyView Actual**.	Date (DD-Mon-YY) when paper appeared online on Early View.
 * **First Online Actual**. Date (DD-Mon-YY) when paper published online in its final format.
 
-2. **BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
+2.  **BES-article-metadata-2015-2024_2025-09-29.csv**
 
-This is the horribly messy raw output from the Google Form we used to collect the data. Each column header is the full question asked in the form, so they are very long and convoluted. The contents of these columns are explained in detail in the data collection protocol which is in the Supporting Information of the paper and in the `/supporting-information` folder. A list of column headers is near the end of this README (it was too long to include here).
-
-3. **fixing-papers-with-issues.csv**
-
-This dataset contains papers flagged with issues by participants, and the suggested solution to those issues. Options for fixes were either to edit (Edit) the entry for the paper as indicated in this dataset, delete the paper from the final analysis dataset (Delete), delete duplicate papers (Delete duplicate), or no fix recommended (None).
-
-The columns headers are all the same as those in `BES-data-code-hackathon-cleaned_2025-12-01.csv` below except the addtion of:
-
-* **course_of_action**.	What should we do to fix this paper? Options: Edit; Delete; Delete duplicate; None.
-* **justification**. Long form text explanation of why the course of action was recommended.
-
-### Processed/cleaned data (`/data`)
-
-All datasets use "NA" for missing data.
-
-1.  **2025-09-29_BES-article-metadata-2015-2024.csv**
-
-This is the cleaned version of `raw-data/BES_2015-2024_article_data_2025-09-02.csv`. The order of the papers was randomised then each was given a unique paper number.
+This is the cleaned version of `raw-data/BES_2015-2024_article_data_2025-09-02.csv`. The order of the papers was randomised then each was given a unique paper number. We recommended participants focus on ten consecutively numbered papers at a time so that papers were selected at random.
 
 Column headers are as follows:
 
@@ -87,9 +68,26 @@ Column headers are as follows:
 * **date_published**. Date the paper was published online in its final format (DD-Mon-YY).                
 * **corresponding_author_country**. Country listed for corresponding author.
 
-2.  **BES-data-code-hackathon-cleaned_2025-12-01.csv**
+3. **BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
 
-This is the cleaned version of the anonymised dataset `raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv` used in the analyses. This data contains n = 1,861 papers in total.
+This is the horribly messy raw output from the Google Form we used to collect the data. Each column header is the full question asked in the form, so they are very long and convoluted. The contents of these columns are explained in detail in the data collection protocol which is in the Supporting Information of the paper and in the `/supporting-information` folder in this repo. A list of column headers is near the end of this README (it was too long to include here).
+
+4. **fixing-papers-with-issues.csv**
+
+This dataset contains papers flagged with issues by participants, and the suggested solution to those issues. Options for fixes were either to edit (Edit) the entry for the paper as indicated in this dataset, delete the paper from the final analysis dataset (Delete), delete duplicate papers (Delete duplicate), or no fix recommended (None).
+
+The columns headers are all the same as those in `BES-data-code-hackathon-cleaned_2025-12-01.csv` below except the addition of:
+
+* **course_of_action**.	What should we do to fix this paper? Options: *Edit; Delete; Delete duplicate; None*.
+* **justification**. Long form text explanation of why the course of action was recommended.
+
+### Processed/cleaned data used in analyses (`/data`)
+
+All datasets use "NA" for missing data.
+
+1.  **BES-data-code-hackathon-cleaned_2025-12-01.csv**
+
+This is the cleaned version of the anonymised dataset (`raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv`) which we used in the analyses. This dataset contains n = 1,861 papers in total.
 
 Column headers are as follows:
 
@@ -100,59 +98,45 @@ Column headers are as follows:
 * **article_type**. Article type. Options are: *Research Article*; *Applications*; *Practical Tools*; *Data Articles*; *Long Term Study*.                
 * **data_used**. Were data used? Options are: *Yes*; *No*.                   
 * **data_availability**. Are data mentioned in the data availability statement? Options are: *Yes*; *No*; *No, but they are available on request*.               
-* **data_availability_text**. Full text from the Data Availability statement.      
-* **data_link**. Does the link direct you to the dataset. Options are: Yes; No.                 
+* **data_availability_text**. Full text from the Data Availability statement. Long form text.     
+* **data_link**. Does the link direct you to the dataset? Options are: *Yes*; *No*.                 
 * **data_archive**. Where are the data archived? Multiple options can be selected. Options are: *Dryad; Figshare; GitHub; GitLab; Codeberg or similar platform; Other repo/database; Personal website; Supplementary materials; Zenodo*.               
 * **data_doi**. Does the data have a DOI? Options are: *Yes*; *No*; *Unsure*; *Yes, but DOI not found/incorrect*; *Yes, but not for all data archived*.                    
 * **data_license**. Does the data have a license? Options are: *Yes*; *No*; *Unsure*; *Yes, but not for all data archived*.              
-* **data_license_type** What type of license does the data have? Multiple options can be selected. Options are: *CC BY; CC BY derivatives; CC0; No; OGL; Other*. Note that CC BY derivatives means licenses like CC BY-SA.         
+* **data_license_type** What type of license does the data have? Multiple options can be selected. Options are: *CC BY; CC BY derivatives; CC0; OGL; Other*. Note that CC BY derivatives means licenses like CC BY-SA.         
 * **data_download**. Can the data be downloaded? Options are: *Yes*; *No*; *No, because the data are embargoed*; *Yes, but not all data*.               
 * **data_open**. Can the data be opened? Options are: *Yes*; *No*; *Needs specific software or too large*; *Yes, but not all files*.                   
 * **data_format**. File extension the data file(s) were saved in. Multiple options can be selected. Options are: *7z*; *.adf*; *.asc*; *.aln*; *.avi*; *.bat*; *.cpg*; *.csv/.tsv*; *.dat*;*.db*; *.dbf*; *.doc(x)*; *.dtg*; *.fasta*; *.fastq*; *fastq.gz*; *.fna*; *.fq*; *.gpkg*; *.gh*; *.grd*; *.gri*; *.gz*; *.html*; *.inc*; *.inp*; *.jags*; *.jpg*; *.js*; *.json*; *.lewis*; *.lux*; *.m*; *.mat*; *.md*; *.mp4*; *.mrb*; *.mzTab*; *.mzxml*; *.NEF*; *.nex*; *.nlogo*; *.numbers*; *.nwk*; *.ods*; *.oligos*; *.pdf*; *.phy*; *.pkl*; *.ply*; *.png*; *.print*; *.prj*; *.py*; *.Rdata*; *.RDS*; *.rocrate*; *.rst*; *.rtf*; *.rwl*; *.sav*; *.sbn*; *.sbx*; *.shp*; *.shx*; *.sqlite*; *.smk*; *.stl*; *.tab*; *.table*; *.tar*; *.tif*; *.tre*; *.txt*; *.vcf*; *.vtk*; *.wav*; *.xlsm*; *.xls(x)*; *.xml*; *.yml*; *.zip*; *Unsure*. Note that these options were collapsed down during the analyses as some are equivalent.                
-* **data_README**. Does the data have a README or equivalent? Options are:                  
-* **data_README_scale**          
-* **data_completeness**           
-* **code_used**                   
-* **code_alert**                 
-* **code_archived**               
-* **code_availability**           
-* **code_link**                  
-* **code_archive**                
-* **code_doi**                    
-* **code_license**               
-* **code_license_type**           
-* **code_CITATION**               
-* **code_download**              
-* **code_open**                   
-* **code_format**                 
-* **code_language**              
-* **code_README**                 
-* **code_README_scale**           
-* **code_annotation_scale**      
-* **code_vignette**               
-* **code_Rpackage_available**     
-* **code_OTHERpackage_available**
-* **code_application_cited**. Number of times an Applications type paper has been cited.      
+* **data_README**. Does the data have a README or equivalent? Options are: *Yes*; *No*; *Unsure*; *Quasi-README*. Quasi-README indicated situations where there was something like a README, but not exactly a README. In our analyses we put this into the Yes category.                
+* **data_README_scale**. How useful is the README or equivalent? This is a scale from 1 to 10 where 1 = very brief and incomplete, and 10 = you can understand the dataset in just a few minutes. Contains all column headers, abbreviations, units, data sources, data dictionary, license info, paper info etc.          
+* **data_completeness**. How complete are the data? This is a four point scale. Options are: *low* = the main analyses of the paper cannot be repeated with the data that has been archived; *fair* = some analyses can be repeated but not all (~50% of analyses can be repeated); *high* = most data are provided with only small omissions, for example exploratory analyses (~75% of analyses can be repeated); *complete* = all the data necessary to reproduce all analyses and results are archived.
+          
+* **code_used**. Was code used in the paper? Options are: *Yes*; *No*; *Unsure*.                   
+* **code_alert**. If code is not mentioned in the Data Availability statement, what part of the text alerted you that code was used in the paper? Long form text.                 
+* **code_archived**. Was any code archived? Options are: *Yes*; *No*              
+* **code_availability**. Is code mentioned in the data availability statement? Options are: *Yes*; *No*.             
+* **code_link**. Does the link direct you to the code? Options are: *Yes*; *No*.                 
+* **code_archive**. Where are the data archived? Multiple options can be selected. Options are: *CRAN*; *Dryad; Figshare; GitHub; GitLab; Codeberg or similar platform; Other repo/database; Personal website; Supplementary materials; Zenodo*. 
+* **code_doi**. Does the code have a DOI? Options are: *Yes*; *No*; *Unsure*; *Yes, same as data*.                     
+* **code_license**. Does the code have a license? Options are: *Yes*; *No*; *Unsure*.                
+* **code_license_type**. What type of license does the code have? Multiple options can be selected. Options are: *CC BY; CC BY derivatives; CC0; GPL; MIT; Other; Unsure*. Note that CC BY derivatives means licenses like CC BY-SA.            
+* **code_CITATION**. Does the code have a CITATION file or equivalent? Options are: *Yes*; *No*; *Unsure*.                
+* **code_download**. Can the code be downloaded? Options are: *Yes*; *No*.               
+* **code_open**. Can the code be opened? Options are: *Yes*; *No*; *Maybe if I had the right software*.                   
+* **code_format**. File extension the code file(s) were saved in. Multiple options can be selected. Options are: *.csv/.tsv; .doc(x); .html; native source code; notebook; .pdf; .txt; Other; Unsure*. Native source code includes things like .R, .py and .jl. Notebooks include RMarkdown, Quarto and Jypiter notebooks.
+* **code_language**. What programming language is the code written in? Multiple options can be selected. Options are: *BUGS/JAGS; C/C++; HTML; Java; Julia; Mathematica; MATLAB; NetLogo; Perl; Python; Shell, SQL; Stan; TeX/LaTeX; Other*.                                
+* **code_README**. Does the code have a README or equivalent? Options are: *Yes*; *No*; *Quasi-README*. Quasi-README indicated situations where there was something like a README, but not exactly a README. In our analyses we put this into the Yes category.                               
+* **code_README_scale**. How useful is the README or equivalent? This is a scale from 1 to 10. 1 = very brief and incomplete, and 10 = all information about script functionality, outputs, software, packages, workflows comprehensively documented.           
+* **code_annotation_scale**. How good is the code annotation? This is a scale from 1 to 10. of 1 = not annotated at all and 10 = thorough annotation throughout.       
+* **code_vignette**. Does the code have a vignette or similar examples file/manual? Options are: *Yes*; *No*; *Unsure*.                
+* **code_Rpackage_available**. If the paper presented a new R package, can you still access the package on CRAN or Bioconductor? Options are: *Yes*; *No*; *Not an R package*; *Unable to check*.      
+* **code_application_cited**. Number of times an Applications type paper has been cited. Integer.     
 * **code_comments**. Any additional comments about code reproducibility.              
 * **country_first**. Country/region of first author. Selected from UN M49 standard georegions: https://unstats.un.org/unsd/methodology/m49/#geo-regions.            
 * **comments**. Any comments about the paper.                    
-* **recorder_ID**. Who collected this data? Unique ID number for each recorder or group of recorders.    
+* **recorder_ID**. Who collected this data? Unique ID number for each recorder or group of recorders.
 
-                                                        
-
-
-
-
-
-
-
-
-
-
-
-
-
-3. **data-validation_2025-11-16.csv**
+2. **data-validation_2025-11-16.csv**
 
 This is the cleaned version of `raw-data/BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv` subset to only include paper 2272 and used in the recorder variability analyses.
 
@@ -322,9 +306,9 @@ checkpoint("2026-03-02")
 
 ### Raw data metadata
 
-2. **BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
+**BES-data-code-hackathon-raw-outputs_ANON_2025-11-16.csv**
 
-This is the horribly messy raw output from the Google Form we used to collect the data. As such each column header is the full question asked in the form, so they are very long and convoluted. The contents of these columns are explained in detail in the data collection protocol which is in the Supporting Information of the paper and in the `/supporting-information` folder.
+This is the horribly messy raw output from the Google Form we used to collect the data. As such each column header is the full question asked in the form, so they are very long and convoluted. The contents of these columns are explained in detail in the data collection protocol which is in the Supporting Information of the paper and in the `/supporting-information` folder. Numbering refers to questions within subsections of the form, but looks a bit nonsensical without the form for reference.
 
 Column headers are as follows:
 
