@@ -311,71 +311,71 @@ This is the horribly messy raw output from the Google Form we used to collect th
 
 Column headers are as follows:
 
-* **Timestamp**. Time that the data was entered into the Google Form.
-* **1. Paper number**
-* **2. DOI of paper (please copy paste to avoid errors)**
-* **3. Year of publication (on spreadsheet)** 
-* **4. Journal  (on spreadsheet)** 
-* **5. Article type  (on spreadsheet)** 
-* **6. Please paste the text of the Data Availability statement here** 
-* **7. Does the paper have data?**
-* **1. Country of corresponding author  (on spreadsheet)**
-* **2. Country of first author. Use their main address on the paper. There may be more than one. We mean the address that is next to their name on the paper, NOT any “current address” that may be added for people who have recently moved institutions.**
-* **3. What georegion(s) were any novel data used in the paper collected from? Select all that apply. NOTE THIS MEANS DATA THAT WERE PHYSICALLY COLLECTED IN THESE COUNTRIES, DO NOT INCLUDE THINGS WHERE THE AUTHORS USED A DATASET FROM FRANCE BUT DID NOT ACTUALLY GO TO FRANCE TO COLLECT DATA :)**
-* **4. Are any authors (use their main address on the paper) based in the georegion the data were collected from?  Also check the Acknowledgments to see if data labourers from the georegion who are not authors are mentioned there instead.**
-* **Any comments about data equity that these Qs don't cover?**
-* **1. Are the data mentioned in the Data Availability statement?**
-* **2. Are you able to find the data using the link/instructions in the Data Availability statement?**
-* **3. Where are the data archived?**
-* **4. Does the dataset have a DOI?**
-* **5. Can you download the data?**
-* **6. Can you open the data?**
-* **7. What format are the data in?**
-* **8. Does the data have a README/metadata?**
-* **9. How useful is the README/metadata? Read the notes in the protocol to help with decisions here. SKIP THIS Q IF NO README EXISTS.**
-* **10. How complete is the archived data?**
-* **11. Does the data have a license?**
-* **12. If yes, what license?**
-* **13. Has the data been cited (excluding the original paper it was archived for)? You can find this information on the Dryad and Figshare landing pages for the dataset on the right hand side. For other repositories it varies. If you can't find out easily just pick Unsure.**
-* **14. If yes, how many times?  Enter number or Unclear**
-* **15. Has the data been cited by someone other than the original authors? You can find this by clicking on the citations and looking at the papers that cite the data.**
-* **16. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear**
-* **17. For any paper(s) citing the data, what georegions are on the authors main addresses (i.e. when doing the work)? Please select all relevant options.**
-* **0.1 Does the paper use code?**
-* **0.2 If the paper uses code, and this is NOT archived (i.e. they mention using R or Python but don't provide any scripts) please copy-paste the text from the paper that alerted you to them using code...**
-* **0.3 Does the paper have archived code?**
-* **1. Is the code archiving described in the Data Availability (or equivalent) statement?**
-* ** *Please paste the section of the text that refers to the archived code if this is NOT part of the Data Availability Statement*.**
-* **2. Are you able to find the code using the link/instructions in the Data Availability (or equivalent) statement?**
-* **3. Where are the code archived?**
-* **4. Does the code have a DOI?**
-* **5. Can you download the code?**
-* **6. Can you open the code?**
-* **7. What language is the code written in?**
-* **8. What format is the code in?**
-* **9. Does the code have a README?**
-* **10. How useful is the README? See the protocol for help with making decisions about this. SKIP THIS Q IF NO README EXISTS.**
-* **11. How well is the code annotated? See the protocol for help with making decisions about this.**
-* **12. Does the code have a separate vignette with examples of how the code should be used?**
-* **13. If the code is an R Package, and it was previously available on CRAN/Bioconductor (as stated in the Data Availability statement), is it still available? Check this by trying to install it on the most recent version of R. If you don't know how to do this/can't do this choose \"Unable to check\"**
-* **14. If the code is a package in another language (e.g. Python) published on PyPI please put the name of the package here and where it has been deposited we will see if it is still available. If you know how to look this up yourself, please do and mention whether it is still available here (Yes/No)**
-* **15. Does the code have a CITATION file?**
-* **16. Does the code have a license?**
-* **17. If yes, what license?**
-* **18. APPLICATION papers only. How many times has the paper been cited? You can find this on the landing page of the paper.**
-* **19. Has the code been cited (excluding the original paper it was archived for)? Code = the archived code (not the paper or package).**
-* **20. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear**
-* **21. Do you have any other comments about the code? For example for those familiar with these processes, does the code use unit test? Doe it have continuous integration? Does it use docker/other containers?**
-* **21. Has the code been cited by someone other than the original authors?**
-* **22. If yes, how many times? Enter number or Unclear**
-* **1. Did you have any issues recording data for this paper? If yes we will go back and check it for you later.**
-* **2. Any other comments about this paper?**
-* **2. What date did you do this? (YYYY-MM-DD)**
-* **...61**
-* **...62**
-* **...63**
-* **...64**
-* **...65**
-* **...66**
-* **recorder_ID**  
+> * **Timestamp**. Time that the data was entered into the Google Form.
+> * **1. Paper number**
+v* **2. DOI of paper (please copy paste to avoid errors)**
+> * **3. Year of publication (on spreadsheet)** 
+> * **4. Journal  (on spreadsheet)** 
+> * **5. Article type  (on spreadsheet)** 
+> * **6. Please paste the text of the Data Availability statement here** 
+> * **7. Does the paper have data?**
+> * **1. Country of corresponding author  (on spreadsheet)**
+> * **2. Country of first author. Use their main address on the paper. There may be more than one. We mean the address that is next to their name on the paper, NOT any “current address” that may be added for people who have recently moved institutions.**
+> * **3. What georegion(s) were any novel data used in the paper collected from? Select all that apply. NOTE THIS MEANS DATA THAT WERE PHYSICALLY COLLECTED IN THESE COUNTRIES, DO NOT INCLUDE THINGS WHERE THE AUTHORS USED A DATASET FROM FRANCE BUT DID NOT ACTUALLY GO TO FRANCE TO COLLECT DATA :)**
+> * **4. Are any authors (use their main address on the paper) based in the georegion the data were collected from?  Also check the Acknowledgments to see if data labourers from the georegion who are not authors are mentioned there instead.**
+> * **Any comments about data equity that these Qs don't cover?**
+> * **1. Are the data mentioned in the Data Availability statement?**
+> * **2. Are you able to find the data using the link/instructions in the Data Availability statement?**
+> * **3. Where are the data archived?**
+> * **4. Does the dataset have a DOI?**
+> * **5. Can you download the data?**
+> * **6. Can you open the data?**
+> * **7. What format are the data in?**
+> * **8. Does the data have a README/metadata?**
+> * **9. How useful is the README/metadata? Read the notes in the protocol to help with decisions here. SKIP THIS Q IF NO README EXISTS.**
+> * **10. How complete is the archived data?**
+> * **11. Does the data have a license?**
+> * **12. If yes, what license?**
+> * **13. Has the data been cited (excluding the original paper it was archived for)? You can find this information on the Dryad and Figshare landing pages for the dataset on the right hand side. For other repositories it varies. If you can't find out easily just pick Unsure.**
+> * **14. If yes, how many times?  Enter number or Unclear**
+> * **15. Has the data been cited by someone other than the original authors? You can find this by clicking on the citations and looking at the papers that cite the data.**
+> * **16. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear**
+> * **17. For any paper(s) citing the data, what georegions are on the authors main addresses (i.e. when doing the work)? Please select all relevant options.**
+> * **0.1 Does the paper use code?**
+> * **0.2 If the paper uses code, and this is NOT archived (i.e. they mention using R or Python but don't provide any scripts) please copy-paste the text from the paper that alerted you to them using code...**
+> * **0.3 Does the paper have archived code?**
+> * **1. Is the code archiving described in the Data Availability (or equivalent) statement?**
+> * ** *Please paste the section of the text that refers to the archived code if this is NOT part of the Data Availability Statement*.**
+> * **2. Are you able to find the code using the link/instructions in the Data Availability (or equivalent) statement?**
+> * **3. Where are the code archived?**
+> * **4. Does the code have a DOI?**
+> * **5. Can you download the code?**
+> * **6. Can you open the code?**
+> * **7. What language is the code written in?**
+> * **8. What format is the code in?**
+> * **9. Does the code have a README?**
+> * **10. How useful is the README? See the protocol for help with making decisions about this. SKIP THIS Q IF NO README EXISTS.**
+> * **11. How well is the code annotated? See the protocol for help with making decisions about this.**
+> * **12. Does the code have a separate vignette with examples of how the code should be used?**
+> * **13. If the code is an R Package, and it was previously available on CRAN/Bioconductor (as stated in the Data Availability statement), is it still available? Check this by trying to install it on the most recent version of R. If you don't know how to do this/can't do this choose \"Unable to check\"**
+> * **14. If the code is a package in another language (e.g. Python) published on PyPI please put the name of the package here and where it has been deposited we will see if it is still available. If you know how to look this up yourself, please do and mention whether it is still available here (Yes/No)**
+> * **15. Does the code have a CITATION file?**
+> * **16. Does the code have a license?**
+> * **17. If yes, what license?**
+> * **18. APPLICATION papers only. How many times has the paper been cited? You can find this on the landing page of the paper.**
+> * **19. Has the code been cited (excluding the original paper it was archived for)? Code = the archived code (not the paper or package).**
+> * **20. If yes, how many times? (excluding the original paper it was archived for) Enter number or Unclear**
+> * **21. Do you have any other comments about the code? For example for those familiar with these processes, does the code use unit test? Doe it have continuous integration? Does it use docker/other containers?**
+> * **21. Has the code been cited by someone other than the original authors?**
+> * **22. If yes, how many times? Enter number or Unclear**
+> * **1. Did you have any issues recording data for this paper? If yes we will go back and check it for you later.**
+> * **2. Any other comments about this paper?**
+> * **2. What date did you do this? (YYYY-MM-DD)**
+> * **...61**
+> * **...62**
+> * **...63**
+> * **...64**
+> * **...65**
+> * **...66**
+> * **recorder_ID**  
 
