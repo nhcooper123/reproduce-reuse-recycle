@@ -91,7 +91,7 @@ This is the cleaned version of the anonymised dataset (`raw-data/BES-data-code-h
 
 Column headers are as follows:
 
-* **paper_number**. Unique paper number.                
+> * **paper_number**. Unique paper number.                
 * **doi**. Digital object identifier (DOI).                          
 * **year_published**. Year the final version was published online (2017-2024)             
 * **journal**. Journal. Options are: *Ecological Solutions and Evidence*; *Functional Ecology*; *Journal of Animal Ecology*; *Journal of Applied Ecology*; *Journal of Ecology*; *Methods in Ecology and Evolution*; *People and Nature*.                     
