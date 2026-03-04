@@ -1,8 +1,9 @@
 # Figures by journal for supplemental
+# Creates Figures S1-S14
 
 # Load libraries
-library(tidyverse)
-library(patchwork)
+library(tidyverse) # for data manipulation and plotting
+library(patchwork) # for multipanel plots
 
 # Build colour scheme for the journals
 journal_cols <- c("#A2DACC", # ESE
@@ -13,9 +14,7 @@ journal_cols <- c("#A2DACC", # ESE
                   "#e3626f", # MEE
                   "#DDAC93") # People and Nature
 
-# Read in the data
-papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
-
+# Add snippets to quickly remove all x or y axis labeling
 remove_x <- theme(axis.title.x=element_blank(),
                   axis.text.x=element_blank(),
                   axis.ticks.x=element_blank())
@@ -23,8 +22,14 @@ remove_x <- theme(axis.title.x=element_blank(),
 remove_y <- theme(axis.title.y=element_blank(),
                   axis.text.y=element_blank(),
                   axis.ticks.y=element_blank())
+
+#-----------------
+# Read in the data
+papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
+glimpse(papers)
+
 #-------------------------------------------------------------------------------
-# Recode as appropriate to clean options up a bit
+# Recode options as appropriate to clean figures up a bit
 #------------------------------------------------------------------------------
 papers <-
   papers %>%
@@ -80,6 +85,7 @@ data_by_journal <-
   papers %>% 
   group_by(journal, data_used)
 
+# Plot
 A <- 
   ggplot(data_by_journal, aes(x = journal, fill = data_used)) + 
   geom_bar(position = "fill") + 
@@ -97,6 +103,7 @@ data_avail_by_journal <-
   filter(data_used == "Yes") %>% 
   select(journal, data_availability)
 
+# Plot
 B <- 
   ggplot(data_avail_by_journal, aes(x = journal, fill = data_availability)) + 
   geom_bar(position = "fill") + 
@@ -120,6 +127,7 @@ data_archive_by_journal <-
   summarise(count = n())
 
 # split by journal
+# plot
 ggplot(data_archive_by_journal, aes(x = data_archive, y = count, fill = journal)) + 
   geom_col() + 
   theme_bw(base_size = 14) +
@@ -146,6 +154,7 @@ data_link_by_journal <-
   select(journal, data_link) %>% 
   na.omit()
 
+# Plot
 C <- 
   ggplot(data_link_by_journal, aes(x = journal, fill = data_link)) + 
   geom_bar(position = "fill") + 
@@ -166,6 +175,7 @@ data_download_by_journal <-
                                                           "Yes, but not all data", "Yes" ))) %>%
   na.omit()
 
+# Plot
 D <- 
   ggplot(data_download_by_journal, aes(x = journal, fill = data_download)) + 
   geom_bar(position = "fill") + 
@@ -187,6 +197,7 @@ data_open_by_journal <-
                                                   "Yes, but not all files", "Yes" ))) %>%
   na.omit()
 
+# Plot
 E <- 
   ggplot(data_open_by_journal, aes(x = journal, fill = data_open)) + 
   geom_bar(position = "fill") + 
@@ -212,6 +223,7 @@ summary_data_format <-
   arrange(-count) %>% 
   slice(1:10)
 
+# Plot
 ggplot(summary_data_format, aes(x = data_format, y = count, fill = journal)) +
   geom_col() +
   facet_wrap(~journal, scales = "free_y") +
@@ -235,6 +247,7 @@ data_readme_by_journal <-
   select(journal, data_README) %>%
   na.omit()
 
+# Plot
 F <- 
   ggplot(data_readme_by_journal, aes(x = journal, fill = data_README)) + 
   geom_bar(position = "fill") + 
@@ -254,6 +267,7 @@ data_readme_scale_by_journal <-
   select(journal, data_README_scale) %>%
   na.omit()
 
+# Plot
 ggplot(data_readme_scale_by_journal, aes(x = data_README_scale, fill = journal)) + 
   geom_bar() + 
   theme_bw(base_size = 14) +
@@ -285,6 +299,7 @@ data_completeness_by_journal <-
                                                                   "High", "Complete"))) %>%
   na.omit() 
 
+# Plot
 ggplot(data_completeness_by_journal, aes(x = data_completeness, fill = journal)) + 
   geom_bar() + 
   theme_bw(base_size = 14) +
@@ -308,6 +323,7 @@ data_doi_by_journal <-
   select(journal, data_doi) %>% 
   na.omit() 
 
+# Plot
 G <- 
   ggplot(data_doi_by_journal, aes(x = journal, fill = data_doi)) + 
   geom_bar(position = "fill") + 
@@ -329,6 +345,7 @@ data_license_by_journal <-
   mutate(data_license = factor(data_license, levels = c("No", "Unsure", "Yes, but not for all data archived", "Yes"))) %>%
   na.omit() 
 
+# Plot
 H <- 
   ggplot(data_license_by_journal, aes(x = journal, fill = data_license)) + 
   geom_bar(position = "fill") + 
@@ -351,6 +368,7 @@ data_license_type_by_journal <-
                                        TRUE ~ as.character(data_license_type))) %>%
   na.omit() 
 
+# Plot
 ggplot(data_license_type_by_journal, aes(fill = journal, x = data_license_type)) + 
   geom_bar() + 
   theme_bw(base_size = 14) +
@@ -367,9 +385,8 @@ ggplot(data_license_type_by_journal, aes(fill = journal, x = data_license_type))
 ggsave(file = "figures/supp-fig_journals-data-license.png", width = 8, height = 6)
 
 #--------------------------------------------------------------
-# Combine plots
+# Combine plots A-H
 #--------------------------------------------------------------
-
 (A + B) / (C + D) / (E + F) + (G + H) + plot_annotation(tag_levels = "A")
 
 # Save figure
@@ -384,6 +401,7 @@ code_by_journal <-
   papers %>% 
   group_by(journal, code_used)
 
+# Plot
 A1 <- 
   ggplot(code_by_journal, aes(x = journal, fill = code_used)) + 
   geom_bar(position = "fill") + 
@@ -402,6 +420,7 @@ code_avail_by_journal <-
   select(journal, code_availability) %>%
   na.omit()
 
+# Plot
 B1 <- 
   ggplot(code_avail_by_journal, aes(x = journal, fill = code_availability)) + 
   geom_bar(position = "fill") + 
@@ -423,6 +442,7 @@ code_archive_by_journal <-
   group_by(journal, code_archive) %>%
   summarise(count = n())
 
+# Plot
 # split by journal
 ggplot(code_archive_by_journal, aes(x = code_archive, y = count, fill = journal)) + 
   geom_col() + 
@@ -450,6 +470,7 @@ code_link_by_journal <-
   select(journal, code_link) %>% 
   na.omit()
 
+# Plot
 C1 <- 
   ggplot(code_link_by_journal, aes(x = journal, fill = code_link)) + 
   geom_bar(position = "fill") + 
@@ -470,6 +491,7 @@ code_download_by_journal <-
                                                           "Yes, but not all code", "Yes" ))) %>%
   na.omit()
 
+# Plot
 D1 <- 
   ggplot(code_download_by_journal, aes(x = journal, fill = code_download)) + 
   geom_bar(position = "fill") + 
@@ -491,6 +513,7 @@ code_open_by_journal <-
                                                   "Yes, but not all files", "Yes" ))) %>%
   na.omit()
 
+# Plot
 E1 <- 
   ggplot(code_open_by_journal, aes(x = journal, fill = code_open)) + 
   geom_bar(position = "fill") + 
@@ -516,6 +539,7 @@ summary_code_format <-
   arrange(-count) %>% 
   slice(1:10)
 
+# Plot
 ggplot(summary_code_format, aes(x = code_format, y = count, fill = journal)) +
  geom_col() +
   facet_wrap(~journal, scales = "free_y") +
@@ -541,6 +565,7 @@ code_readme_by_journal <-
                                  TRUE ~ as.character(code_README))) %>%
   na.omit()
 
+# Plot
 F1 <- 
   ggplot(code_readme_by_journal, aes(x = journal, fill = code_README)) + 
   geom_bar(position = "fill") + 
@@ -560,6 +585,7 @@ code_readme_scale_by_journal <-
   select(journal, code_README_scale) %>%
   na.omit()
 
+# Plot
 ggplot(code_readme_scale_by_journal, aes(x = code_README_scale, fill = journal)) + 
   geom_bar() + 
   theme_bw(base_size = 14) +
@@ -589,6 +615,7 @@ code_annotation_by_journal <-
   select(journal, code_annotation_scale) %>%
   na.omit()
 
+# Plot
 ggplot(code_annotation_by_journal, aes(x = code_annotation_scale, fill = journal)) + 
   geom_bar() + 
   geom_bar() + 
@@ -619,6 +646,7 @@ code_doi_by_journal <-
   select(journal, code_doi) %>% 
   na.omit() 
 
+# Plot
 G1 <- 
   ggplot(code_doi_by_journal, aes(x = journal, fill = code_doi)) + 
   geom_bar(position = "fill") + 
@@ -640,6 +668,7 @@ code_license_by_journal <-
   mutate(code_license = factor(code_license, levels = c("No", "Unsure", "Yes, but not for all code archived", "Yes"))) %>%
   na.omit() 
 
+# Plot
 H1 <- 
   ggplot(code_license_by_journal, aes(x = journal, fill = code_license)) + 
   geom_bar(position = "fill") + 
@@ -662,6 +691,7 @@ code_license_type_by_journal <-
                                   TRUE ~ as.character(code_license_type))) %>%
   na.omit() 
 
+# Plot
 ggplot(code_license_type_by_journal, aes(fill = journal, x = code_license_type)) + 
   geom_bar() + 
   theme_bw(base_size = 14) +
@@ -676,7 +706,6 @@ ggplot(code_license_type_by_journal, aes(fill = journal, x = code_license_type))
 
 # Save figure
 ggsave(file = "figures/supp-fig_journals-code-license.png", width = 8, height = 6)
-
 
 #--------------------------------------------------------------
 # 15. What language is the code in?
@@ -693,6 +722,7 @@ summary_code_language <-
   arrange(-count) %>% 
   slice(1:10)
 
+# Plot
 ggplot(summary_code_language, aes(fill = journal, x = code_language, y = count)) + 
   geom_col() + 
   theme_bw(base_size = 14) +
@@ -709,9 +739,8 @@ ggplot(summary_code_language, aes(fill = journal, x = code_language, y = count))
 ggsave(file = "figures/supp-fig_journals-code-language.png", width = 8, height = 6)
 
 #--------------------------------------------------------------
-# Combine plots
+# Combine plots A1-H1
 #--------------------------------------------------------------
-
 (A1 + B1) / (C1 + D1) / (E1 + F1) + (G1 + H1) + plot_annotation(tag_levels = "A")
 
 # Save figure
