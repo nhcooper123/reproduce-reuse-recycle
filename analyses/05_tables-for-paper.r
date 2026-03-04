@@ -1,7 +1,10 @@
 # Making tables for the paper
+# Note these output tables for each variable, these were then manually
+# combined as appropriate in the paper.
+# Table S2 is all the overall results, Tables S3/S4 are results split by journal
 
 # Load libraries
-library(tidyverse)
+library(tidyverse) # for data manipulation
  
 # Read in the data
 papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
@@ -13,6 +16,7 @@ papers <- read_csv("data/BES-data-code-hackathon-cleaned_2025-12-01.csv")
 # 2. Are data/code findable and accessible?
 #--------------------------------------------------------------------------------
 # Numbers overall for using data and/or code  
+#--------------------------------------------------------------------------------
 summary_all_total <- 
   papers %>%
   select(data_used, code_used) %>%
@@ -28,10 +32,12 @@ summary_all_total <-
   # Remove duplicates
   distinct()
 
+# Write to file
 #write_csv(summary_all_total, file = "tables/table_summary-all-data-code-use.csv")  
 
+#------------
 # By journal
-
+#------------
 summary_all_total_journal <- 
   papers %>%
   select(journal, data_used, code_used) %>%
@@ -51,12 +57,15 @@ summary_all_total_journal <-
   # order by journal
   arrange(journal)
 
+# Write to file
 #write_csv(summary_all_total_journal, file = "tables/table_summary-all-data-code-use-by-journal.csv")
+
 #--------------------------------------------------------------------------------
 # 2. Are data/code findable and accessible?
 # Only for where there is data used or code used
 #--------------------------------------------------------------------------------
 # For data, only looking at papers that use data
+#------------------------------------------------------
 summary_all_data <- 
   papers %>%
   filter(data_used == "Yes") %>%
@@ -82,9 +91,12 @@ summary_all_data <-
   # Get percentages
   mutate('%' = round(n/total*100, 2))
 
+# Write to file
 #write_csv(summary_all_data, file = "tables/table_summary-all-data-find-access.csv")
 
+#------------
 # By journal
+#------------
 summary_all_data_journal <- 
   papers %>%
   filter(data_used == "Yes") %>%
@@ -114,10 +126,12 @@ summary_all_data_journal <-
   # order by journal
   arrange(journal)
 
+# Write to file
 #write_csv(summary_all_data_journal, file = "tables/table_summary-all-data-find-access-by-journal.csv")
 
-#------------------
+#------------------------------------------------------
 # For code, only looking at papers that use code
+#------------------------------------------------------
 summary_all_code <- 
   papers %>%
   filter(code_used == "Yes") %>%
@@ -143,9 +157,12 @@ summary_all_code <-
   # Get percentages
   mutate('%' = round(n/total*100, 2))
 
+# Write to file
 #write_csv(summary_all_code, file = "tables/table_summary-all-code-find-access.csv")
 
+#------------
 # By journal
+#------------
 summary_all_code_journal <- 
   papers %>%
   filter(code_used == "Yes") %>%
@@ -173,10 +190,12 @@ summary_all_code_journal <-
   # order by journal
   arrange(journal)
 
+# Write to file
 #write_csv(summary_all_code_journal, file = "tables/table_summary-all-code-find-access-by-journal.csv")
 
-#------------------
+#------------------------------------------------------
 # For code, only looking at papers that ARCHIVED code
+#------------------------------------------------------
 summary_all_code_archived <- 
   papers %>%
   filter(code_archived == "Yes") %>%
@@ -204,7 +223,9 @@ summary_all_code_archived <-
 
 #write_csv(summary_all_code_archived, file = "tables/table_summary-archived-code-find-access.csv")
 
+#------------
 # By journal
+#------------
 summary_all_code_archived_journal <- 
   papers %>%
   filter(code_archived == "Yes") %>%
@@ -241,6 +262,7 @@ summary_all_code_archived_journal <-
 # A. What format are they saved in? 
 #--------------------------------------------------------------------------------  
 # Data format
+#--------------------------------------------------------------------------------
 # First work out how many entries are not in the top ten 
 # these should be added to the plot as "other"
 topten <-
@@ -293,6 +315,7 @@ summary_data_format <-
 
 #--------------------------------------------------------------------------------
 # Code format
+#--------------------------------------------------------------------------------
 # Get total numbers
 total_cf <-
   papers %>% 
@@ -350,6 +373,7 @@ summary_code_language <-
 # 4. Where are data/code archived?
 #-------------------------------------------------------------------------------
 # Data
+#--------------------------------------------------------------------------------
 # Get totals
 total_da <- 
   papers %>% 
@@ -374,8 +398,9 @@ summary_data_archive <-
 
 #write_csv(summary_data_archive, file = "tables/table_summary-data-archive.csv")
 
-#-----
+#--------------------------------------------------------------------------------
 # Code
+#--------------------------------------------------------------------------------
 # Get totals
 total_ca <- 
   papers %>% 
@@ -424,6 +449,7 @@ github <-
 length(github$paper_number) # 177
 intersect(github$paper_number, zenodo$paper_number) # 106
 106/177
+
 #--------------------------------------------------------------------------------
 # 5. Are data/code reusable?
 # README + completeness + annotation
@@ -431,6 +457,7 @@ intersect(github$paper_number, zenodo$paper_number) # 106
 # A. README
 #-----------------
 # data
+#-----------------
 # Don't add % for this as it's not clear what total we 
 # want to get % from (total of papers using data, or with archived data etc.)
 # Also keep NAs for the same reason
@@ -443,7 +470,9 @@ data_readme <-
 
 #write_csv(data_readme, file = "tables/table_summary-data-readme.csv")
 
+#-----------------
 # code
+#-----------------
 code_readme <- 
   papers %>%
   filter(code_archived == "Yes") %>% 
@@ -456,6 +485,7 @@ code_readme <-
 #--------------------------------------------------------------------
 # Scales for README/completeness/annotation
 # Get median scores
+#-------------------
 papers %>% summarise(median(data_README_scale, na.rm = TRUE))
 papers %>% summarise(median(code_README_scale, na.rm = TRUE))
 papers %>% summarise(median(code_annotation_scale, na.rm = TRUE))
@@ -469,7 +499,9 @@ papers %>% summarise(median(code_annotation_scale, na.rm = TRUE))
 # Don't add % for this as it's not clear what total we 
 # want to get % from (total of papers using data, or with archived data etc.)
 # Also keep NAs for the same reason
+#-----------------
 # data
+#-----------------
 data_doi <- 
   papers %>%
   filter(data_availability == "Yes") %>% 
@@ -479,7 +511,9 @@ data_doi <-
 
 #write_csv(data_doi, file = "tables/table_summary-data-doi.csv")
 
+#-----------------
 # code
+#-----------------
 code_doi <- 
   papers %>%
   filter(code_archived == "Yes") %>% 
@@ -493,6 +527,7 @@ code_doi <-
 # B. License
 #-----------------
 # data
+#-----------------
 data_license <- 
   papers %>%
   filter(data_availability == "Yes") %>% 
@@ -502,7 +537,9 @@ data_license <-
 
 #write_csv(data_license, file = "tables/table_summary-data-license.csv")
 
+#-----------------
 # code
+#-----------------
 code_license <- 
   papers %>%
   filter(code_archived == "Yes") %>% 
@@ -516,6 +553,7 @@ code_license <-
 # C. License type
 # --------------------
 # data
+#-----------------
 data_license_type <-
   papers %>% 
   filter(data_used == "Yes" & data_license_type != "No") %>% 
@@ -526,6 +564,9 @@ data_license_type <-
 
 #write_csv(data_license_type, file = "tables/table_summary-data-license-type.csv")
 
+#-----------------
+# code
+#-----------------
 code_license_type <-
   papers %>% 
   filter(code_archived == "Yes") %>% 
