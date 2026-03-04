@@ -145,9 +145,6 @@ The columns headers are all the same as those in `BES-data-code-hackathon-cleane
 -------
 ## Analyses
 
-
-?????Table S1 numbers
-
 Analyses were carried out in the following order.
 
 * **00-wrangle-raw-data.R**. 
@@ -157,6 +154,8 @@ This preliminary data wrangling script is in the subfolder `prepare-paper-list`.
 The first step of the analyses was to take the list of published papers across the BES journals from 2017-2024 and wrangle this data to create a list of papers participants could collect data from. This script cleans the data, removes paper types that are unlikely to share data/code e.g. reviews, randomises the order of papers and assigns each a unique ID called `paper_number` which is used to refer to papers in the rest of the analyses.
 
 This script uses the  `raw-data/BES_2015-2024_article_data_2025-09-02.csv` dataset. It outputs `data/2025-09-29_BES-article-metadata-2015-2024.csv`. Note that the names of these files suggest data from 2015 onwards was available but in reality only data from 2017 onwards was provided by Wiley.
+
+This script also produces the summary numbers/% for the proportion of papers in each journal/year in the full dataset. This forms one part of Table S1, so we can check our papers are broadly representative of the full dataset.
 
 We used this list during the hackathon.
 
@@ -175,15 +174,15 @@ The script outputs `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` and `da
 
 * **03_summary-stats-plots.qmd**
 
-This script explores the data in `data/BES-data-code-hackathon-cleaned_2025-12-01.csv`, and produces several summary figures and tables. These are for information purposes and not output for use in the paper. 
+This script explores the data in `data/BES-data-code-hackathon-cleaned_2025-12-01.csv`, and produces several summary figures and tables. These are for information purposes and not output for use in the paper. Though some numbers calculated appear in the main text.
 
 * **04_figures-for-paper.r**
 
-This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to create all the figures used in the paper and some in the supporting information. This script outputs Figures 1-7 and Supporting Figure S16. All figures are output to the `/figures` folder.
+This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to create all the figures used in the paper and some in the supporting information. This script outputs Figures 1-7 and Supporting Figure S16. All figures are output to the `/figures` folder. 
 
 * **05_tables-for-paper.r**
 
-This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to extract numbers used in tables in the paper and the supporting information. It also contributes numbers cited in the paper text. This script outputs numbers used in Tables S2-S4, though several tables are combined to create each of these tables. All tables are output to the `/tables` folder.
+This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to extract numbers used in tables in the paper and the supporting information. It also contributes numbers cited in the paper text, for example median scores for README and code annotation quality. This script outputs numbers used in Tables S2-S4, though several tables are combined to create each of these tables. All tables are output to the `/tables` folder.
 
 * **06_by-journal-figures-for-supplemental.r**
 
@@ -199,7 +198,7 @@ This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to determ
 
 * **09_recorder-variability.r**
 
-This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to investigate variability in data recorders by investigating how 100 different unique data recorders collected data for paper 2272. This script outputs Supporting Figure S15, and the numbers in used in the Supporting Information and main text when describing data recorder variability. The figure is output to the `/figures` folder.
+This script uses `data/BES-data-code-hackathon-cleaned_2025-12-01.csv` to investigate variability in data recorders by investigating how 100 different data recorders collected data for paper 2272. This script outputs Supporting Figure S15, and the numbers in used in the Supporting Information and main text when describing data recorder variability. The figure is output to the `/figures` folder.
 
 -------
 ## Other folders
