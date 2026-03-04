@@ -14,7 +14,7 @@ To cite this repo:
 
 This code is shared under an MIT License.
 
-![alt text](https://github.com/nhcooper123/reproduce-reuse-recycle/raw/main/figures/summary-journal-year.jpg)
+![alt text](https://github.com/nhcooper123/reproduce-reuse-recycle/raw/main/figures/fig1_summary-journal-year.jpg)
 
 -------
 ## DATA
