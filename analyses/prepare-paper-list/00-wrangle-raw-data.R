@@ -1,4 +1,5 @@
-# Wrangle data from BES system
+# Wrangle data from BES system to get a list of papers 
+# to work with at the hackathon
 # Sept 2025
 
 # Load libraries
@@ -17,7 +18,7 @@ raw_data <- clean_names(raw_data)
 # Clean the data
 clean_data <- 
   raw_data %>%
-# Rename article 
+# Rename article types 
   mutate(category_display_article_type = 
           case_when(category_display_article_type == "Long-term Studies in Animal Ecology" ~ "Long Term Study",
                     category_display_article_type == "Original Article" ~ "Research Article",
@@ -26,7 +27,6 @@ clean_data <-
                     TRUE ~ as.character(category_display_article_type))) %>%
 # Select only required article types
   # i.e. Research Article, Applications, Practical Tools, Data Articles and Long Term Study
-
   # Excludes Biological Flora, Commentary, Concept, Correction,
   # Correspondence, Corrigendum, Editorial, Editorial Note, Erratum,
   # Essay Review, FE Spotlight, Forum, From Practice,
@@ -34,7 +34,6 @@ clean_data <-
   # Policy Directions, Practice Insights, Practitioner Perspective,
   # Registered Reports, Research Highlights, Research Methods Guides,
   # Review, Review and Synthesis, Synthesis.
-  
   filter(category_display_article_type == "Research Article" |
            category_display_article_type == "Application" | 
            category_display_article_type == "Data Article" | 
@@ -67,7 +66,9 @@ clean_data_random <-
 # Write to file
 write_csv(clean_data_random, file = "raw-data/BES-article-metadata-2017-2024_2025-09-29.csv")
 
+#--------------------------
 # Quick exploratory plots
+#--------------------------
 ggplot(clean_data_random, aes(x = journal, fill = journal)) +
   geom_bar() +
   coord_flip() +
@@ -85,6 +86,10 @@ ggplot(clean_data_random, aes(x = dmy(date_published), colour = journal)) +
   ylab("Number of papers")
 geom_line()
 
+#-----------------------------------------------------------
+# Summaries for Table S1
+# What number/% of papers are in each year and each journal?
+#-----------------------------------------------------------
 # How many papers in total?
 total <-
   clean_data_random %>%
