@@ -312,7 +312,7 @@ ggplot(data_completeness_by_journal, aes(x = data_completeness, fill = journal))
   xlab("data completeness")
 
 # Save figure
-ggsave(file = "figures/supp-fig_journals-data-completeness.png", width = 8, height = 6)
+ggsave(file = "figures/supp-fig_journals-data-completeness.png", width = 10, height = 6)
 
 #--------------------------------------------------------------
 # 12. Does the data have a DOI?
