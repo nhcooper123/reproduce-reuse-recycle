@@ -141,21 +141,26 @@ summary_all_archive <-
   mutate(archive = case_when(archive == "GitHub, GitLab, Codeberg or similar platform" ~ "Git hosting services",
          TRUE ~ as.character(archive))) %>%
   # remove personal website as it only has two entries
-  filter(archive != "Personal website")
+  filter(archive != "Personal website") %>%
+  # Reorder so other is at the bottom and the rest is ordered by count for data
+  mutate(archive = factor(archive, levels = c("Other repo/database", 
+                                                     "CRAN", "Supplementary materials", "Git hosting services", 
+                                                     "Figshare", "Zenodo", "Dryad")))
+
 
 # Get totals
 summary_all_archive %>% group_by(type) %>% summarise(sum(count))
 
 # Plot
 fig3 <-
-  ggplot(summary_all_archive, aes(x = forcats::fct_reorder(archive, count), y = count)) + 
+  ggplot(summary_all_archive, aes(x = archive, y = count)) + 
   geom_col(fill = "lightgrey") +
   coord_flip() +
   theme_bw(base_size = 14) +
   # Remove legend title
   theme(legend.title = element_blank()) +
   xlab("") +
-  ylab("files") +
+  ylab("archives") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white")) +
   expand_limits(y = c(0,300))
@@ -331,18 +336,23 @@ summary_all_format <-
   mutate(type = factor(type, levels = c("data", "code"))) %>%
   mutate(format = case_when(format == "Other" ~ "other",
                             format == "Unsure" ~ "unsure",
-                            TRUE ~ as.character(format)))
+                            TRUE ~ as.character(format))) %>%
+  # Reorder so other/unsure is at the bottom and the rest is ordered by data count
+  mutate(format = factor(format, levels = c("unsure", "other", ".html", "notebook", "native source code",
+                                            ".fasta", ".xml", ".pdf", ".tif", ".shp", ".doc(x)",
+                                            ".rda/.rdata/.rds", ".txt", ".xls(x)", ".csv/.tsv")))
+
 
 # Plot
 fig5 <-
-  ggplot(summary_all_format, aes(x = forcats::fct_reorder(format, count), y = count)) + 
+  ggplot(summary_all_format, aes(x = format, count, y = count)) + 
   geom_col(fill = "lightgrey") +
   theme_bw(base_size = 14) +
   coord_flip() +
   # Remove legend title
   theme(legend.title = element_blank()) +
   xlab("file extension") +
-  ylab("files") +
+  ylab("archives") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white")) 
 
@@ -533,11 +543,14 @@ summary_all_lt <-
   # change levels so plot is in correct order (data first)
   mutate(type = factor(type, levels = c("data", "code"))) %>%
   mutate(license_type = case_when(license_type == "Other" ~ "other",
-                                   TRUE ~ as.character(license_type)))
+                                   TRUE ~ as.character(license_type))) %>%
+  # Reorder so other is at the bottom
+  mutate(license_type = factor(license_type, 
+                               levels = c("other", "GPL", "MIT", "OGL", "other CC BY", "CC BY", "CC0")))
 
 # Make the figure
 fig7 <-
-  ggplot(summary_all_lt, aes(x = forcats::fct_reorder(license_type, count), y = count)) + 
+  ggplot(summary_all_lt, aes(x = license_type, y = count)) + 
   geom_col(fill = "lightgrey") +
   coord_flip() +
   theme_bw(base_size = 14) +
@@ -547,7 +560,7 @@ fig7 <-
   ylab("files") +
   facet_wrap(~type, scales = "free_x") +
   theme(strip.background = element_rect(fill = "white")) +
-  expand_limits(y = c(0,300))
+  expand_limits(y = c(0, 300))
 
 # Save figure
 ggsave(fig7, file = "figures/fig7_licenses.jpg", width = 6, height = 4)
