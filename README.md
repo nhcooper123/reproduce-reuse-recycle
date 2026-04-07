@@ -97,7 +97,7 @@ Column headers are as follows:
 > * **journal**. Journal. Options are: *Ecological Solutions and Evidence*; *Functional Ecology*; *Journal of Animal Ecology*; *Journal of Applied Ecology*; *Journal of Ecology*; *Methods in Ecology and Evolution*; *People and Nature*.                     
 > * **article_type**. Article type. Options are: *Research Article*; *Applications*; *Practical Tools*; *Data Articles*; *Long Term Study*.                
 > * **data_used**. Were data used? Options are: *Yes*; *No*.                   
-> * **data_availability**. Are data mentioned in the data availability statement? Options are: *Yes*; *No*; *No, but they are available on request*.               
+> * **data_availability**. Are data mentioned in the data availability statement? Options are: *Yes*; *No*; *No, but they are available on request*. Due to the requirement for data archiving this is equivalent to asking "was any data archived?".             
 > * **data_availability_text**. Full text from the Data Availability statement. Long form text.     
 > * **data_link**. Does the link direct you to the dataset? Options are: *Yes*; *No*.                 
 > * **data_archive**. Where are the data archived? Multiple options can be selected. Options are: *Dryad; Figshare; GitHub; GitLab; Codeberg or similar platform; Other repo/database; Personal website; Supplementary materials; Zenodo*.               

@@ -2,6 +2,11 @@
 # Note these output tables for each variable, these were then manually
 # combined as appropriate in the paper.
 # Table S2 is all the overall results, Tables S3/S4 are results split by journal
+# Also note that due to the mandated data archiving at BES journals, data mentioned in the Data availability statement
+# that is not coded as "embargoed" by definition is archived. Thus we use the values for data_availability column
+# as numbers archived in the text so it is equivalent to the code. For code very little was mentioned in the Data availability statement
+# but it was often still archived so this forms two separate questions in the data collection and we focus on code archived, not just
+# code mentioned in the the Data availability statement.
 
 # Load libraries
 library(tidyverse) # for data manipulation
@@ -152,7 +157,6 @@ summary_all_code <-
   add_count(var, value, name = "n") %>%
   # Just keep the yes options
   filter(value == "Yes") %>%
-  # Remove duplicates
   distinct() %>%
   # Get percentages
   mutate('%' = round(n/total*100, 2))
