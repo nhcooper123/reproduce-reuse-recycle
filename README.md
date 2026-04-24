@@ -10,7 +10,9 @@ To cite the paper:
 >  Natalie Cooper and the BES Data and Code Hackathon Group. 2026. Data- and code-archiving in the British Ecological Society journals: present status and recommendations for future improvements.
 
 To cite this repo: 
->  Natalie Cooper. Data and code for MEE paper v1. DOI:.
+>  Natalie Cooper and the BES Data and Code Hackathon Group. 2026. Data and code for MEE paper v1.0. Zenodo. DOI: 10.5281/zenodo.19737911.
+
+[![DOI](https://zenodo.org/badge/1028451403.svg)](https://doi.org/10.5281/zenodo.19737911)
 
 This code is shared under an MIT License.
 
