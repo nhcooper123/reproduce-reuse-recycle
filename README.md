@@ -7,7 +7,7 @@ Author(s): Natalie Cooper (natalie.cooper@nhm.ac.uk) and the hackathon gang
 This repository contains all the data and code used in the [paper](LINK TO BE ADDED), EXCEPT the non-anonymised raw data and the script used to anonymise it.
 
 To cite the paper: 
->  Natalie Cooper and the BES Data and Code Hackathon Group. 2026. Data- and code-archiving in the British Ecological Society journals: present status and recommendations for future improvements.
+>  Natalie Cooper and the BES Data and Code Hackathon Group. 2026. Data- and code-archiving in the British Ecological Society journals: present status and recommendations for future improvements. Methods in Ecology and Evolution, Vol, pp. DOI: .
 
 To cite this repo: 
 >  Natalie Cooper and the BES Data and Code Hackathon Group. 2026. Data and code for MEE paper v1.0. Zenodo. DOI: 10.5281/zenodo.19737911.
