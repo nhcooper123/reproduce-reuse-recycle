@@ -2,7 +2,7 @@
 
 Code and data for MEE paper
 
-Author(s): Natalie Cooper (natalie.cooper@nhm.ac.uk) and the hackathon gang
+Author(s): Natalie Cooper (natalie.cooper@nhm.ac.uk) and the BES Data and Code Hackathon Group.
 
 This repository contains all the data and code used in the [paper](LINK TO BE ADDED), EXCEPT the non-anonymised raw data and the script used to anonymise it.
 
