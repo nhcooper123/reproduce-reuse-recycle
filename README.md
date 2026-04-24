@@ -11,8 +11,8 @@ To cite the paper:
 
 To cite this repo: 
 >  Natalie Cooper and the BES Data and Code Hackathon Group. 2026. Data and code for MEE paper v1.0. Zenodo. DOI: 10.5281/zenodo.19737911.
-
-[![DOI](https://zenodo.org/badge/1028451403.svg)](https://doi.org/10.5281/zenodo.19737911)
+ 
+[![DOI](https://zenodo.org/badge/1028451403.svg)](https://doi.org/10.5281/zenodo.19737911)]
 
 This code is shared under an MIT License.
 
